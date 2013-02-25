@@ -1,0 +1,11 @@
+*.vo
+*.aux
+*.out
+*.v.d
+jasonssubmissions.zip
+*.tex
+*.pdf
+*.glob
+html/
+*.log
+coqdoc.sty
