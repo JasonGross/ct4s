@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,79 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import Notations.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
 (** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
+
+(** * Exercise 3.5.2.4 *)
+Module Exercise_3_5_2_4.
+  (** ** Problem *)
+  (** Consider the graph shown in (3.14), and the two declarations
+      shown at the top. They generate a CPER. Is it true that under
+      this CPER we have
+
+      [[Employee manager manager worksIn ≃ Employee worksIn?]]
+
+      What about
+
+      [[Employee worksIn secretary ≃ Employee?]]
+
+      What about
+
+      [[Department secretary manager worksIn name ≃ Department name?]] *)
   (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+  (** Yes; no (unless every department has only one employee); yes.
+      Here's a proof. *)
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+  (** I use [=], because then we don't have to encode that [compose]
+      respects [≃]. *)
+  Local Infix "≃" := eq (at level 70, right associativity).
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+  Inductive Node := Employee | Department | FirstNameString
+                    | LastNameString | DepartmentNameString.
 
+  Inductive Arrow : Node -> Node -> Type :=
+  | identity : forall {x}, Arrow x x
+  | compose : forall {s d d'}, Arrow s d -> Arrow d d' -> Arrow s d'
+  | manager : Arrow Employee Employee
+  | firstName : Arrow Employee FirstNameString
+  | lastName : Arrow Employee LastNameString
+  | worksIn : Arrow Employee Department
+  | secretary : Arrow Department Employee
+  | name : Arrow Department DepartmentNameString.
+
+  Local Infix "o" := compose.
+
+  Axiom Rule1 : manager o worksIn ≃ worksIn.
+  Axiom Rule2 : secretary o worksIn ≃ identity.
+  Axiom LeftIdentity : forall s d (m : Arrow s d), identity o m ≃ m.
+  Axiom RightIdentity : forall s d (m : Arrow s d), m o identity ≃ m.
+  Axiom Associativity : forall a b c d
+                               (m1 : Arrow a b)
+                               (m2 : Arrow b c)
+                               (m3 : Arrow c d),
+                          (m1 o m2) o m3 ≃ m1 o (m2 o m3).
+
+  Lemma Exercise_3_5_2_4_a : manager o manager o worksIn ≃ worksIn.
+    rewrite Associativity.
+    repeat rewrite Rule1.
+    reflexivity.
+  Qed.
+
+  Lemma Exercise_3_5_2_4_c : secretary o manager o worksIn o name ≃ name.
+    match goal with
+      | [ |- ?a o ?b o ?c o ?d ≃ _ ] => transitivity (a o (b o c) o d);
+                                       [ repeat rewrite Associativity;
+                                         reflexivity | ]
+    end.
+    rewrite Rule1.
+    rewrite Rule2.
+    rewrite LeftIdentity.
+    reflexivity.
+  Qed.
+End Exercise_3_5_2_4.
 (** ------------------------------------------------------------------------ *)

@@ -47,11 +47,17 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
+(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
+(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
+(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
+(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +72,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +104,54 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import Omega.
+Require Import DiscreteCategory NatCategory DiscreteCategoryFunctors Functor.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
-
 (** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
+
+(** * Exercise 4.1.2.28 *)
+Section Exercise_4_1_2_28.
+  (** ** Problem *)
+  (** Recall the definition of the set [ _n_ ] for any natural number
+      [n : ℕ], and let [D_n := Disc( _n_ ) : Ob Cat]. List all the
+      morphisms in [D_4].  List all the functors [D_3 -> D_2]. *)
   (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+  (** I defined the discrete categories above, as coercions from the
+      natural numbers.  The functors [D_3 -> D_2] are the functions
+      [{1, 2, 3} -> {1, 2}].  There is the function which sends
+      everything to 1, the function which sends everything to 2, and
+      functions which send two numbers to 1 and the other one to 2,
+      and vice versa. *)
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+  Let D_3 := NatCategory 3.
+  Let D_2 := NatCategory 2.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+  Lemma OneLtTwo : 1 < 2. repeat constructor. Qed.
+  Lemma ZeroLtTwo : 0 < 2. repeat constructor. Qed.
+  Lemma ThreeNotLtThree n : S (S (S n)) < 3 -> False. omega. Qed.
+
+  Local Ltac mk_functor a b c :=
+    apply FunctorFromDiscrete;
+    refine (fun x => match proj1_sig x as n return (n < 3 → {k : ℕ | k < 2}) with
+                       | 0 => fun _ => exist _ a _
+                       | 1 => fun _ => exist _ b _
+                       | 2 => fun _ => exist _ c _
+                       | S (S (S n')) => fun pf => match ThreeNotLtThree pf with end
+                     end (proj2_sig x));
+    try exact ZeroLtTwo;
+    try exact OneLtTwo.
+
+  Example E_4_1_2_28_Functor_1 : Functor D_3 D_2. mk_functor 0 0 0. Defined.
+  Example E_4_1_2_28_Functor_2 : Functor D_3 D_2. mk_functor 0 0 1. Defined.
+  Example E_4_1_2_28_Functor_3 : Functor D_3 D_2. mk_functor 0 1 0. Defined.
+  Example E_4_1_2_28_Functor_4 : Functor D_3 D_2. mk_functor 0 1 1. Defined.
+  Example E_4_1_2_28_Functor_5 : Functor D_3 D_2. mk_functor 1 0 0. Defined.
+  Example E_4_1_2_28_Functor_6 : Functor D_3 D_2. mk_functor 1 0 1. Defined.
+  Example E_4_1_2_28_Functor_7 : Functor D_3 D_2. mk_functor 1 1 0. Defined.
+  Example E_4_1_2_28_Functor_8 : Functor D_3 D_2. mk_functor 1 1 1. Defined.
+End Exercise_4_1_2_28.
 
 (** ------------------------------------------------------------------------ *)

@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,94 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import ProofIrrelevance FunctionalExtensionality.
+Require Import JMeq.
+Require Export Category.
+Require Import Notations.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+(** * Category Morphisms *)
+Section category_morphisms.
+  Context `(C : @Category obj).
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+  Local Open Scope morphism_scope.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+  (** Quoting Wikipedia,
 
-(** ------------------------------------------------------------------------ *)
+      In category theory, an epimorphism (also called an epic morphism
+      or, colloquially, an epi) is a morphism [f : X → Y] which is
+      right-cancellative in the sense that, for all morphisms [g, g' :
+      Y → Z], [g ○ f = g' ○ f -> g = g']
+
+      Epimorphisms are analogues of surjective functions, but they are
+      not exactly the same. The dual of an epimorphism is a
+      monomorphism (i.e. an epimorphism in a category [C] is a
+      monomorphism in the dual category [C ᵒᵖ]).  *)
+
+  Definition IsEpimorphism x y (m : C.(Morphism) x y) : Prop :=
+    forall z (m1 m2 : C.(Morphism) y z), m1 o m = m2 o m ->
+      m1 = m2.
+  Definition IsMonomorphism x y (m : C.(Morphism) x y) : Prop :=
+    forall z (m1 m2 : C.(Morphism) z x), m o m1 = m o m2 ->
+      m1 = m2.
+
+  Section properties.
+    Lemma IdentityIsEpimorphism x : IsEpimorphism _ _ (Identity x).
+      repeat intro; autorewrite with category in *; trivial.
+    Qed.
+
+    Lemma IdentityIsMonomorphism x : IsMonomorphism _ _ (Identity x).
+      repeat intro; autorewrite with category in *; trivial.
+    Qed.
+
+    Lemma EpimorphismComposition s d d' m0 m1 :
+      IsEpimorphism _ _ m0
+      -> IsEpimorphism _ _ m1
+      -> IsEpimorphism _ _ (Compose (C := C) (s := s) (d := d) (d' := d') m0 m1).
+      repeat intro.
+      repeat match goal with | [ H : _ |- _ ] => rewrite <- Associativity in H end.
+      intuition.
+    Qed.
+
+    Lemma MonomorphismComposition s d d' m0 m1 :
+      IsMonomorphism _ _ m0
+      -> IsMonomorphism _ _ m1
+      -> IsMonomorphism _ _ (Compose (C := C) (s := s) (d := d) (d' := d') m0 m1).
+      repeat intro.
+      repeat match goal with | [ H : _ |- _ ] => rewrite Associativity in H end.
+      intuition.
+    Qed.
+  End properties.
+End category_morphisms.
+
+Hint Immediate @IdentityIsEpimorphism @IdentityIsMonomorphism @MonomorphismComposition @EpimorphismComposition : category.
+Hint Immediate @IdentityIsEpimorphism @IdentityIsMonomorphism @MonomorphismComposition @EpimorphismComposition : morphism.
+
+Arguments IsEpimorphism {obj} [C x y] m.
+Arguments IsMonomorphism {obj} [C x y] m.
+
+Section AssociativityComposition.
+  Context `(C : @Category obj).
+  Variables o0 o1 o2 o3 o4 : C.
+
+  Local Open Scope morphism_scope.
+
+  Lemma compose4associativity_helper
+        (a : Morphism C o3 o4) (b : Morphism C o2 o3)
+        (c : Morphism C o1 o2) (d : Morphism C o0 o1) :
+    (a o b) o (c o d) = a o ((b o c) o d).
+    repeat rewrite Associativity; reflexivity.
+  Qed.
+End AssociativityComposition.
+
+Ltac compose4associativity' a b c d :=
+  transitivity (a o ((b o c) o d))%morphism;
+  try solve [ apply compose4associativity_helper ].
+Ltac compose4associativity :=
+  match goal with
+    | [ |- ((?a o ?b) o (?c o ?d))%morphism = _ ] => compose4associativity' a b c d
+    | [ |- _ = ((?a o ?b) o (?c o ?d))%morphism ] => compose4associativity' a b c d
+  end.

@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,41 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Export Monoid Category.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+(** * Category of Monoids *)
+(** ** Example 4.1.1.4 *)
+Section CategoryOfMonoids.
+  (** (The category Mon of monoids) We defined monoids in Definition
+      3.1.1.1 and monoid homomorphisms in Definition 3.1.4.1. Every
+      monoid [M := (M, 1_M, ★)] has an identity homomorphism [id M: M ->
+      M], given by the identity function [id M : M -> M]. To compose
+      two monoid homomorphisms [f : M -> M'] and [g : M' -> M''], we
+      compose their underlying functions [f : M -> M'] and [g : M' ->
+      M''], and check that the result [g o f] is a monoid homomorphism.
+      Indeed,
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+      - [[g o f(1_M) = g(1_M') = 1_M'']]
+      - [[g o f(m1 ★ m2) = g(f(m1) ★ f(m2)) = g o f(m1) ★ g o f(m2).]]
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+      It is clear that the two laws hold, so [Mon] is a category. *)
 
-(** ------------------------------------------------------------------------ *)
+  Definition CategoryOfMonoids : @Category { T : Type & Monoid T }.
+    refine {|
+        (*Object := { T : Type & Monoid T };*)
+        Morphism := (fun s d : { T : Type & Monoid T } =>
+                       MonoidHomomorphism (projT2 s) (projT2 d));
+        Identity := (fun x => identity_monoid_homomorphism _);
+        Compose := (fun _ _ _ m1 m2 => compose_monoid_homomorphisms m1 m2)
+      |};
+    abstract (
+        repeat intros [? ?]; intros;
+        apply MonoidHomomorphism_Eq;
+        reflexivity
+      ).
+  Defined.
+End CategoryOfMonoids.

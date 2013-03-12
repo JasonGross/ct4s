@@ -133,3 +133,22 @@ Record Group (G : Type) :=
 (* begin hide *)
 Notation "i ⁻¹" := (@group_inverse _ _ i) (at level 10) : type_scope.
 (* end hide *)
+
+(** ** Group Homomorphisms *)
+
+Definition IsGroupHomomorphism
+           `(G0H : @IsGroup G0' G0)
+           `(G1H : @IsGroup G1' G1)
+  := MonoidHomomorphism (M0 := G0) _ (M'0 := G1) _.
+Definition GroupHomomorphism
+           `(G0 : Group G0')
+           `(G1 : Group G1')
+  := IsGroupHomomorphism (is_group G0) (is_group G1).
+Definition identity_group_homomorphism `(G0 : Group G0') : GroupHomomorphism G0 G0
+  := identity_monoid_homomorphism _.
+Definition compose_group_homomorphisms
+           `(G0 : Group G0')
+           `(G1 : Group G1')
+           `(G2 : Group G2')
+: GroupHomomorphism G1 G2 -> GroupHomomorphism G0 G1 -> GroupHomomorphism G0 G2
+  := fun m1 m2 => compose_monoid_homomorphisms m1 m2.

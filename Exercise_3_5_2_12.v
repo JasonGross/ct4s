@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -96,47 +99,24 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
-
-Set Implicit Arguments.
-
-Generalizable All Variables.
-
 (** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
+
+(** * Exercise 3.5.2.12 *)
+Section Exercise_3_5_2_12.
+  (** ** Problem *)
+  (** Is there any nontrivial PED on Loop that holds for the data in
+      Example 3.5.2.9? If so, what is it and how many equivalence
+      classes of paths in Loop are there after you impose that
+      relation? *)
   (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+  (** Yes.  We have [f f f f ≃ f f].  No sequence of two or more [f]s
+      is equal to one [f], because [f f] takes [A] to [C], but [f]
+      takes [A] to [B], and nothing takes [C] to [B].  We don't have
+      [f f f ≃ f f] because [f f f] takes [F] to [G], but [f f] takes
+      [F] to [H].  After this, there is the empty path, the path [f],
+      the path [f f], and the path [f f f]. Everything else is
+      equivalent to one of these four paths. *)
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+End Exercise_3_5_2_12.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
-
-(** ------------------------------------------------------------------------ *)
+(* ------------------------------------------------------------------------ *)

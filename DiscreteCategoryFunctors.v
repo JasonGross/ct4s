@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,114 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import FunctionalExtensionality.
+Require Export Category DiscreteCategory.
+Require Import Functor SetCategory ComputableCategory.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+(** * Discrete Category Functors *)
+Section FunctorFromDiscrete.
+  Variable O : Type.
+  Context `(D : @Category objD).
+  Variable objOf : O -> objD.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+  Let FunctorFromDiscrete_MorphismOf s d (m : Morphism (DiscreteCategory O) s d)
+  : Morphism D (objOf s) (objOf d)
+    := match m with
+         | eq_refl => Identity _
+       end.
 
-(** ------------------------------------------------------------------------ *)
+  Definition FunctorFromDiscrete : Functor (DiscreteCategory O) D.
+  Proof.
+    refine {| ObjectOf := objOf; MorphismOf := FunctorFromDiscrete_MorphismOf |};
+    abstract (
+        intros; hnf in *; subst; simpl;
+        auto with category
+      ).
+  Defined.
+End FunctorFromDiscrete.
+
+Notation ObjectFunctorTo Index2Object Index2Cat Sets :=
+  ((Build_Functor (@ComputableCategory _ _ Index2Cat) (CategoryOf Sets)
+                  (fun C' => Index2Object C')
+                  (fun _ _ F => ObjectOf F)
+                  (fun _ _ _ _ _ => eq_refl)
+                  (fun _ => eq_refl))).
+
+Section Obj.
+  Definition ObjectFunctor I (Index2Object : I -> Type)
+             `(Index2Cat : forall i : I, @Category (@Index2Object i))
+    := ObjectFunctorTo Index2Object Index2Cat Type.
+  Definition ObjectFunctorToSet I (Index2Object : I -> Set)
+             `(Index2Cat : forall i : I, @Category (@Index2Object i))
+    := ObjectFunctorTo Index2Object Index2Cat Set.
+  Definition ObjectFunctorToProp I (Index2Object : I -> Prop)
+             `(Index2Cat : forall i : I, @Category (@Index2Object i))
+    := ObjectFunctorTo Index2Object Index2Cat Prop.
+End Obj.
+
+Arguments ObjectFunctor {I Index2Object Index2Cat}.
+Arguments ObjectFunctorToSet {I Index2Object Index2Cat}.
+Arguments ObjectFunctorToProp {I Index2Object Index2Cat}.
+
+Section InducedFunctor.
+  Variable O : Type.
+  Context `(O' : @Category obj).
+  Variable f : O -> O'.
+
+  Definition InducedDiscreteFunctor : Functor (DiscreteCategory O) O'.
+    match goal with
+      | [ |- Functor ?C ?D ] =>
+        refine (Build_Functor C D
+                              f
+                              (fun s d m =>
+                                 match m with eq_refl => Identity (f s) end)
+                              _
+                              _
+               )
+    end;
+    abstract (
+        intros; simpl in *; repeat subst; trivial;
+        repeat rewrite RightIdentity; repeat rewrite LeftIdentity;
+        repeat rewrite Associativity;
+        reflexivity
+      ).
+  Defined.
+End InducedFunctor.
+
+Section disc.
+  Local Ltac t := simpl; intros; apply Functor_Eq; simpl; intros;
+                  repeat (apply functional_extensionality_dep; intro);
+                  hnf in *; subst;
+                  auto.
+
+  Definition DiscreteFunctor : Functor CategoryOfTypes CategoryOfCategories.
+    refine (Build_Functor CategoryOfTypes CategoryOfCategories
+                          (fun O => existT _ _ (DiscreteCategory O))
+                          (fun s d f => InducedDiscreteFunctor _ f)
+                          _
+                          _
+           );
+    abstract t.
+  Defined.
+
+  Definition DiscreteSetFunctor : Functor CategoryOfSets CategoryOfCategories.
+    refine (Build_Functor CategoryOfSets CategoryOfCategories
+                          (fun O => existT _ _ (DiscreteCategory O))
+                          (fun s d f => InducedDiscreteFunctor _ f)
+                          _
+                          _
+           );
+    abstract t.
+  Defined.
+End disc.
+
+Section DiscreteAdjoints.
+  Lemma DiscreteObjectIdentity : ComposeFunctors ObjectFunctor DiscreteFunctor = IdentityFunctor _.
+    apply Functor_Eq; reflexivity.
+  Qed.
+End DiscreteAdjoints.

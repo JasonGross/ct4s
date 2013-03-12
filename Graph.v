@@ -97,9 +97,13 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
+Require Import JMeq.
+Require Import FunctionalExtensionality ProofIrrelevance.
 Require Import Common.
 
 Set Implicit Arguments.
+
+Local Infix "==" := JMeq (at level 70, right associativity).
 
 (** In a dependently typed programming language like, Coq, it is more
     natural to define a separate set of edges for each pair of
@@ -117,21 +121,114 @@ Record Graph :=
 Record Graph' :=
   {
     Vertex' :> Type;
-    Arrows' : Type;
-    Graph'Source : Arrows' -> Vertex';
-    Graph'Target : Arrows' -> Vertex'
+    Arrow' : Type;
+    Graph'Source : Arrow' -> Vertex';
+    Graph'Target : Arrow' -> Vertex'
   }.
 
 Section graph_equivalence.
   Definition GraphToGraph' (G : Graph) : Graph'
     := {| Vertex' := Vertex G;
-          Arrows' := { sd : G × G & Edge G (fst sd) (snd sd) };
+          Arrow' := { sd : G × G & Edge G (fst sd) (snd sd) };
           Graph'Source := (fun sdm => fst (projT1 sdm));
           Graph'Target := (fun sdm => snd (projT1 sdm)) |}.
 
   Definition Graph'ToGraph (G : Graph') : Graph
     := {| Vertex := Vertex' G;
-          Edge := (fun s d => { m : Arrows' G
+          Edge := (fun s d => { m : Arrow' G
                               | Graph'Source _ m = s
                                 /\ Graph'Target _ m = d }) |}.
 End graph_equivalence.
+
+(** ** Graph Homomorphisms *)
+Section graph_homomorphisms.
+  Record GraphHomomorphism (G G' : Graph) :=
+    {
+      OnVertices :> Vertex G -> Vertex G';
+      OnEdges
+      : forall src tgt,
+          Edge G src tgt
+          -> Edge G' (OnVertices src) (OnVertices tgt)
+    }.
+
+  Definition identity_graph_homomorphism (G : Graph)
+  : GraphHomomorphism G G.
+    exists (fun x => x).
+    exact (fun _ _ x => x).
+  Defined.
+
+  Definition compose_graph_homomorphisms
+             (G G' G'' : Graph)
+  : GraphHomomorphism G' G'' -> GraphHomomorphism G G' -> GraphHomomorphism G G''.
+    intros m1 m2.
+    exists (fun x => m1 (m2 x)).
+    exact (fun _ _ e => OnEdges m1 _ _ (OnEdges m2 _ _ e)).
+  Defined.
+
+  Lemma GraphHomomorphism_Eq (G G' : Graph)
+        (m m' : GraphHomomorphism G G')
+  : (forall x, OnVertices m x = OnVertices m' x)
+    -> (forall src tgt e, OnEdges m src tgt e == OnEdges m' src tgt e)
+    -> m = m'.
+    intros H1 H2.
+    assert (H1' : OnVertices m = OnVertices m')
+      by (apply functional_extensionality_dep; assumption);
+      destruct m, m';
+      simpl in *;
+      subst;
+      f_equal;
+      repeat (apply functional_extensionality_dep; intro);
+      apply JMeq_eq;
+      intuition.
+  Qed.
+End graph_homomorphisms.
+
+(** And now the version in the book *)
+Section graph'_homomorphisms.
+  Record Graph'Homomorphism (G G' : Graph') :=
+    {
+      OnVertices' :> Vertex' G -> Vertex' G';
+      OnArrows' : Arrow' G -> Arrow' G';
+      SourceCommutes' : forall x, OnVertices' (Graph'Source G x)
+                                  = Graph'Source G' (OnArrows' x);
+      TargetCommutes' : forall x, OnVertices' (Graph'Target G x)
+                                  = Graph'Target G' (OnArrows' x)
+    }.
+
+  Definition identity_graph'_homomorphism (G : Graph')
+  : Graph'Homomorphism G G.
+    exists (fun x => x) (fun x => x);
+    reflexivity.
+  Defined.
+
+  Definition compose_graph'_homomorphisms
+             (G G' G'' : Graph')
+  : Graph'Homomorphism G' G'' -> Graph'Homomorphism G G' -> Graph'Homomorphism G G''.
+    intros m1 m2.
+    exists (fun x => m1 (m2 x)) (fun x => OnArrows' m1 (OnArrows' m2 x));
+      abstract (
+          intros;
+          simpl;
+          repeat rewrite SourceCommutes';
+          repeat rewrite TargetCommutes';
+          reflexivity
+        ).
+  Defined.
+
+  Lemma Graph'Homomorphism_Eq (G G' : Graph')
+        (m m' : Graph'Homomorphism G G')
+  : (forall x, OnVertices' m x = OnVertices' m' x)
+    -> (forall x, OnArrows' m x = OnArrows' m' x)
+    -> m = m'.
+    intros H1 H2.
+    assert (H1' : OnVertices' m = OnVertices' m')
+      by (apply functional_extensionality_dep; assumption).
+    assert (H2' : OnArrows' m = OnArrows' m')
+      by (apply functional_extensionality_dep; assumption).
+    destruct m, m';
+      simpl in *;
+      subst;
+      f_equal;
+      apply proof_irrelevance.
+  Qed.
+End graph'_homomorphisms.

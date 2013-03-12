@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,62 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import JMeq.
+Require Export Notations.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+(** * Categories *)
+(** We include the object type as a parameter, because, otherwise, we
+    can't make a category of categories easily. *)
+Record Category {obj : Type} :=
+  {
+    Object :> _ := obj;
+    Morphism : obj -> obj -> Type;
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+    Identity : forall x, Morphism x x;
+    Compose : forall s d d', Morphism d d' -> Morphism s d -> Morphism s d';
+    Associativity : forall o1 o2 o3 o4
+                           (m1 : Morphism o1 o2)
+                           (m2 : Morphism o2 o3)
+                           (m3 : Morphism o3 o4),
+                      Compose (Compose m3 m2) m1 = Compose m3 (Compose m2 m1);
+    LeftIdentity : forall a b (f : Morphism a b), Compose (Identity b) f = f;
+    RightIdentity : forall a b (f : Morphism a b), Compose f (Identity a) = f
+  }.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+Delimit Scope category_scope with category.
+Delimit Scope object_scope with object.
+Delimit Scope morphism_scope with morphism.
 
-(** ------------------------------------------------------------------------ *)
+Bind Scope category_scope with Category.
+Bind Scope object_scope with Object.
+Bind Scope morphism_scope with Morphism.
+
+Arguments Object {obj%type} C%category : rename.
+Arguments Morphism {obj%type} C%category s%object d%object : rename.
+Arguments Identity {obj%type} [C%category] x%object : rename.
+Arguments Compose {obj%type} [C%category s%object d%object d'%object] m1%morphism m2%morphism : rename.
+
+Infix "o" := (@Compose _ _ _ _ _) : morphism_scope.
+
+(* create a hint db for all category theory things *)
+Create HintDb category discriminated.
+(* create a hint db for morphisms in categories *)
+Create HintDb morphism discriminated.
+
+Hint Resolve @LeftIdentity @RightIdentity @Associativity : category.
+Hint Resolve @LeftIdentity @RightIdentity @Associativity : morphism.
+Hint Rewrite @LeftIdentity @RightIdentity : category.
+Hint Rewrite @LeftIdentity @RightIdentity : morphism.
+
+(** We create aliases for categories, calling them small and locally
+    small in accordance with mathematical terminology.   *)
+Definition LocallySmallCategory {obj : Type} (*mor : obj -> obj -> Set*) := @Category obj.
+Definition SmallCategory {obj : Set} (*mor : obj -> obj -> Set*) := @Category obj.
+Identity Coercion LocallySmallCategory_Category_Id
+: LocallySmallCategory >-> Category.
+Identity Coercion SmallCategory_LocallySmallCategory_Id
+: SmallCategory >-> Category.

@@ -97,7 +97,8 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8 Setoid.
-Require Import Classes.RelationClasses.
+Require Import Classes.RelationClasses Morphisms.
+Require Import FunctionalExtensionality ProofIrrelevance.
 
 Set Implicit Arguments.
 
@@ -139,3 +140,50 @@ Class JoinOf {S} le `(PreOrder S le) (a b : S) :=
 Definition opposite_relation {T} :
   relation T -> relation T
   := fun R => (fun x y => R y x).
+
+(** ** Relation Homomorphisms *)
+Record RelationHomomorphism
+       `(r : Relation_Definitions.relation T)
+       `(r' : Relation_Definitions.relation T') :=
+  {
+    RelationHomomorphism_Function :> T -> T';
+    RelationHomomorphism_Respectful
+    : respectful r r' RelationHomomorphism_Function RelationHomomorphism_Function
+  }.
+
+Definition identity_relation_homomorphism `(r : Relation_Definitions.relation T)
+: RelationHomomorphism r r.
+  exists (fun x => x);
+  repeat intro; assumption.
+Defined.
+
+Definition compose_relation_homomorphisms
+           `(r : Relation_Definitions.relation T)
+           `(r' : Relation_Definitions.relation T')
+           `(r'' : Relation_Definitions.relation T'')
+: RelationHomomorphism r' r''
+  -> RelationHomomorphism r r'
+  -> RelationHomomorphism r r''.
+  intros m1 m2.
+  exists (fun x => m1 (m2 x)).
+  abstract (
+      repeat intro;
+      destruct m1, m2;
+      intuition
+    ).
+Defined.
+
+Lemma RelationHomomorphism_Eq
+      `(m : @RelationHomomorphism T0 r0 T1 r1)
+      (m' : RelationHomomorphism r0 r1)
+: (forall x, m x = m' x)
+  -> m = m'.
+  intro H.
+  assert (H0 : RelationHomomorphism_Function m = RelationHomomorphism_Function m')
+    by (apply functional_extensionality_dep; assumption).
+  destruct m, m';
+    simpl in *;
+    subst;
+    f_equal;
+    apply proof_irrelevance.
+Qed.

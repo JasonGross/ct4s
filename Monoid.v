@@ -97,8 +97,11 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
+Require Import FunctionalExtensionality ProofIrrelevance.
 
 Set Implicit Arguments.
+
+Generalizable All Variables.
 
 Record ComputationalMonoid (M : Type) :=
   {
@@ -139,3 +142,58 @@ Record MonoidAction G' (G : ComputationalMonoid G') (S : Type) :=
 
 Infix "↷" := (@monoid_action _ _ _) (at level 70).
 Infix "↷" := (@MonoidAction _) (at level 70) : type_scope.
+
+(** ** Monoid Homomorphism *)
+(** Definition 3.1.4.1. Let [M := ( M, id, ★ ) and [M' := ( M', id', ★
+    )] be monoids. A monoid homomorphism [f] from [M] to [M'], denoted
+    [f : M -> M'], is a function [f : M -> M'] satisfying two
+    conditions:
+
+    - [f(id) = id'], and
+    - [f(m1 ★ m2) = f(m1) ★ f(m2)], for all [m1], [m2] in [M].
+    *)
+
+Record MonoidHomomorphism `(MH : @IsMonoid M0 M) `(M'H : @IsMonoid M'0 M') :=
+  {
+    MonoidHomomorphism_Function :> M -> M';
+    MonoidHomomorphism_IdentityLaw
+    : MonoidHomomorphism_Function id = id;
+    MonoidHomomorphism_CompositionLaw
+    : forall m1 m2,
+        MonoidHomomorphism_Function (m1 ★ m2)
+        = (MonoidHomomorphism_Function m1) ★ (MonoidHomomorphism_Function m2)
+  }.
+
+Definition identity_monoid_homomorphism `(MH : @IsMonoid M0 M)
+: MonoidHomomorphism MH MH.
+  exists (fun x => x); reflexivity.
+Defined.
+
+Definition compose_monoid_homomorphisms
+           `(MH : @IsMonoid M0 M)
+           `(MH' : @IsMonoid M0' M')
+           `(MH'' : @IsMonoid M0'' M'')
+: MonoidHomomorphism MH' MH''
+  -> MonoidHomomorphism MH MH'
+  -> MonoidHomomorphism MH MH''.
+  intros m1 m2.
+  exists (fun x => m1 (m2 x));
+    abstract (
+        intros;
+        repeat rewrite MonoidHomomorphism_IdentityLaw;
+        repeat rewrite MonoidHomomorphism_CompositionLaw;
+        reflexivity
+      ).
+Defined.
+
+Lemma MonoidHomomorphism_Eq
+      `(MH : @IsMonoid M0 M)
+      `(M'H : @IsMonoid M'0 M')
+      (M1 M2 : MonoidHomomorphism MH M'H)
+: (forall x, MonoidHomomorphism_Function M1 x = MonoidHomomorphism_Function M2 x)
+  -> M1 = M2.
+  intro H.
+  assert (H0 : MonoidHomomorphism_Function M1 = MonoidHomomorphism_Function M2) by
+      (apply functional_extensionality_dep; assumption).
+  destruct M1, M2; simpl in *; subst; f_equal; apply proof_irrelevance.
+Qed.

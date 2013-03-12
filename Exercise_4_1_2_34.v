@@ -47,11 +47,17 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
+(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
+(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
+(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
+(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +72,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +104,62 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import ProofIrrelevance FunctionalExtensionality.
+Require Import Omega.
+Require Import JMeq.
+Require Import Category Functor DiscreteCategory NatCategory DiscreteCategoryFunctors.
+Require Import Common FEqualDep.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
-
 (** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
+(** * Exercise 4.1.2.34 *)
+Section Exercise_4_1_2_34.
+  (** ** Problem *)
+  (** (Terminal category). Let [C] be a category. How many functors
+      are there [C -> D_1], where [D_1 := Disc( _1_ )] is the discrete
+      category on one element? *)
   (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+  (** There is one such functor. *)
+  Variable obj : Type.
+  Variable C : @Category obj.
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+  Lemma proof_irrelevance_JMeq (A B : Prop) (a : A) (b : B) : A = B -> a == b.
+    intro; subst; apply eq_JMeq; apply proof_irrelevance.
+  Qed.
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+  Definition FunctorToTerminal : Functor C (NatCategory 1).
+    refine (Build_Functor C (NatCategory 1)
+                          (fun _ => exist _ 0 (@le_n 1))
+                          (fun _ _ _ => eq_refl)
+                          _
+                          _);
+    abstract (
+        intros; simpl; try apply proof_irrelevance
+      ).
+  Defined.
+
+  Lemma FunctorToTerminalUnique : forall F, F = FunctorToTerminal.
+    intro F.
+    apply Functor_Eq; simpl_eq; intros;
+    repeat match goal with
+             | [ H : _ |- _ ] => clear H
+             | [ m : Morphism ?C ?s ?d |- _ ] =>
+               simpl; destruct (MorphismOf F m); clear m;
+               apply proof_irrelevance_JMeq;
+               apply f_equal2;
+               simpl_eq
+             | [ x : obj |- _ ] =>
+               let x0 := fresh in
+               let H := fresh in
+               set (H := F x) in *;
+                 destruct H as [ x0 ? ];
+                 induction x0;
+                 simpl;
+                 omega
+           end.
+  Qed.
+End Exercise_4_1_2_34.
 
 (** ------------------------------------------------------------------------ *)

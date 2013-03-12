@@ -47,11 +47,13 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -66,11 +68,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -97,46 +100,157 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Peano_dec.
-Require Import Common Graph.
+Require Import ProofIrrelevance FunctionalExtensionality.
+Require Import JMeq.
+Require Export Category.
+Require Import Common.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
-(** * Exercise 3.3.1.9 *)
-Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
-  Example Exercise_3_3_1_9' : Graph' :=
-    {| Vertex' := ℕ × ℕ;
-       Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)
-                 | let n := fst (fst nmn'm') in
-                   let m := snd (fst nmn'm') in
-                   let n' := fst (snd nmn'm') in
-                   let m' := snd (snd nmn'm') in
-                   (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n') };
-       Graph'Source := (fun x => fst (proj1_sig x));
-       Graph'Target := (fun x => snd (proj1_sig x)) |}.
+Infix "==" := JMeq (at level 70, right associativity).
 
-  Local Infix "=" := eq_nat_dec : nat_scope.
+(** * Functors *)
 
-  Example Exercise_3_3_1_9 : Graph :=
-    {| Vertex := ℕ × ℕ;
-       Edge := (fun nm n'm' => let n := fst nm in
-                               let m := snd nm in
-                               let n' := fst n'm' in
-                               let m' := snd n'm' in
-                               if (((n = n') && (m + 1 = m'))
-                                     || ((m = m') && (n + 1 = n')))%bool
-                               then unit
-                               else ∅) |}.
-End Exercise_3_3_1_9.
+Section Functors.
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
 
-(** ------------------------------------------------------------------------ *)
+  Local Open Scope morphism_scope.
+
+  (**
+     Quoting from the lecture notes for 18.705, Commutative Algebra:
+
+     A map of categories is known as a functor. Namely, given
+     categories [C] and [C'], a (covariant) functor [F : C -> C'] is a rule that assigns to
+     each object [A] of [C] an object [F A] of [C'] and to each map [m : A -> B] of [C] a map
+     [F m : F A -> F B] of [C'] preserving composition and identity; that is,
+
+     - [F (m' ○ m) = (F m') ○ (F m)] for maps [m : A -> B] and [m' : B -> C] of [C], and
+     - [F (id A) = id (F A)] for any object [A] of [C], where [id A] is the identity morphism of [A].
+     **)
+  Record Functor :=
+    {
+      ObjectOf :> objC -> objD;
+      MorphismOf : forall s d, C.(Morphism) s d
+                               -> D.(Morphism) (ObjectOf s) (ObjectOf d);
+      FCompositionOf : forall s d d' (m1 : C.(Morphism) s d) (m2: C.(Morphism) d d'),
+                          MorphismOf _ _ (m2 o m1)
+                          = (MorphismOf _ _ m2) o (MorphismOf _ _ m1);
+      FIdentityOf : forall x, MorphismOf _ _ (Identity x)
+                              = Identity (ObjectOf x)
+    }.
+End Functors.
+
+Delimit Scope functor_scope with functor.
+Bind Scope functor_scope with Functor.
+
+Create HintDb functor discriminated.
+
+Arguments ObjectOf {objC C objD D} F c : simpl nomatch, rename.
+Arguments MorphismOf {objC} [C] {objD} [D] F [s d] m : simpl nomatch, rename.
+
+Arguments FCompositionOf [objC C objD D] F _ _ _ _ _ : rename.
+Arguments FIdentityOf [objC C objD D] F _ : rename.
+
+Hint Resolve @FCompositionOf @FIdentityOf : category.
+Hint Resolve @FCompositionOf @FIdentityOf : functor.
+Hint Rewrite @FIdentityOf : category.
+Hint Rewrite @FIdentityOf : functor.
+
+Section Functors_Equal.
+  Lemma Functor_Eq objC C objD D :
+    forall (F G : @Functor objC C objD D),
+      (forall x, ObjectOf F x = ObjectOf G x)
+      -> (forall s d m, MorphismOf F (s := s) (d := d) m
+                        == MorphismOf G (s := s) (d := d) m)
+      -> F = G.
+    intros.
+    assert (ObjectOf F = ObjectOf G)
+      by (apply functional_extensionality_dep; assumption);
+      pose F as F'; pose G as G';
+      destruct F, G;
+      simpl in *;
+      subst.
+    assert (MorphismOf F' = MorphismOf G');
+      subst F' G';
+      simpl;
+      repeat (apply functional_extensionality_dep; intro);
+      try solve [ apply JMeq_eq; intuition ];
+      simpl in *.
+    subst;
+      f_equal; apply proof_irrelevance.
+  Qed.
+End Functors_Equal.
+
+Section FunctorComposition.
+  Context `(B : @Category objB).
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
+  Context `(E : @Category objE).
+
+  Hint Rewrite @FCompositionOf : functor.
+
+  Definition ComposeFunctors (G : Functor D E) (F : Functor C D) : Functor C E.
+    refine (Build_Functor C E
+                          (fun c => G (F c))
+                          (fun _ _ m => G.(MorphismOf) (F.(MorphismOf) m))
+                          _
+                          _);
+    abstract (
+        intros; autorewrite with functor; reflexivity
+      ).
+  Defined.
+End FunctorComposition.
+
+Section IdentityFunctor.
+  Context `(C : @Category objC).
+
+  (** There is an identity functor.  It does the obvious thing. *)
+  Definition IdentityFunctor : Functor C C.
+    refine {| ObjectOf := (fun x => x);
+      MorphismOf := (fun _ _ x => x)
+    |};
+    abstract t.
+  Defined.
+End IdentityFunctor.
+
+Section IdentityFunctorLemmas.
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
+
+  Lemma LeftIdentityFunctor (F : Functor D C)
+  : ComposeFunctors (IdentityFunctor _) F = F.
+    apply Functor_Eq; reflexivity.
+  Qed.
+
+  Lemma RightIdentityFunctor (F : Functor C D)
+  : ComposeFunctors F (IdentityFunctor _) = F.
+    apply Functor_Eq; reflexivity.
+  Qed.
+End IdentityFunctorLemmas.
+
+Hint Rewrite @LeftIdentityFunctor @RightIdentityFunctor : category.
+Hint Immediate @LeftIdentityFunctor @RightIdentityFunctor : category.
+Hint Rewrite @LeftIdentityFunctor @RightIdentityFunctor : functor.
+Hint Immediate @LeftIdentityFunctor @RightIdentityFunctor : functor.
+
+Section FunctorCompositionLemmas.
+  Context `(B : @Category objB).
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
+  Context `(E : @Category objE).
+
+  Lemma ComposeFunctorsAssociativity
+        (F : Functor B C)
+        (G : Functor C D)
+        (H : Functor D E)
+  : ComposeFunctors (ComposeFunctors H G) F
+    = ComposeFunctors H (ComposeFunctors G F).
+    apply Functor_Eq; reflexivity.
+   Qed.
+End FunctorCompositionLemmas.
+
+Hint Resolve @ComposeFunctorsAssociativity : category.
+Hint Resolve @ComposeFunctorsAssociativity : functor.

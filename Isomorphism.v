@@ -97,6 +97,7 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Setoid Utf8 Ensembles ProofIrrelevance.
+Require Export Notations.
 
 Set Implicit Arguments.
 
@@ -105,7 +106,7 @@ Definition compose X Y Z (f : Y -> Z) (g : X -> Y) := λ x, f (g x).
 
 Arguments compose [X Y Z] f g x / .
 
-Infix "o" := (@compose _ _ _) (at level 70).
+Infix "o" := (@compose _ _ _).
 
 Record is_isomorphism X Y (f : X -> Y) :=
   {
