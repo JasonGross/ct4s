@@ -208,6 +208,6 @@ End disc.
 
 Section DiscreteAdjoints.
   Lemma DiscreteObjectIdentity : ComposeFunctors ObjectFunctor DiscreteFunctor = IdentityFunctor _.
-    apply Functor_Eq; reflexivity.
+    apply Functor_Eq; repeat intro; simpl; reflexivity.
   Qed.
 End DiscreteAdjoints.

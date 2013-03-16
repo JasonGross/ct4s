@@ -47,13 +47,11 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
-(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
-(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -68,12 +66,11 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
-(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
@@ -99,41 +96,54 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import Setoid Utf8.
-Require Export Category Orders.
+Require Import Utf8.
+Require Export Setoid.
+Require Export Classes.RelationClasses Morphisms.
+Require Import FunctionalExtensionality ProofIrrelevance.
+Require Export Category.
+Require Import ComputableCategory.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** * Category Of PreOrders *)
-Section CategoryOfPreOrders.
-  (** ** Problem *)
-  (** (The category [PrO] of preorders). Suppose we set out to define
-      a category [PrO], having preorders as objects and preorder
-      homomorphisms as morphisms (see Definition 3.4.3.1). Show (to
-      the level of detail of Example 4.1.1.4 that the rest of the
-      conditions for PrO to be a category are satisfied. *)
-  (** ** Solution *)
-  (** Unfolding of definitions and applying proof-irrelevance is
-      sufficient to prove these goals by reflexivity. *)
+(** * PreOrders as Categories *)
+Section preorder_category.
+  (** A preorder [(X, ≤)] consists of a set [X] and a binary relation
+      [≤] that is reflexive and transitive. We can make from [(X, ≤) :
+      Ob PrO] a category [X' : Ob Cat] as follows.  Define [Ob X' = X]
+      and for every two objects [x y : X] define
 
-  Let Objects
-    := { T : Type & { r : Relation_Definitions.relation T | PreOrder r } }.
 
-  Definition CategoryOfPreOrders : @Category Objects.
-    refine {|
-        (*Object := { T : Type & { r : Relation_Definitions.relation T | PreOrder r } };*)
-        Morphism := (fun s d : Objects =>
-                       RelationHomomorphism (proj1_sig (projT2 s))
-                                            (proj1_sig (projT2 d)));
-        Identity := (fun x => identity_relation_homomorphism _);
-        Compose := (fun _ _ _ m1 m2 => compose_relation_homomorphisms m1 m2)
-      |};
-    abstract (
-        repeat intros [? ?]; intros;
-        apply RelationHomomorphism_Eq;
-        reflexivity
-      ).
-  Defined.
-End CategoryOfPreOrders.
+      [[Hom_X'(x, y) = if x ≤ y then {"x ≤ y"} else ∅]]
+
+      ...
+
+      In Coq, we can simply take the set of proofs of [x ≤ y]. *)
+  Section single_preorder.
+    Context `(PreOrder X R).
+
+    Local Infix "≤" := R.
+
+    Definition PreOrderCategory : @Category X.
+      refine {|
+          Morphism := R;
+          Identity := reflexivity;
+          Compose := (fun x y z A B => transitivity B A)
+        |};
+      abstract (intros; apply proof_irrelevance).
+    Defined.
+  End single_preorder.
+
+  Section all_preorders.
+    Record > PreOrderedSet :=
+      {
+        PreOrderedSetType :> Type;
+        PreOrderedSetRelation :> relation PreOrderedSetType;
+        PreOrderedSetPreOrder :> PreOrder PreOrderedSetRelation
+      }.
+
+    Definition CategoryOfPreOrders
+      := @ComputableCategory PreOrderedSet _ (fun X => PreOrderCategory X).
+  End all_preorders.
+End preorder_category.

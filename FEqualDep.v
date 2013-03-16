@@ -1,3 +1,4 @@
+Require Import ProofIrrelevance.
 Require Export FunctionalExtensionality JMeq.
 Require Import Common Notations.
 
@@ -198,5 +199,12 @@ Section misc.
     JMeq_eq.
     simpl_eq.
     trivial.
+  Qed.
+
+  Lemma proof_irrelevance_JMeq (P Q : Prop) (p : P) (q : Q) (H : P = Q)
+  : p == q.
+    subst.
+    apply eq_JMeq.
+    apply proof_irrelevance.
   Qed.
 End misc.

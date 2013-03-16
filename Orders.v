@@ -117,6 +117,9 @@ Class LinearOrder {A} (R : relation A) : Prop := {
 Definition Same_relation T (R R' : relation T) : Prop :=
   forall x y, R x y <-> R' x y.
 
+(** Equality is a pre-order *)
+Program Instance eq_pre_order T : PreOrder (@eq T).
+
 (** ** Meets and joins *)
 Definition is_meet S le `(PreOrder S le) (a b : S) : S -> Prop
   := fun c => le c a

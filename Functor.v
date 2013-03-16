@@ -163,15 +163,17 @@ Section Functors_Equal.
   Lemma Functor_Eq objC C objD D :
     forall (F G : @Functor objC C objD D),
       (forall x, ObjectOf F x = ObjectOf G x)
-      -> (forall s d m, MorphismOf F (s := s) (d := d) m
-                        == MorphismOf G (s := s) (d := d) m)
+      -> (ObjectOf F = ObjectOf G
+          -> forall s d m, MorphismOf F (s := s) (d := d) m
+                           == MorphismOf G (s := s) (d := d) m)
       -> F = G.
     intros.
-    assert (ObjectOf F = ObjectOf G)
+    assert (H' : ObjectOf F = ObjectOf G)
       by (apply functional_extensionality_dep; assumption);
       pose F as F'; pose G as G';
       destruct F, G;
       simpl in *;
+      intuition;
       subst.
     assert (MorphismOf F' = MorphismOf G');
       subst F' G';

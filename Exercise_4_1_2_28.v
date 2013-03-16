@@ -104,54 +104,144 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import Omega.
-Require Import DiscreteCategory NatCategory DiscreteCategoryFunctors Functor.
+Require Import Omega JMeq.
+Require Import Common DiscreteCategory NatCategory
+        PathsCategory Graph ComputableCategory
+        CategoryIsomorphisms ChainCategory.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
+
 (** ------------------------------------------------------------------------ *)
 
 (** * Exercise 4.1.2.28 *)
 Section Exercise_4_1_2_28.
   (** ** Problem *)
-  (** Recall the definition of the set [ _n_ ] for any natural number
-      [n : ℕ], and let [D_n := Disc( _n_ ) : Ob Cat]. List all the
-      morphisms in [D_4].  List all the functors [D_3 -> D_2]. *)
+  (** Let [G] be the graph depicted
+
+<<
+      v₀      e     v₁
+      o ----------> o
+>>
+
+      and let [[1] : Ob Cat] denote the free category on [G] (see
+      Example 4.1.2.27). We call [[1]] the free arrow category. What
+      are its objects? For every pair of objects in [[1]], write down
+      the hom-set. *)
   (** ** Solution *)
-  (** I defined the discrete categories above, as coercions from the
-      natural numbers.  The functors [D_3 -> D_2] are the functions
-      [{1, 2, 3} -> {1, 2}].  There is the function which sends
-      everything to 1, the function which sends everything to 2, and
-      functions which send two numbers to 1 and the other one to 2,
-      and vice versa. *)
+  (** The objects are [v₀] and [v₁].  Letting [[]] denote the empty
+      path, we have
+      - [Hom(v₀, v₀) = {[]}]
+      - [Hom(v₁, v₁) = {[]}]
+      - [Hom(v₀, v₁) = {[e]}]
+      - [Hom(v₁, v₀) = {}]
 
-  Let D_3 := NatCategory 3.
-  Let D_2 := NatCategory 2.
+      In Coq, I call the free category on [G] the category
+      [PathsCategory (Vertex G) (Edge G)] *)
 
-  Lemma OneLtTwo : 1 < 2. repeat constructor. Qed.
-  Lemma ZeroLtTwo : 0 < 2. repeat constructor. Qed.
-  Lemma ThreeNotLtThree n : S (S (S n)) < 3 -> False. omega. Qed.
+  (** Some useful lemmas. *)
+  Lemma OneLeOne : 1 <= 1. repeat constructor. Qed.
+  Lemma ZeroLeOne : 0 <= 1. repeat constructor. Qed.
+  Lemma TwoNotLeOne n : S (S n) <= 1 -> False. omega. Qed.
 
-  Local Ltac mk_functor a b c :=
-    apply FunctorFromDiscrete;
-    refine (fun x => match proj1_sig x as n return (n < 3 → {k : ℕ | k < 2}) with
-                       | 0 => fun _ => exist _ a _
-                       | 1 => fun _ => exist _ b _
-                       | 2 => fun _ => exist _ c _
-                       | S (S (S n')) => fun pf => match ThreeNotLtThree pf with end
-                     end (proj2_sig x));
-    try exact ZeroLtTwo;
-    try exact OneLtTwo.
+  Inductive G_Vertex := G_v0 | G_v1.
+  Inductive G_Edge : G_Vertex -> G_Vertex -> Set := G_e : G_Edge G_v0 G_v1.
 
-  Example E_4_1_2_28_Functor_1 : Functor D_3 D_2. mk_functor 0 0 0. Defined.
-  Example E_4_1_2_28_Functor_2 : Functor D_3 D_2. mk_functor 0 0 1. Defined.
-  Example E_4_1_2_28_Functor_3 : Functor D_3 D_2. mk_functor 0 1 0. Defined.
-  Example E_4_1_2_28_Functor_4 : Functor D_3 D_2. mk_functor 0 1 1. Defined.
-  Example E_4_1_2_28_Functor_5 : Functor D_3 D_2. mk_functor 1 0 0. Defined.
-  Example E_4_1_2_28_Functor_6 : Functor D_3 D_2. mk_functor 1 0 1. Defined.
-  Example E_4_1_2_28_Functor_7 : Functor D_3 D_2. mk_functor 1 1 0. Defined.
-  Example E_4_1_2_28_Functor_8 : Functor D_3 D_2. mk_functor 1 1 1. Defined.
+  Definition G : Graph :=
+    {|
+      Vertex := G_Vertex;
+      Edge := G_Edge
+    |}.
+
+  Definition FreeArrowCategory := @PathsCategory (Vertex G) (Edge G).
+
+  Lemma E_4_1_2_28_Objects_G : Object FreeArrowCategory = Vertex G. reflexivity. Qed.
+
+  (** *** Helper lemmas *)
+  Local Ltac t' tac :=
+    repeat match goal with
+             | _ => assumption
+             | _ => progress (repeat intro; hnf in *; subst_eq_refl; subst; trivial)
+             | _ => (exists eq_refl)
+             | [ H : _ |- _ ] => solve [ inversion H; trivial ]
+             | [ H : _ |- _ ] => solve [ destruct H; trivial ]
+             | [ H : _ |- _ ] => specialize (H eq_refl)
+             | [ H : sigT _ |- _ ] => destruct H
+             | [ H : sig _ |- _ ] => destruct H
+             | [ H : context[match ?x with _ => _ end] |- _ ] => destruct x
+             | _ => progress tac
+           end.
+
+  Lemma no_path'
+  : forall m (p : Morphism FreeArrowCategory G_v1 m),
+      { Hm : G_v1 = m
+      | p = match Hm with
+              | eq_refl => NoEdges
+            end }.
+    induction p; t' idtac.
+  Qed.
+
+  (** We need a helpful destruction lemma. *)
+  Lemma destruct_path v v' (p : Morphism FreeArrowCategory v v')
+  : { H : v = v' & match H
+                         in (_ = y)
+                         return (Morphism FreeArrowCategory v y → Prop)
+                   with
+                     | eq_refl => λ p0, p0 = NoEdges
+                   end p }
+    + { v'' : _ & { p' : path _ v v'' & { e : _ | p = AddEdge p' e } } }.
+    destruct p.
+    - left.
+      exists eq_refl.
+      reflexivity.
+    - right.
+      repeat esplit.
+  Defined.
+
+  Local Ltac t'' tac := t' ltac:(idtac;
+                                 match goal with
+                                   | [ H : _ |- _ ] => destruct (no_path' H)
+                                 end;
+                                 tac).
+
+  Local Ltac t :=
+    intros;
+    hnf in *;
+    match goal with
+      | [ p : path _ _ _ |- _ ] => induction p; solve [ t'' idtac ]
+      | [ p : path _ _ _ |- _ ] => destruct p; solve [ t'' idtac ]
+      | [ p : path _ _ _ |- _ ] => destruct (destruct_path p); solve [ t'' idtac ]
+    end.
+
+  Lemma one_path'
+  : forall m n (p : Morphism FreeArrowCategory n m)
+           (Hn : G_v0 = n)
+           (Hm : G_v1 = m),
+      p = match Hn with
+            | eq_refl => match Hm with
+                           | eq_refl => AddEdge NoEdges G_e
+                         end
+          end.
+    induction p;
+    repeat match goal with
+             | [ d : G_Vertex |- _ ] => destruct d
+             | _ => progress (t' idtac)
+             | _ => apply f_equal2
+             | _ => t
+             | [ d : G_Edge _ _ |- _ ] => try solve [ apply JMeq_eq; destruct d; reflexivity ]
+           end.
+  Qed.
+
+  Lemma E_4_1_2_28_Hom_v0_v0
+  : forall m : Morphism FreeArrowCategory G_v0 G_v0, m = NoEdges. Proof. t. Qed.
+  Lemma E_4_1_2_28_Hom_v1_v1
+  : forall m : Morphism FreeArrowCategory G_v1 G_v1, m = NoEdges. Proof. t. Qed.
+  Lemma E_4_1_2_28_Hom_v1_v0
+  : Morphism FreeArrowCategory G_v1 G_v0 -> False. Proof. t. Qed.
+  Lemma E_4_1_2_28_Hom_v0_v1
+  : forall m : Morphism FreeArrowCategory G_v0 G_v1, m = AddEdge NoEdges G_e.
+  Proof. exact (fun m => @one_path' _ _ m eq_refl eq_refl). Qed.
 End Exercise_4_1_2_28.
 
 (** ------------------------------------------------------------------------ *)

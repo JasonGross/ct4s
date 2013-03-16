@@ -140,3 +140,13 @@ Notation CategoryOfCategoriesOn Sets
       : @Category { obj : Sets & @Category obj }).
 
 Definition CategoryOfCategories := CategoryOfCategoriesOn Type.
+
+Definition CategoryInCategoryOfCategories obj
+: @Category obj -> CategoryOfCategories
+  := @existT _ _ _.
+Definition CategoryInCategoryOfCategories' obj
+: @Category obj -> sigT _
+  := @CategoryInCategoryOfCategories obj.
+
+Coercion CategoryInCategoryOfCategories : Category >-> Object.
+Coercion CategoryInCategoryOfCategories' : Category >-> sigT.
