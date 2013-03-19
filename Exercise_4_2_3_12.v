@@ -189,7 +189,7 @@ Section Exercise_4_2_3_12.
   Defined.
 
   (** Here's the groupoid; the inversion operation is symmetry (note
-      the [exists [eq_sym m]]; [eq_sym] is symmetry of equality for
+      the [exists (eq_sym m)]; [eq_sym] is symmetry of equality for
       Coq). *)
   Definition ArithmeticGroupoid : Groupoid.
     refine {| GroupoidCategory := ArithmeticCategory |}.

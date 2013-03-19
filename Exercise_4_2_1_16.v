@@ -133,7 +133,8 @@ Section Exercise_4_2_1_16.
   Let C := PreOrderCategory (R := R) _.
 
   Class CategoryConnected obj (C : @Category obj) :=
-    { category_connected :> forall x y, inhabited ((Morphism C x y) ⊔ (Morphism C y x)) }.
+    { category_connected :> forall x y,
+                              inhabited ((Morphism C x y) ⊔ (Morphism C y x)) }.
 
   Local Infix "≤" := R.
 

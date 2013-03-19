@@ -201,8 +201,9 @@ Module Exercise_4_2_4_4.
   Qed.
 
   (** The fact that this is a functor follows by proof irrelevance. *)
-  Definition RespectedLawsOfFunctor : Functor (PreOrderCategory JurisdictionPreOrder)
-                                              (OppositeCategory (PreOrderCategory SetsPreOrder)).
+  Definition RespectedLawsOfFunctor
+  : Functor (PreOrderCategory JurisdictionPreOrder)
+            (OppositeCategory (PreOrderCategory SetsPreOrder)).
     refine (Build_Functor (PreOrderCategory JurisdictionPreOrder)
                           (OppositeCategory (PreOrderCategory SetsPreOrder))
                           (RespectedLawsOf)
@@ -255,8 +256,9 @@ Module Exercise_4_2_4_4.
   Defined.
 
   (** The fact that this is a functor follows by proof irrelevance. *)
-  Definition MaximalRespectedLawOfFunctor : Functor (PreOrderCategory JurisdictionPreOrder)
-                                                    (PreOrderCategory Prop_PreOrder).
+  Definition MaximalRespectedLawOfFunctor
+  : Functor (PreOrderCategory JurisdictionPreOrder)
+            (PreOrderCategory Prop_PreOrder).
     refine (Build_Functor (PreOrderCategory JurisdictionPreOrder)
                           (PreOrderCategory Prop_PreOrder)
                           (fun J => maximal_law (RespectedLawsOf J))

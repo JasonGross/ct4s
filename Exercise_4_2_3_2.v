@@ -149,14 +149,17 @@ Section Exercise_4_2_3_2.
   Lemma OpenSet_eq `(T : Topology X) (A B : EOpenSet T)
   : OpenSetSet A = OpenSetSet B
     -> A = B.
-    destruct A, B; simpl; intro; subst; f_equal; apply ProofIrrelevance.proof_irrelevance.
+    destruct A, B; simpl; intro; subst;
+    f_equal; apply ProofIrrelevance.proof_irrelevance.
   Qed.
 
-  Global Instance opens_ordered_by_inclusion `(Topology X) : @PreOrder (EOpenSet _) (fun U V => U ⊆ V).
+  Global Instance opens_ordered_by_inclusion `(Topology X)
+  : @PreOrder (EOpenSet _) (fun U V => U ⊆ V).
     split; firstorder.
   Qed.
 
-  Definition continuous_induced_functor_object_of s d (m : Morphism CategoryOfTopologies s d)
+  Definition continuous_induced_functor_object_of
+             s d (m : Morphism CategoryOfTopologies s d)
   : (opens_ordered_by_inclusion d) -> (opens_ordered_by_inclusion s).
     intro; hnf in *.
     exists (inverse_image (proj1_sig m) X);
@@ -169,8 +172,11 @@ Section Exercise_4_2_3_2.
       ).
   Defined.
 
-  Definition continuous_induced_functor_morphism_of s d (m : Morphism CategoryOfTopologies s d)
-  : forall s' d' (m' : Morphism (PreOrderCategory (opens_ordered_by_inclusion d)) s' d'),
+  Definition continuous_induced_functor_morphism_of
+             s d (m : Morphism CategoryOfTopologies s d)
+  : forall s' d' (m' : Morphism (PreOrderCategory (opens_ordered_by_inclusion d))
+                                s'
+                                d'),
       Morphism (PreOrderCategory (opens_ordered_by_inclusion s))
                (continuous_induced_functor_object_of m s')
                (continuous_induced_functor_object_of m d').
@@ -182,16 +188,21 @@ Section Exercise_4_2_3_2.
     intuition.
   Qed.
 
-  Definition continuous_induced_functor s d (m : Morphism CategoryOfTopologies s d)
-  : Morphism CategoryOfPreOrders (opens_ordered_by_inclusion d) (opens_ordered_by_inclusion s).
+  Definition continuous_induced_functor
+             s d (m : Morphism CategoryOfTopologies s d)
+  : Morphism CategoryOfPreOrders
+             (opens_ordered_by_inclusion d)
+             (opens_ordered_by_inclusion s).
     refine {| ObjectOf := (continuous_induced_functor_object_of m);
               MorphismOf := (continuous_induced_functor_morphism_of m) |};
     abstract (intros; simpl; apply ProofIrrelevance.proof_irrelevance).
   Defined.
 
   (** Here's the open-set functor *)
-  Definition PreOrderedSets : Functor CategoryOfTopologies (OppositeCategory CategoryOfPreOrders).
-    refine (Build_Functor CategoryOfTopologies (OppositeCategory CategoryOfPreOrders)
+  Definition PreOrderedSets
+  : Functor CategoryOfTopologies (OppositeCategory CategoryOfPreOrders).
+    refine (Build_Functor CategoryOfTopologies
+                          (OppositeCategory CategoryOfPreOrders)
                           (fun x => opens_ordered_by_inclusion x)
                           continuous_induced_functor
                           _
@@ -439,7 +450,8 @@ Module Exercise_4_2_3_2_continuity_bad.
   Defined.
 
   Lemma f_not_preserve_open : exists S,
-                                @Open _ ThreeTopology1 S /\ ~@Open _ ThreeTopology2 (image f S).
+                                @Open _ ThreeTopology1 S
+                                /\ ~@Open _ ThreeTopology2 (image f S).
     exists (fun x => match x with
                        | A => True
                        | _ => False
@@ -452,16 +464,20 @@ Module Exercise_4_2_3_2_continuity_bad.
                  pose proof (H B);
                  pose proof (H C);
                  clear H
-                 | [ H : @eq Prop ?a ?b |- _ ] => let H' := fresh in
-                                                  assert (H' : a <-> b) by (rewrite H; firstorder);
+                 | [ H : @eq Prop ?a ?b |- _ ]
+                   => let H' := fresh in
+                      assert (H' : a <-> b) by (rewrite H; firstorder);
                  clear H;
                  destruct H';
                  intuition
-                 | [ H : forall _ : ?T, _ |- _ ] => match type of T with
-                                                      | Prop => let t := fresh in
-                                                                assert (t : T) by (repeat esplit; try reflexivity; trivial);
-                                                      specialize (H t)
-                                                    end
+                 | [ H : forall _ : ?T, _ |- _ ]
+                   => match type of T with
+                        | Prop => let t := fresh in
+                                  assert (t : T) by (repeat esplit;
+                                                     try reflexivity;
+                                                     trivial);
+                        specialize (H t)
+                      end
                  | _ => progress compute in *
                  | _ => progress destruct_head_hnf @ex
                  | _ => progress destruct_head_hnf @and

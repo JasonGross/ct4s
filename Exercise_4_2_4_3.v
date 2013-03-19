@@ -177,23 +177,30 @@ Module Exercise_4_2_4_3.
 
   Lemma LawOfTheLand_subset_flip (U V : Jurisdiction) (P := Prop_PreOrder)
         (LawOfTheVLand := EnsembleMeetElement (EnsembleMeetOf := LawOfTheLand V))
-        (LawOfTheULand := EnsembleMeetElement (EnsembleMeetOf := LawOfTheLand U)) :
-    LawsOf U ⊆ LawsOf V
+        (LawOfTheULand := EnsembleMeetElement (EnsembleMeetOf := LawOfTheLand U))
+  : LawsOf U ⊆ LawsOf V
     -> LawOfTheVLand ≤ LawOfTheULand.
   Proof.
     firstorder.
   Qed.
 
-  Global Instance JurisdictionPreOrder : @PreOrder Jurisdiction (fun U V => LawsOf U ⊆ LawsOf V).
+  Global Instance JurisdictionPreOrder
+  : @PreOrder Jurisdiction (fun U V => LawsOf U ⊆ LawsOf V).
   firstorder.
   Qed.
 
-  Definition LawOfTheLandFunctor : Functor (PreOrderCategory JurisdictionPreOrder)
-                                           (OppositeCategory (PreOrderCategory Prop_PreOrder)).
+  Definition LawOfTheLandFunctor
+  : Functor (PreOrderCategory JurisdictionPreOrder)
+            (OppositeCategory (PreOrderCategory Prop_PreOrder)).
     refine {| ObjectOf := (fun V =>
-                             EnsembleMeetElement (EnsembleMeetOf := LawOfTheLand V));
+                             EnsembleMeetElement
+                               (EnsembleMeetOf := LawOfTheLand V));
               MorphismOf := (@LawOfTheLand_subset_flip
-                             : forall s d (m : Morphism (PreOrderCategory JurisdictionPreOrder) s d),
+                             : forall s
+                                      d
+                                      (m : Morphism (PreOrderCategory JurisdictionPreOrder)
+                                                    s
+                                                    d),
                                  Morphism (OppositeCategory (PreOrderCategory Prop_PreOrder))
                                           _
                                           _) |};

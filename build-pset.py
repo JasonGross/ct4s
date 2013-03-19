@@ -56,11 +56,11 @@ def filter_printings(contents):
     lines = contents.split('\n')
     commented_printings = [line for line in lines if line[:len('(* printing ')] == '(* printing ']
     printings = [line for line in lines if line[:len('(** printing ')] == '(** printing ']
-    rtn = list(sorted(set(commented_printings))) + \
-          list(sorted(set(printings))) + \
-          [line for line in lines if
-           (line[:len('(* printing ')] != '(* printing '
-            and line[:len('(** printing ')] != '(** printing ')]
+    rtn = (# list(sorted(set(commented_printings))) +
+           list(sorted(set(printings))) + 
+           [line for line in lines if
+            (line[:len('(* printing ')] != '(* printing '
+             and line[:len('(** printing ')] != '(** printing ')])
     return '\n'.join(rtn)
 
 def make_file_list(*file_names):
@@ -95,8 +95,8 @@ def build_pset(pset_n, *file_names):
     file_contents = {}
     file_imports = {}
     rtn = include_imports(*file_names)
-    with open('Homework%d.v' % pset_n, 'w') as f:
+    with open('../Homework%d.v' % pset_n, 'w') as f:
         f.write("(** * Homework %d, By Jason Gross *)\n\n" % pset_n)
         f.write(rtn)
         
-# build_pset(6, 'Exercise_4_1_2_29.v', 'Exercise_4_1_2_30.v', 'Exercise_4_1_2_31.v', 'Exercise_4_1_2_33.v', 'Exercise_4_2_1_10.v', 'Exercise_4_2_1_13.v', 'Exercise_4_2_1_14.v', 'Exercise_4_2_1_16.v', 'Exercise_4_2_3_2.v', 'Exercise_4_2_3_12.v', 'Exercise_4_2_4_3.v', 'Exercise_4_2_4_4.v')
+# build_pset(6, 'Exercise_4_1_2_29.v', 'Exercise_4_1_2_28.v', 'Exercise_4_1_2_30.v', 'Exercise_4_1_2_31.v', 'Exercise_4_2_1_10.v', 'Exercise_4_2_1_13.v', 'Exercise_4_2_1_14.v', 'Exercise_4_2_1_16.v', 'Exercise_4_2_3_2.v', 'Exercise_4_2_3_12.v', 'Exercise_4_2_4_3.v', 'Exercise_4_2_4_4.v')

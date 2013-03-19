@@ -136,7 +136,8 @@ Section Exercise_4_2_1_13.
 
   Local Infix "≤" := R.
 
-  Global Instance PartialOrderCategory_is_PartialOrder `(IsoImpliesId _ (PreOrderCategory (R := R) _))
+  Global Instance PartialOrderCategory_is_PartialOrder
+         `(IsoImpliesId _ (PreOrderCategory (R := R) _))
   : PartialOrder _ R.
   Proof.
     compute;
