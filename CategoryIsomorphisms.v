@@ -211,6 +211,7 @@ Section category_isomorphisms.
   End Isomorphism.
 
   Infix "≅" := (Isomorphism) (at level 70) : category_scope.
+  Infix "≅" := (Isomorphism) (at level 70) : type_scope.
 
   Section IsIsomorphism.
     Definition IsIsomorphism {s d : C} (m : C.(Morphism) s d) : Prop :=
@@ -238,6 +239,7 @@ Section category_isomorphisms.
       exists (m : C.(Morphism) s d) (m' : C.(Morphism) d s), IsInverseOf m m'.
 
     Local Infix "≅" := (Isomorphic) (at level 70).
+    Local Infix "≅" := (Isomorphic) (at level 70) : type_scope.
 
     Lemma Isomrphism_Isomorphic s d : Isomorphism s d -> s ≅ d.
       intro i; destruct i as [ m i ].

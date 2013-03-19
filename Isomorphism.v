@@ -125,7 +125,7 @@ Record isomorphic X Y :=
 
 Hint Resolve isomorphic_is_isomorphism.
 
-Infix "≅" := (isomorphic) (at level 70).
+Infix "≅" := (isomorphic) (at level 70) : type_scope.
 
 Lemma isomorphic_eq X Y (f g : X ≅ Y) :
   isomorphic_morphism f = isomorphic_morphism g
@@ -134,7 +134,7 @@ Lemma isomorphic_eq X Y (f g : X ≅ Y) :
 Proof.
   destruct f as [ ? [ ] ], g as [ ? [ ] ]; simpl;
   repeat intro; subst; repeat f_equal;
-  apply proof_irrelevance.
+  apply ProofIrrelevance.proof_irrelevance.
 Qed.
 
 (*Existing Instance isomorphic_is_isomorphism.*)

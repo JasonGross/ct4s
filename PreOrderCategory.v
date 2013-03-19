@@ -131,7 +131,7 @@ Section preorder_category.
           Identity := reflexivity;
           Compose := (fun x y z A B => transitivity B A)
         |};
-      abstract (intros; apply proof_irrelevance).
+      abstract (intros; apply ProofIrrelevance.proof_irrelevance).
     Defined.
   End single_preorder.
 
@@ -139,7 +139,7 @@ Section preorder_category.
     Record > PreOrderedSet :=
       {
         PreOrderedSetType :> Type;
-        PreOrderedSetRelation :> relation PreOrderedSetType;
+        PreOrderedSetRelation :> Relation_Definitions.relation PreOrderedSetType;
         PreOrderedSetPreOrder :> PreOrder PreOrderedSetRelation
       }.
 

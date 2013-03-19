@@ -109,8 +109,6 @@ Set Implicit Arguments.
 
 Generalizable All Variables.
 
-Infix "==" := JMeq (at level 70, right associativity).
-
 (** * Functors *)
 
 Section Functors.
@@ -182,7 +180,7 @@ Section Functors_Equal.
       try solve [ apply JMeq_eq; intuition ];
       simpl in *.
     subst;
-      f_equal; apply proof_irrelevance.
+      f_equal; apply ProofIrrelevance.proof_irrelevance.
   Qed.
 End Functors_Equal.
 

@@ -110,10 +110,8 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import ProofIrrelevance FunctionalExtensionality.
-Require Import Finite_sets Classical IndefiniteDescription.
-Require Export Topology.
-Require Import Notations Common PreOrderCategory CategoryIsomorphisms Orders Morphism.
+Require Export Topology TopologicalContinuity Category.
+Require Import Notations Common.
 
 Set Implicit Arguments.
 

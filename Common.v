@@ -97,21 +97,14 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import JMeq ProofIrrelevance Eqdep_dec.
+Require Export Notations.
 
 Set Implicit Arguments.
-
-Local Infix "==" := JMeq (at level 70).
-
-Notation "∅" := Datatypes.Empty_set.
-
-Notation ℕ := nat.
 
 Definition sumbool_to_bool A B : {A} + {B} -> bool
   := fun x => if x then true else false.
 
 Coercion sumbool_to_bool : sumbool >-> bool.
-
-Infix "×" := prod (at level 40, left associativity): type_scope.
 
 (* The standard library does not provide projections of [sigT2] or [sig2].
    I define coercions to [sigT] and [sig], so that [projT1], [projT2],
@@ -360,11 +353,11 @@ Ltac solve_repeat_rewrite rew_H tac :=
     solve [ repeat (rewrite <- rew_H; tac) ].
 
 Lemma sig_eq A P (s s' : @sig A P) : proj1_sig s = proj1_sig s' -> s = s'.
-  destruct s, s'; simpl; intro; subst; f_equal; apply proof_irrelevance.
+  destruct s, s'; simpl; intro; subst; f_equal; apply ProofIrrelevance.proof_irrelevance.
 Qed.
 
 Lemma sig2_eq A P Q (s s' : @sig2 A P Q) : proj1_sig s = proj1_sig s' -> s = s'.
-  destruct s, s'; simpl; intro; subst; f_equal; apply proof_irrelevance.
+  destruct s, s'; simpl; intro; subst; f_equal; apply ProofIrrelevance.proof_irrelevance.
 Qed.
 
 Lemma sigT_eq A P (s s' : @sigT A P) : projT1 s = projT1 s' -> projT2 s == projT2 s' -> s = s'.
@@ -932,9 +925,9 @@ Tactic Notation "hideProofs" constr(pf0) constr(pf1) constr(pf2) constr(pf3) con
 
 Ltac destruct_to_empty_set :=
   match goal with
-    | [ H : Empty_set |- _ ] => destruct H
-    | [ H : ?T -> Empty_set, a : ?T |- _ ] => destruct (H a)
-    | [ H : context[Empty_set] |- _ ] => solve [ destruct H; trivial; assumption ]
+    | [ H : ∅ |- _ ] => destruct H
+    | [ H : ?T -> ∅, a : ?T |- _ ] => destruct (H a)
+    | [ H : context[∅] |- _ ] => solve [ destruct H; trivial; assumption ]
   end.
 
 Ltac destruct_to_empty_set_in_match :=
@@ -956,15 +949,15 @@ Section unit.
     case u; case u'; reflexivity.
   Qed.
 
-  Lemma Empty_set_eq (a b : Empty_set) : a = b.
+  Lemma Empty_set_eq (a b : ∅) : a = b.
     destruct a.
   Qed.
 
-  Lemma Empty_set_JMeql (a : Empty_set) T (b : T) : a == b.
+  Lemma Empty_set_JMeql (a : ∅) T (b : T) : a == b.
     destruct a.
   Qed.
 
-  Lemma Empty_set_JMeqr T (a : T) (b : Empty_set) : a == b.
+  Lemma Empty_set_JMeqr T (a : T) (b : ∅) : a == b.
     destruct b.
   Qed.
 End unit.
@@ -973,6 +966,6 @@ Hint Rewrite unit_singleton.
 Hint Extern 0 (@eq unit _ _) => apply unit_eq.
 Hint Extern 0 (@JMeq unit _ unit _) => apply unit_JMeq.
 Hint Extern 0 unit => constructor.
-Hint Extern 0 (@eq Empty_set _ _) => apply Empty_set_eq.
-Hint Extern 0 (@JMeq Empty_set _ _ _) => apply Empty_set_JMeql.
-Hint Extern 0 (@JMeq _ _ Empty_set _) => apply Empty_set_JMeqr.
+Hint Extern 0 (@eq ∅ _ _) => apply Empty_set_eq.
+Hint Extern 0 (@JMeq ∅ _ _ _) => apply Empty_set_JMeql.
+Hint Extern 0 (@JMeq _ _ ∅ _) => apply Empty_set_JMeqr.

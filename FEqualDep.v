@@ -4,8 +4,6 @@ Require Import Common Notations.
 
 Set Implicit Arguments.
 
-Local Infix "==" := JMeq.
-
 Section f_equal_dep.
   Theorem f_type_equal {A B A' B'} : A = A' -> B = B' -> (A -> B) = (A' -> B').
     intros; repeat subst; reflexivity.
@@ -122,7 +120,7 @@ End f_equal_dep.
 Inductive identity_dep (A : Type) (a : A) : forall B : Type, B -> Type :=
   identity_dep_refl : identity_dep a a.
 
-Section f_identity_dep.
+(*Section f_identity_dep.
   Local Infix "~" := identity (at level 50).
   Local Infix "~~" := identity_dep (at level 50).
   Definition f_identity (A B : Type) (f : A -> B) (x y : A) (H : x ~ y) : f x ~ f y
@@ -163,7 +161,7 @@ Section f_identity_dep.
     := fun H => match H in (_ ~~ b) return _ with
                   | identity_dep_refl => identity_refl A
                 end.
-End f_identity_dep.
+End f_identity_dep.*)
 
 Ltac JMeq_eq :=
   repeat match goal with
@@ -205,6 +203,6 @@ Section misc.
   : p == q.
     subst.
     apply eq_JMeq.
-    apply proof_irrelevance.
+    apply ProofIrrelevance.proof_irrelevance.
   Qed.
 End misc.

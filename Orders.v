@@ -97,8 +97,9 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8 Setoid.
-Require Import Classes.RelationClasses Morphisms.
-Require Import FunctionalExtensionality ProofIrrelevance.
+Require Import Ensembles.
+Require Export Classes.RelationClasses Morphisms.
+Require Import Notations FunctionalExtensionality ProofIrrelevance.
 
 Set Implicit Arguments.
 
@@ -106,15 +107,15 @@ Generalizable All Variables.
 
 (** * Orders *)
 
-Class Comparable {A} (R : relation A) : Prop :=
+Class Comparable {A} (R : Relation_Definitions.relation A) : Prop :=
   comparability : forall x y, R x y \/ R y x.
 
-Class LinearOrder {A} (R : relation A) : Prop := {
-  LinearOrder_Reflexive :> Reflexive R | 2 ;
-  LinearOrder_Transitive :> Transitive R | 2 ;
+Class LinearOrder {A} (R : Relation_Definitions.relation A) : Prop := {
+  LinearOrder_Reflexive :> RelationClasses.Reflexive R | 2 ;
+  LinearOrder_Transitive :> RelationClasses.Transitive R | 2 ;
   LinearOrder_Comparable :> Comparable R | 2 }.
 
-Definition Same_relation T (R R' : relation T) : Prop :=
+Definition Same_relation T (R R' : Relation_Definitions.relation T) : Prop :=
   forall x y, R x y <-> R' x y.
 
 (** Equality is a pre-order *)
@@ -139,9 +140,70 @@ Class JoinOf {S} le `(PreOrder S le) (a b : S) :=
   { JoinElement :> S;
     join_is_join : is_join _ a b JoinElement }.
 
+Section IndexedMeetsAndJoins.
+  Variable T : Type.
+  Variable leq : Relation_Definitions.relation T.
+
+  Local Infix "<=" := leq.
+
+  Variable Index : Type.
+  Variable IndexToSet : Index -> T.
+
+  Local Coercion IndexToSet : Index >-> T.
+
+  Definition is_indexed_meet `(PreOrder T leq) : T -> Prop
+    := fun c => (forall i : Index, c <= i)
+                /\ forall d : T,
+                     (forall i : Index, d <= i)
+                     -> d <= c.
+
+  Definition is_indexed_join `(PreOrder T leq) : T -> Prop
+    := fun c => (forall i : Index, i <= c)
+                /\ forall d : T,
+                     (forall i : Index, i <= d)
+                     -> c <= d.
+
+  Class IndexedMeetOf `(PreOrder T leq) :=
+    { IndexedMeetElement :> T;
+      indexed_meet_is_meet : is_indexed_meet _ IndexedMeetElement }.
+
+  Class IndexedJoinOf `(PreOrder T leq) :=
+    { IndexedJoinElement :> T;
+      indexed_join_is_join : is_indexed_join _ IndexedJoinElement }.
+End IndexedMeetsAndJoins.
+
+Section EnsemblesMeetsAndJoins.
+  Variable T : Type.
+  Variable leq : Relation_Definitions.relation T.
+
+  Local Infix "<=" := leq.
+
+  Variable U : Ensemble T.
+
+  Definition is_ensemble_meet `(PreOrder T leq) : T -> Prop
+    := fun c => (forall i, i ∈ U -> c <= i)
+                /\ forall d : T,
+                     (forall i, i ∈ U -> d <= i)
+                     -> d <= c.
+
+  Definition is_ensemble_join `(PreOrder T leq) : T -> Prop
+    := fun c => (forall i, i ∈ U -> i <= c)
+                /\ forall d : T,
+                     (forall i, i ∈ U -> i <= d)
+                     -> c <= d.
+
+  Class EnsembleMeetOf `(PreOrder T leq) :=
+    { EnsembleMeetElement :> T;
+      ensemble_meet_is_meet : is_ensemble_meet _ EnsembleMeetElement }.
+
+  Class EnsembleJoinOf `(PreOrder T leq) :=
+    { EnsembleJoinElement :> T;
+      ensemble_join_is_join : is_ensemble_join _ EnsembleJoinElement }.
+End EnsemblesMeetsAndJoins.
+
 (** ** Opposite relations *)
 Definition opposite_relation {T} :
-  relation T -> relation T
+  Relation_Definitions.relation T -> Relation_Definitions.relation T
   := fun R => (fun x y => R y x).
 
 (** ** Relation Homomorphisms *)
@@ -188,5 +250,5 @@ Lemma RelationHomomorphism_Eq
     simpl in *;
     subst;
     f_equal;
-    apply proof_irrelevance.
+    apply ProofIrrelevance.proof_irrelevance.
 Qed.

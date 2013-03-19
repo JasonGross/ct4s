@@ -101,7 +101,8 @@
 
 Require Import Utf8.
 Require Import JMeq Eqdep.
-Require Export Category CategoryIsomorphisms Functor (*ProductCategory NaturalTransformation*).
+Require Export Category CategoryIsomorphisms Functor.
+(*ProductCategory NaturalTransformation*)
 Require Import Common Notations.
 
 Set Implicit Arguments.
@@ -164,6 +165,7 @@ Section DualObjects.
     := Eval cbv beta iota zeta delta [initial_opposite_terminal IsTerminalObject_TerminalObject InitialObject_IsInitialObject proj1_sig proj2_sig] in
         fun x => initial_opposite_terminal x.
 End DualObjects.
+*)
 
 Section OppositeFunctor.
   Context `(C : @Category objC).
@@ -172,18 +174,16 @@ Section OppositeFunctor.
   Let COp := OppositeCategory C.
   Let DOp := OppositeCategory D.
 
-  Definition OppositeFunctor : Functor COp DOp.
-    refine (Build_Functor COp DOp
-      (fun c : COp => F c : DOp)
-      (fun (s d : COp) (m : C.(Morphism) d s) => MorphismOf F (s := d) (d := s) m)
-      (fun d' d s m1 m2 => FCompositionOf F s d d' m2 m1)
-      (FIdentityOf F)
-    ).
-  Defined.
+  Definition OppositeFunctor : Functor COp DOp
+    := Build_Functor COp DOp
+                     (fun c : COp => F c : DOp)
+                     (fun (s d : COp) (m : C.(Morphism) d s) => MorphismOf F (s := d) (d := s) m)
+                     (fun d' d s m1 m2 => FCompositionOf F s d d' m2 m1)
+                     (FIdentityOf F).
 End OppositeFunctor.
 
 (*Notation "C ᵒᵖ" := (OppositeFunctor C) : functor_scope.*)
-
+(*
 Section OppositeFunctor_Id.
   Context `(C : @Category objC).
   Context `(D : @Category objD).

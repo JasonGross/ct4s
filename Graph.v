@@ -103,8 +103,6 @@ Require Import Common.
 
 Set Implicit Arguments.
 
-Local Infix "==" := JMeq (at level 70, right associativity).
-
 (** In a dependently typed programming language like, Coq, it is more
     natural to define a separate set of edges for each pair of
     vertices.  I define both this type of graph and the one in the
@@ -229,6 +227,6 @@ Section graph'_homomorphisms.
       simpl in *;
       subst;
       f_equal;
-      apply proof_irrelevance.
+      apply ProofIrrelevance.proof_irrelevance.
   Qed.
 End graph'_homomorphisms.
