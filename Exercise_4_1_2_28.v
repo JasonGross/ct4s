@@ -105,9 +105,7 @@
 
 Require Import Utf8.
 Require Import Omega JMeq.
-Require Import Common DiscreteCategory NatCategory
-        PathsCategory Graph ComputableCategory
-        CategoryIsomorphisms ChainCategory.
+Require Import Common DiscreteCategory NatCategory PathsCategory Graph ComputableCategory CategoryIsomorphisms ChainCategory.
 
 Set Implicit Arguments.
 
