@@ -10,3 +10,4 @@ html/
 *.log
 coqdoc.sty
 index.html
+Makefile.coq
