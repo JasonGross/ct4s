@@ -108,33 +108,32 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import Category Functor NaturalTransformation.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Functor Category *)
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+Section FunctorCategory.
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
 
-Reserved Infix "o" (at level 40, left associativity).
+  (** There is a category Fun(C, D) of functors from [C] to [D]. *)
+  Definition FunctorCategory : @Category (Functor C D).
+    refine (@Build_Category _
+                            (NaturalTransformation (C := C) (D := D))
+                            (IdentityNaturalTransformation (C := C) (D := D))
+                            (NTComposeT (C := C) (D := D))
+                            _
+                            _
+                            _);
+    abstract (intros; apply NaturalTransformation_Eq; simpl; auto with morphism).
+  Defined.
+End FunctorCategory.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
-
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+Notation "C ^ D" := (FunctorCategory D C) : category_scope.

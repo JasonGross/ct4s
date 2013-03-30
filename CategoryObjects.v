@@ -7,10 +7,6 @@
 (** printing '★' %\ensuremath{\star}% #&#9733;# *)
 (** printing '⊔' %\ensuremath{\sqcup}% #&#x2294;# *)
 (** printing ⊔ %\ensuremath{\sqcup}% #&#x2294;# *)
-(** printing ∪ %\ensuremath{\cup}% #&cup;# *)
-(** printing '∪' %\ensuremath{\cup}% #&cup;# *)
-(** printing ∩ %\ensuremath{\cap}% #&cap;# *)
-(** printing '∩' %\ensuremath{\cap}% #&cap;# *)
 (** printing 'π' %\ensuremath{\pi}% #&pi;# *)
 (** printing π %\ensuremath{\pi}% #&pi;# *)
 (** printing 'Σ' %\ensuremath{\Sigma}% #&Sigma;# *)
@@ -56,10 +52,6 @@
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
-(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
-(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
-(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
-(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
@@ -83,7 +75,6 @@
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
 (** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
-(** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
 (** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
@@ -104,37 +95,113 @@
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
 (** printing ∨ %\ensuremath{\vee}% #&or;# *)
 (** printing ¬ %\ensuremath{\neg}% #&not;# *)
-(** printing ¬( %\ensuremath{\neg}(% #&not;(# *) (* ))) *)
+(** printing ¬( %\ensuremath{\neg}(% #&not;(# *)
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import ProofIrrelevance FunctionalExtensionality.
+Require Import JMeq.
+Require Export Category CategoryIsomorphisms.
+Require Import Common Notations.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** * Category Objects *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+Section CategoryObjects1.
+  Context `(C : @Category obj).
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+  Definition UniqueUpToUniqueIsomorphism' (P : C.(Object) -> Prop) : Prop :=
+    forall x, P x -> forall x', P x' -> exists m : C.(Morphism) x x', IsIsomorphism C m /\ is_unique m.
 
-Reserved Infix "o" (at level 40, left associativity).
+  Definition UniqueUpToUniqueIsomorphism (P : C.(Object) -> Type) :=
+    forall x, P x -> forall x', P x' -> { m : C.(Morphism) x x' | IsIsomorphism C m & is_unique m }.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Section terminal.
+    (* A terminal object is an object with a unique morphism from every other object. *)
+    Definition IsTerminalObject' (x : C) : Prop :=
+      forall x', exists! m : C.(Morphism) x' x, True.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+    Definition IsTerminalObject (x : C) :=
+      forall x', { m : C.(Morphism) x' x | is_unique m }.
 
-Reserved Infix "≅" (at level 70).
+    Record TerminalObject :=
+      {
+        TerminalObject_Object' : obj;
+        TerminalObject_Morphism : forall x, Morphism C x TerminalObject_Object';
+        TerminalObject_Property : forall x, is_unique (TerminalObject_Morphism x)
+      }.
 
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
+    Definition TerminalObject_Object : TerminalObject -> C := TerminalObject_Object'.
 
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+    Global Coercion TerminalObject_Object : TerminalObject >-> Object.
+
+    Definition TerminalObject_IsTerminalObject (x : TerminalObject) : IsTerminalObject x
+      := fun x' => exist _ (TerminalObject_Morphism x x') (TerminalObject_Property x x').
+
+    Definition IsTerminalObject_TerminalObject x : IsTerminalObject x -> TerminalObject
+      := fun H => @Build_TerminalObject x (fun o' => proj1_sig (H o')) (fun o' => proj2_sig (H o')).
+
+    Global Coercion TerminalObject_IsTerminalObject : TerminalObject >-> IsTerminalObject.
+    Global Coercion IsTerminalObject_TerminalObject : IsTerminalObject >-> TerminalObject.
+  End terminal.
+
+  Section initial.
+    (* An initial object is an object with a unique morphism from every other object. *)
+    Definition IsInitialObject' (x : C) : Prop :=
+      forall x', exists! m : C.(Morphism) x x', True.
+
+    Definition IsInitialObject (x : C) :=
+      forall x', { m : C.(Morphism) x x' | is_unique m }.
+
+    Record InitialObject :=
+      {
+        InitialObject_Object' :> obj;
+        InitialObject_Morphism : forall x, Morphism C InitialObject_Object' x;
+        InitialObject_Property : forall x, is_unique (InitialObject_Morphism x)
+      }.
+
+    Definition InitialObject_Object : InitialObject -> C := InitialObject_Object'.
+
+    Global Coercion InitialObject_Object : InitialObject >-> Object.
+
+    Definition InitialObject_IsInitialObject (x : InitialObject) : IsInitialObject x
+      := fun x' => exist _ (InitialObject_Morphism x x') (InitialObject_Property x x').
+
+    Definition IsInitialObject_InitialObject x : IsInitialObject x -> InitialObject
+      := fun H => @Build_InitialObject x (fun x' => proj1_sig (H x')) (fun x' => proj2_sig (H x')).
+
+    Global Coercion InitialObject_IsInitialObject : InitialObject >-> IsInitialObject.
+    Global Coercion IsInitialObject_InitialObject : IsInitialObject >-> InitialObject.
+  End initial.
+End CategoryObjects1.
+
+Arguments UniqueUpToUniqueIsomorphism {_ C} P.
+Arguments IsInitialObject' {_ C} x.
+Arguments IsInitialObject {_ C} x.
+Arguments IsTerminalObject' {_ C} x.
+Arguments IsTerminalObject {_ C} x.
+
+Section CategoryObjects2.
+  Context `(C : @Category obj).
+
+  Ltac unique := hnf; intros; specialize_all_ways; destruct_sig;
+    unfold is_unique, unique, uniqueness in *;
+      repeat (destruct 1);
+      repeat match goal with
+               | [ x : _ |- _ ] => exists x
+             end; eauto with category; try split; try solve [ etransitivity; eauto with category ].
+
+  (* The terminal object is unique up to unique isomorphism. *)
+  Theorem TerminalObjectUnique : UniqueUpToUniqueIsomorphism (IsTerminalObject (C := C)).
+    unique.
+  Qed.
+
+  (* The initial object is unique up to unique isomorphism. *)
+  Theorem InitialObjectUnique : UniqueUpToUniqueIsomorphism (IsInitialObject (C := C)).
+    unique.
+  Qed.
+End CategoryObjects2.

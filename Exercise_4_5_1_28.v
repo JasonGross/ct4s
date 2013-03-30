@@ -62,6 +62,7 @@
 (** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -108,33 +109,56 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import Category Coproduct DiscreteCategory.
+Require Import Common Notations.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.5.1.28 *)
+Section Exercise_4_5_1_28.
+  (** ** Problem *)
+  (** Let [X] be a set, and consider it as a discrete category. Given
+      two objects [x y : Ob X], under what conditions will there exist
+      a product [x ⊔ y]? *)
+  (** ** Solution *)
+  (** [x ⊔ y] exists if and only if [x = y = x ⊔ y], for the existance
+      of the injection morphisms requires that [x = x ⊔ y = y], and
+      all the necesary morphisms exist if [x = x ⊔ y = y]. *)
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+  Variable X : Type.
 
-Reserved Infix "o" (at level 40, left associativity).
+  Let X' := DiscreteCategory X.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  (** The morphisms from [x] to [y] are proofs of [x = y].  We have
+      proofs that [x = x] ([@eq_refl X' x]), and the product map is
+      just the identity on either of the two proofs we're given.  The
+      proofs of universality come from proof irrelevance.  (We
+      actually only need proof irrelevance for one of the proofs, but
+      we might as well use it for all of them.) *)
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+  Definition Exercise_4_5_1_28_ex (x : X') : (x ⊔ x)%object.
+    subst_body; compute in *.
+    exists x.
+    eexists (@eq_refl _ x) (@eq_refl _ x) (fun _ _ m => m);
+      abstract (
+          compute;
+          intros;
+          apply ProofIrrelevance.proof_irrelevance
+        ).
+  Defined.
 
-Reserved Infix "≅" (at level 70).
+  (** The fact that the existance of [x ⊔ y] implies [x = y] follows
+      trivially from unfolding definitions and the substitution
+      property of equality. *)
+  Lemma Exercise_4_5_1_28_only (x y : X') : (x ⊔ y)%object -> x = y.
+    intros [? []]; compute; intros.
+    subst; reflexivity.
+  Qed.
+End Exercise_4_5_1_28.
 
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)

@@ -230,3 +230,32 @@ Section graph'_homomorphisms.
       apply ProofIrrelevance.proof_irrelevance.
   Qed.
 End graph'_homomorphisms.
+
+Section conversion.
+  Definition GraphHomomorphismToGraph'Homomorphism (G G' : Graph) (f : GraphHomomorphism G G')
+  : Graph'Homomorphism (GraphToGraph' G) (GraphToGraph' G')
+    := Build_Graph'Homomorphism (GraphToGraph' G) (GraphToGraph' G')
+                                (OnVertices f)
+                                (fun sde => existT _
+                                                   (OnVertices f (fst (projT1 sde)),
+                                                    OnVertices f (snd (projT1 sde)))
+                                                   (OnEdges f _ _ (projT2 sde))
+                                            : { sd : G' × G' & Edge G' (fst sd) (snd sd) } )
+                                (fun _ => eq_refl)
+                                (fun _ => eq_refl).
+
+  Definition Graph'HomomorphismToGraphHomomorphism (G G' : Graph') (f : Graph'Homomorphism G G')
+  : GraphHomomorphism (Graph'ToGraph G) (Graph'ToGraph G').
+    refine (Build_GraphHomomorphism (Graph'ToGraph G) (Graph'ToGraph G')
+                                    (OnVertices' f)
+                                    (fun src tgt m => exist _ (OnArrows' f (proj1_sig m)) _));
+    abstract (
+        split;
+        (rewrite <- (SourceCommutes' f) || rewrite <- (TargetCommutes' f));
+        destruct_head_hnf @sig;
+        split_and;
+        subst;
+        reflexivity
+      ).
+  Defined.
+End conversion.

@@ -23,6 +23,16 @@ Generalizable All Variables.
 (** We use [Notation] to get around type-checking until we instantiate
     it with a particular universe. *)
 
+Notation IndexedCategoryOf obj coerce :=
+  (@Build_Category obj
+                   (fun s d => coerce s -> coerce d)
+                   (fun _ => (fun x => x))
+                   (fun _ _ _ f g => (fun x => f (g x)))
+                   (fun _ _ _ _ _ _ f => eq_refl)
+                   (fun _ _ f => eq_refl : (fun x => f x) = f)
+                   (fun _ _ f => eq_refl : (fun x => f x) = f)
+  ).
+
 Notation CategoryOf Sets :=
   ({|
       (*Object := Sets;*)

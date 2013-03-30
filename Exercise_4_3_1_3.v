@@ -108,33 +108,58 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import NaturalTransformation.
+Require Import Common.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.3.1.3 *)
+Section Exercise_4_3_1_3.
+  (** ** Problem *)
+  (** Let [F : C -> D] be a functor. Suppose someone said "the
+      identity on [F] is a natural transformation from [F] to itself."
+      What might they mean? If it is somehow true, what are the
+      components of this natural transformation? *)
+  (** ** Solution *)
+  (** They mean that [Fun(C, D)] is a category (assuming composition
+      works), and [F : C -> D] is a functor in [Fun(C, D)], and there
+      is an identity morphism on [F].  Alternatively, they mean that
+      there is a natural transformation [T : F -> F] which satisfies
+      left- and right- identity laws under natural transformation
+      composition.  The componets of this natural transformation are
+      the identity on [F c] for each [c] in [C].
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+      I defined this in NaturalTransformation.v, but here it is again. *)
 
-Reserved Infix "o" (at level 40, left associativity).
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
+  Variable F : Functor C D.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Definition IdentityNaturalTransformation' : NaturalTransformation F F.
+    refine {| ComponentsOf := (fun c => Identity (F c)) |}.
+    abstract (simpl; intros; rewrite LeftIdentity, RightIdentity; reflexivity).
+  Defined.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+  Lemma LeftIdentityNaturalTransformation'
+  : forall (F' : Functor C D)
+           (T : NaturalTransformation F' F),
+      NTComposeT IdentityNaturalTransformation' T = T.
+  Proof.
+    intros; apply NaturalTransformation_Eq; simpl; auto with morphism.
+  Qed.
 
-Reserved Infix "≅" (at level 70).
+  Lemma RightIdentityNaturalTransformation'
+  : forall (F' : Functor C D)
+           (T : NaturalTransformation F F'),
+      NTComposeT T IdentityNaturalTransformation' = T.
+  Proof.
+    intros; apply NaturalTransformation_Eq; simpl; auto with morphism.
+  Qed.
+End Exercise_4_3_1_3.
 
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)

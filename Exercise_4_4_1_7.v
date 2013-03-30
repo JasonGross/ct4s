@@ -62,6 +62,7 @@
 (** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -95,6 +96,7 @@
 (** printing ↘ %\ensuremath{\searrow}% #&#x2198# *)
 (** printing ↙ %\ensuremath{\swarrow}% #&#x2199# *)
 (** printing ⇉ %\ensuremath{\rightrightarrows} #&#x21c9# *)
+(** printing ↦ %\ensuremath{\mapsto}% #&#21A6# *)
 (** printing ⊆ %\ensuremath{\subseteq}% #&sube;# *)
 (** printing ⊂ %\ensuremath{\subset}% #&sub;# *)
 (** printing ∈ %\ensuremath{\in}% #&isin;# *)
@@ -108,33 +110,38 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.4.1.7 *)
+Module Exercise_4_4_1_7.
+  (** ** Problem *)
+  (** Let [Loop] and [L_n] be the schemas deﬁned in Exercise 4.4.1.6.
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+      (a) What is the cardinality of the set [Hom_Sch(L_3, L_5)]?
 
-Reserved Infix "o" (at level 40, left associativity).
+      (b) What is the cardinality of the set [Hom_Sch(L_5, L_3)]?
+          Hint: the cardinality of the set [Hom_Sch(L_4, L_9)] is
+          8. *)
+  (** ** Solution *)
+  (** A schema morphism from [L_n] to [L_m] is just a rule [f ↦ f^k].
+      Since [f^n ≃_n f^{n+1}], we must have [f^{nk} ≃_m f^{(n+1)k}].
+      Thus we must have [k = 0] or [nk >= m], that is, [k = 0] or [k
+      >= ceiling(m / n)].  Choosing [k > m] is no different from
+      choosing [k = m], so our choices of [k] are [0], along with
+      [ceiling(m / n), ..., m].  Thus the cardinality of [Hom_Sch(L_n,
+      L_m)] is [m - ceiling(m / n) + 2].
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+      (a) Plugging [n = 3], [m = 5] into the formula above gives [5 -
+          ceiling(5 / 3) + 2 = 5 - 2 + 2], or a cardinality of [5].
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+      (a) Plugging [n = 5], [m = 3] into the formula above gives [3 -
+          ceiling(3 / 5) + 2 = 3 - 1 + 2], or a cardinality of [4]. *)
+End Exercise_4_4_1_7.
 
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)

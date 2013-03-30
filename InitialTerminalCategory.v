@@ -108,33 +108,33 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Export Category Functor.
+Require Import DiscreteCategory.
+Require Import Common.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** * Initial and terminal objects of the category of categories. *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+Section InitialTerminal.
+  Definition TerminalCategory : @SmallCategory unit :=
+    Eval compute in DiscreteCategory unit.
+  Definition InitialCategory : (@SmallCategory ∅) :=
+    Eval compute in DiscreteCategory ∅.
+End InitialTerminal.
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+Section InitialTerminalFunctors.
+  Context `(C : @Category objC).
 
-Reserved Infix "o" (at level 40, left associativity).
+  Definition FunctorToTerminal : Functor C TerminalCategory
+    := Build_Functor C TerminalCategory (fun _ => tt) (fun _ _ _ => eq_refl) (fun _ _ _ _ _ => eq_refl) (fun _ => eq_refl).
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Definition FunctorFromTerminal (c : C) : Functor TerminalCategory C
+    := Build_Functor TerminalCategory C (fun _ => c) (fun _ _ _ => Identity c) (fun _ _ _ _ _ => eq_sym (@RightIdentity _ _ _ _ _)) (fun _ => eq_refl).
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+  Definition FunctorFromInitial : Functor InitialCategory C
+    := Build_Functor InitialCategory C (fun x => match x with end) (fun x _ _ => match x with end) (fun x _ _ _ _ => match x with end) (fun x => match x with end).
+End InitialTerminalFunctors.

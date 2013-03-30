@@ -98,7 +98,7 @@
 
 Require Import Utf8 Setoid.
 Require Import Ensembles.
-Require Export Classes.RelationClasses Morphisms.
+Require Export Classes.RelationClasses Morphisms Bool.
 Require Import Notations FunctionalExtensionality ProofIrrelevance.
 
 Set Implicit Arguments.
@@ -107,8 +107,22 @@ Generalizable All Variables.
 
 (** * Orders *)
 
+Delimit Scope relation_scope with relation.
+Bind Scope relation_scope with Relation_Definitions.relation.
+
 Class Comparable {A} (R : Relation_Definitions.relation A) : Prop :=
   comparability : forall x y, R x y \/ R y x.
+
+Class RelationDecidable {A} (R :  Relation_Definitions.relation A) :=
+  Relation_dec : forall x y, {R x y} + {~R x y}.
+
+Definition dec_rel {A} R `{@RelationDecidable A R} x y :=
+  match Relation_dec x y with
+    | left _ => true
+    | right _ => false
+  end.
+
+Arguments dec_rel {A} R {_} _ _.
 
 Class LinearOrder {A} (R : Relation_Definitions.relation A) : Prop := {
   LinearOrder_Reflexive :> RelationClasses.Reflexive R | 2 ;

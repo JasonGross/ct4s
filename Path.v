@@ -104,6 +104,8 @@ Set Implicit Arguments.
 
 Generalizable All Variables.
 
+(** * Paths *)
+
 (** We use the dependently typed formulation of graphs *)
 Section path.
   Variable V : Type.

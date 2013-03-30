@@ -7,10 +7,6 @@
 (** printing '★' %\ensuremath{\star}% #&#9733;# *)
 (** printing '⊔' %\ensuremath{\sqcup}% #&#x2294;# *)
 (** printing ⊔ %\ensuremath{\sqcup}% #&#x2294;# *)
-(** printing ∪ %\ensuremath{\cup}% #&cup;# *)
-(** printing '∪' %\ensuremath{\cup}% #&cup;# *)
-(** printing ∩ %\ensuremath{\cap}% #&cap;# *)
-(** printing '∩' %\ensuremath{\cap}% #&cap;# *)
 (** printing 'π' %\ensuremath{\pi}% #&pi;# *)
 (** printing π %\ensuremath{\pi}% #&pi;# *)
 (** printing 'Σ' %\ensuremath{\Sigma}% #&Sigma;# *)
@@ -51,17 +47,11 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
-(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
-(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
-(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
-(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
-(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
-(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -76,14 +66,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
-(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
-(** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
 (** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
@@ -104,37 +92,65 @@
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
 (** printing ∨ %\ensuremath{\vee}% #&or;# *)
 (** printing ¬ %\ensuremath{\neg}% #&not;# *)
-(** printing ¬( %\ensuremath{\neg}(% #&not;(# *) (* ))) *)
+(** printing ¬( %\ensuremath{\neg}(% #&not;(# *)
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Export Orders.
+Require Import Common Notations.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** * Order Products *)
+(** We define [R × R' (a, a') (b, b')] to be [R a b /\ R' a' b']. *)
+Definition relation_product {A A'}
+           (R : Relation_Definitions.relation A)
+           (R' : Relation_Definitions.relation A')
+: Relation_Definitions.relation (A * A')
+  := fun aa' bb' => R (fst aa') (fst bb')
+                    /\ R' (snd aa') (snd bb').
 
-Infix "==" := JMeq (at level 70, right associativity).
+Infix "*" := relation_product : relation_scope.
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+Section order_product.
+  Local Open Scope relation_scope.
 
-Reserved Infix "o" (at level 40, left associativity).
+  Local Ltac t :=
+    repeat (esplit
+              || (progress destruct_head_hnf @prod)
+              || (progress compute in *; split_and)
+              || (progress (hnf in *; simpl in *; compute in *; intuition eauto))
+              || (etransitivity; solve [ eauto ])
+              || (progress firstorder)).
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Local Obligation Tactic := abstract t.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+  Global Program Instance product_refl `(RelationClasses.Reflexive A R) `(RelationClasses.Reflexive A' R') : RelationClasses.Reflexive (R * R').
+  Global Program Instance product_irefl `(RelationClasses.Irreflexive A R) `(RelationClasses.Irreflexive A' R') : RelationClasses.Irreflexive (R * R').
+  Global Program Instance product_sym `(RelationClasses.Symmetric A R) `(RelationClasses.Symmetric A' R') : RelationClasses.Symmetric (R * R').
+  Global Program Instance product_asym `(RelationClasses.Asymmetric A R) `(RelationClasses.Asymmetric A' R') : RelationClasses.Asymmetric (R * R').
+  Global Program Instance product_trans `(RelationClasses.Transitive A R) `(RelationClasses.Transitive A' R') : RelationClasses.Transitive (R * R').
+  Global Program Instance product_pre_order `(RelationClasses.PreOrder A R) `(RelationClasses.PreOrder A' R') : RelationClasses.PreOrder (R * R').
+  Global Program Instance product_PER `(RelationClasses.PER A R) `(RelationClasses.PER A' R') : RelationClasses.PER (R * R').
+  Global Program Instance product_equiv `(RelationClasses.Equivalence A R) `(RelationClasses.Equivalence A' R') : RelationClasses.Equivalence (R * R').
+  Global Program Instance product_antisym `(@RelationClasses.Antisymmetric A eqA equA R) `(@RelationClasses.Antisymmetric A' eqA' equA' R') : @RelationClasses.Antisymmetric (A * A') (eqA * eqA') _ (R * R').
+  Global Program Instance product_partial_order `(@RelationClasses.PartialOrder A eqA equA R preoA) `(@RelationClasses.PartialOrder A' eqA' equA' R' preoA')
+  : @PartialOrder (A * A') (eqA * eqA') _  (R * R') _.
+  Global Program Instance product_strict_order `(RelationClasses.StrictOrder A R) `(RelationClasses.StrictOrder A' R') : RelationClasses.StrictOrder (R * R').
+  Global Instance product_decidable `(RelationDecidable A R) `(RelationDecidable A' R') : RelationDecidable (R * R')
+    := fun xx' yy' =>
+         let (x, x') as p
+             return ({(R * R')%relation p yy'} + {¬(R * R')%relation p yy'}) :=
+             xx' in
+         let (y, y') as p
+             return ({(R * R')%relation (x, x') p} + {¬(R * R')%relation (x, x') p}) :=
+             yy' in
+         match Relation_dec x y, Relation_dec x' y' with
+           | left pf, left pf' => left (conj pf pf')
+           | right pf, _ => right (fun pfpf' => pf (proj1 pfpf'))
+           | _, right pf' => right (fun pfpf' => pf' (proj2 pfpf'))
+         end.
+End order_product.

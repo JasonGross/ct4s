@@ -108,33 +108,67 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import Graph GraphCategory SetCategory NaturalTransformation.
+Require Import Common.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.3.1.10 *)
+Section Exercise_4_3_1_10.
+  (** ** Problem *)
+  (** Let [X] and [Y] be sets, and let [f : X -> Y]. There is a
+      functor [C_X : Grph -> Set] that sends every graph to the set
+      [X] and sends every morphism of graphs to the identity morphism
+      [id_X : X -> X]. This functor is called the constant functor at
+      [X]. Similarly there is a constant functor [C_Y : Grph ->
+      Set]. Use [f] to construct a natural transformation [C_X ->
+      C_Y]. What are its components? *)
+  (** ** Solution *)
+  (** This is also called the diagonal functor or constant diagram
+      functor [Δ : C -> Fun(D, C)].  We can simply send object in
+      [Grph] to the morphism [f]. *)
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+  Section DiagonalFunctor_parts.
+    Context `(C : @Category objC).
+    Context `(D : @Category objD).
 
-Reserved Infix "o" (at level 40, left associativity).
+    Definition diagonal_functor_object_of (c : C) : Functor D C.
+      refine {| ObjectOf := (fun _ => c);
+                MorphismOf := (fun _ _ _ => Identity c) |};
+      abstract (intros; repeat rewrite LeftIdentity; reflexivity).
+    Defined.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+    Definition diagonal_functor_morphism_of X Y
+               (f : C.(Morphism) X Y)
+    : NaturalTransformation (diagonal_functor_object_of X)
+                            (diagonal_functor_object_of Y).
+      refine (Build_NaturalTransformation (diagonal_functor_object_of X)
+                                          (diagonal_functor_object_of Y)
+                                          (fun _ => f)
+                                          _);
+      abstract (
+          intros;
+          simpl;
+          repeat rewrite LeftIdentity, RightIdentity;
+          reflexivity
+        ).
+    Defined.
+  End DiagonalFunctor_parts.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+  Variables X Y : CategoryOfTypes.
+  Variable f : Morphism CategoryOfTypes X Y.
+  Definition C := diagonal_functor_object_of CategoryOfTypes CategoryOfGraphs.
+  Definition Exercise_4_3_1_10_NT : NaturalTransformation (C X) (C Y)
+    := diagonal_functor_morphism_of CategoryOfTypes
+                                    CategoryOfGraphs
+                                    X
+                                    Y
+                                    f.
+End Exercise_4_3_1_10.
 
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)

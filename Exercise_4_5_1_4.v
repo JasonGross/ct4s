@@ -62,6 +62,7 @@
 (** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -101,6 +102,10 @@
 (** printing ∅ %\ensuremath{\emptyset}% #&empty;# *)
 (** printing ≤ %\ensuremath{\le}% #&le;# *)
 (** printing ≤) %\ensuremath{\le)}% #&le;)# *)
+(** printing ≰ %\ensuremath{\not\le}% #&#x2270;# *)
+(** printing ≱ %\ensuremath{\not\ge}% #&#x2271;# *)
+(** printing ≼ %\ensuremath{\preceq}% #&#x227c;# *)
+(** printing ≽ %\ensuremath{\succeq}% #&#x227d;# *)
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
 (** printing ∨ %\ensuremath{\vee}% #&or;# *)
 (** printing ¬ %\ensuremath{\neg}% #&not;# *)
@@ -108,33 +113,44 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import OrderProduct Orders NatOrders.
+Require Import Common Notations.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.5.1.4 *)
+Section Exercise_4_5_1_4.
+  (** ** Problem *)
+  (** Consider the partial order [≤] on [ℕ] given by standard
+      "less-than-or-equal-to", so [5 ≤ 9] etc.  And consider another
+      partial order, [divides] on [ℕ], where [a divides b] if "[a]
+      goes into [b] evenly", i.e. if there exists [n : ℕ] such that [a
+      * n = b], so [5 divides 35]. If we call the product order [(X,
+      ≼) := (ℕ, ≤) * (ℕ, divides)], which of the following are true:
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+      [(2, 4) ≼ (3, 4)]?  [(2, 4) ≼ (3, 5)]?  [(2, 4) ≼ (8, 0)]?  [(2,
+      4) ≼ (0, 0)]? *)
+  (** ** Solution *)
+  (** By computation, [(2, 4) ≼ (3, 4)] is true and [(2, 4) ≼ (8, 0)]
+      is true.  (We have that [2 ≤ 3, 8] and [2 ≰ 0], and [4 divides
+      4, 0], but not [4 divides 5].*)
 
-Reserved Infix "o" (at level 40, left associativity).
+  Local Infix "≤" := le.
+  Local Infix "≼" := (fun n m => @dec_rel _ (le * divides)%relation _ n m) (at level 70, right associativity).
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Eval hnf in (2, 4) ≼ (3, 4).
+  (** [= true : bool] *)
+  Eval hnf in (2, 4) ≼ (3, 5).
+  (** [= false : bool] *)
+  Eval hnf in (2, 4) ≼ (8, 0).
+  (** [= true : bool] *)
+  Eval hnf in (2, 4) ≼ (0, 0).
+  (** [= false : bool] *)
+End Exercise_4_5_1_4.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)

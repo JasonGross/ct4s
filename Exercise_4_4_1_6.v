@@ -62,6 +62,7 @@
 (** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -108,33 +109,170 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import FunctionalExtensionality JMeq EqdepFacts Relation_Definitions.
+Require Import Omega.
+Require Import Schema SchemaMorphism Path.
+Require Import Common Notations FEqualDep.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.4.1.6 *)
+Module Exercise_4_4_1_6.
+  (** ** Problem *)
+  (** Consider the graph [Loop] pictured below
+<<
+                  __
+                 /   ↘
+     Loop :=  f |     s
+                 \___/
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+>>
 
-Reserved Infix "o" (at level 40, left associativity).
+      and for any natural number [n], let [L_n] denote the schema
+      [(Loop, ≃_n)] where [≃_n] is the PED [f^{n+1} ≃ f^n]. This is the "finite
+      hierarchy" schema of Example 3.5.2.11. Let _1_ denote the graph
+      with one vertex and no arrows; consider it as a schema.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+      (a) Is _1_ isomorphic to [L_1] in [Sch]?
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+      (b) Is it isomorphic to any (other) [L_n]? *)
+  (** ** Solution *)
+  (** (a) No; by (b), it's isomorphic to [L_0], which is clearly not
+          isomorphic to [L_1]. (Though proving this is a pain, because
+          equivalence relations are a pain.  The idea would be to show
+          that for [n <> 0], [f^1] is not equivalent to [f^0], but any
+          morphism which factors through [L_0] sends all paths to
+          equivalent paths, because all paths are equivalent in
+          [L_0].)
 
-Reserved Infix "≅" (at level 70).
+      (b) Yes, _1_ is isomorphic to [L_0]; both have exactly one path,
+          up to path equivalence, and schema morphisms which are the
+          same up to path equivalence are defined to be equivalent.
+          *)
 
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
+  Inductive Loop_Vertex := s.
+  Inductive Loop_Edge : Loop_Vertex -> Loop_Vertex -> Set := f : Loop_Edge s s.
 
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+  Fixpoint count_edges x y (p : path Loop_Edge x y) : ℕ
+    := match p with
+         | NoEdges => 0
+         | AddEdge _ _ p e => 1 + (count_edges p)
+       end.
+
+  Lemma count_edges_prepend x y z (e : Loop_Edge x y) (p : path Loop_Edge y z)
+  : count_edges (prepend p e) = 1 + count_edges p.
+    induction p; simpl in *; intuition.
+  Qed.
+
+  Lemma count_edges_concatenate x y z (p1 : path Loop_Edge x y) (p2 : path Loop_Edge y z)
+  : count_edges (concatenate p1 p2) = count_edges p2 + count_edges p1.
+    revert x p1.
+    induction p2; simpl in *; intuition.
+  Qed.
+
+  (** We have [f^a ≃_n f^b] if and only if [a = b] or [a >= n /\ b >=
+      n]. *)
+  Definition Loop_Equiv (n : ℕ) x y
+  : Relation_Definitions.relation (path Loop_Edge x y)
+    := fun p q => count_edges p = count_edges q
+                  \/ (count_edges p >= n /\ count_edges q >= n).
+
+  Local Notation "x ≃_ n y" := (@Loop_Equiv n x y) (at level 70).
+
+  Hint Extern 1 => etransitivity; (eassumption || (symmetry; eassumption)).
+
+  (** The schema [(Loop, ≃_n)]. *)
+  Definition L (n : ℕ) : Schema.
+    refine {| SVertex := Loop_Vertex;
+              SEdge := Loop_Edge;
+              PathsEquivalent := (@Loop_Equiv n) |};
+    abstract (
+        repeat (intro || split);
+        hnf in *;
+          repeat match goal with
+                   | _ => progress simpl in *
+                   | _ => progress rewrite count_edges_prepend
+                   | [ H0 : _, H1 : _ |- _ ] => progress rewrite H0 in H1
+                   | [ H : _ |- _ ] => progress rewrite H
+                   | _ => progress intuition eauto
+                 end
+      ).
+  Defined.
+
+  (** The schema with one vertex and no arrows. *)
+  Definition SingletonSchema : Schema.
+    refine {| SVertex := unit;
+              SEdge := (fun _ _ => ∅);
+              PathsEquivalent := (fun _ _ => @eq _) |};
+    abstract (repeat (esplit || intro); intuition eauto).
+  Defined.
+
+  (** We build an isomorphism between [L_0] and _1_ .  It sends
+      everything to [NoEdges].  We destruct paths and absurdities and
+      use reflexivity to prove that it's a schema morphism. *)
+  Definition L0_to_singleton : SchemaMorphism (L 0) SingletonSchema.
+    refine (@Build_SchemaMorphism (L 0) SingletonSchema
+                                  (fun _ => tt)
+                                  (fun _ _ _ => NoEdges)
+                                  _).
+    abstract (
+        intros;
+        simpl;
+        apply JMeq_eq;
+        match goal with
+          | [ |- ?a == ?b ] => let a' := fresh in
+                               let b' := fresh in
+                               set (a' := a); set (b' := b);
+          simpl in *;
+            try destruct a';
+          try destruct b'
+        end;
+        try reflexivity;
+        destruct_head_hnf ∅
+      ).
+  Defined.
+
+  Definition singleton_to_L0 : SchemaMorphism SingletonSchema (L 0).
+    refine (@Build_SchemaMorphism SingletonSchema (L 0)
+                                  (fun _ => s)
+                                  (fun _ _ _ => NoEdges)
+                                  _).
+    abstract (
+        intros;
+        hnf in *;
+          subst;
+        intuition
+      ).
+  Defined.
+
+  (** We prove the composition one way is the identity by using the
+      fact that there is only one element of the singleton set, and
+      the fact that having an element of the empty set is an
+      absurdity. *)
+  Lemma singleton_to_L0_to_singleton_id
+  : ComposeSchemaMorphisms L0_to_singleton singleton_to_L0
+    = IdentitySchemaMorphism _.
+    apply SchemaMorphism_Eq;
+    repeat intros [].
+    reflexivity.
+  Qed.
+
+  (** We prove the composition the other way is equivalent to the
+      identity by using the fact that there is only one element of the
+      singleton set, and by using the fact that all paths are
+      equivalent in [L_0]. *)
+  Lemma L0_to_singleton_to_L0_id
+  : SchemaMorphismsEquivalent (ComposeSchemaMorphisms singleton_to_L0 L0_to_singleton)
+                              (IdentitySchemaMorphism _).
+    apply SchemaMorphisms_equivalent;
+    repeat (intros [] || intro);
+    repeat (right || constructor).
+  Qed.
+ End Exercise_4_4_1_6.
+
+(** ------------------------------------------------------------------------ *)

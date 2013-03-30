@@ -102,6 +102,7 @@
 Require Import Utf8.
 Require Import JMeq.
 Require Export Notations.
+Require Import Common.
 
 Set Implicit Arguments.
 
@@ -140,7 +141,8 @@ Arguments Identity {obj%type} [C%category] x%object : rename.
 Arguments Compose {obj%type} [C%category s%object d%object d'%object] m1%morphism m2%morphism : rename.
 
 Infix "o" := (@Compose _ _ _ _ _) : morphism_scope.
-
+Infix "~>" := (@Morphism _ _) : category_scope.
+Infix "~>" := (@Morphism _ _) : type_scope.
 (* create a hint db for all category theory things *)
 Create HintDb category discriminated.
 (* create a hint db for morphisms in categories *)
@@ -159,3 +161,28 @@ Identity Coercion LocallySmallCategory_Category_Id
 : LocallySmallCategory >-> Category.
 Identity Coercion SmallCategory_LocallySmallCategory_Id
 : SmallCategory >-> Category.
+
+(** Version of [Associativity] that avoids going off into the weeds in
+    the presence of unification variables *)
+
+Local Open Scope morphism_scope.
+
+Definition NoEvar T (_ : T) := True.
+
+Lemma AssociativityNoEvar `(C : @Category obj) : forall (o1 o2 o3 o4 : C) (m1 : C.(Morphism) o1 o2)
+  (m2 : C.(Morphism) o2 o3) (m3 : C.(Morphism) o3 o4),
+  NoEvar (m1, m2) \/ NoEvar (m2, m3) \/ NoEvar (m1, m3)
+  -> (m3 o m2) o m1 = m3 o (m2 o m1).
+  intros; apply Associativity.
+Qed.
+
+Ltac noEvar := match goal with
+                 | [ |- context[NoEvar ?X] ] => (has_evar X; fail 1)
+                                                  || cut (NoEvar X); [ intro; tauto | constructor ]
+               end.
+
+Hint Rewrite @AssociativityNoEvar using noEvar : category.
+Hint Rewrite @AssociativityNoEvar using noEvar : morphism.
+
+Ltac try_associativity_quick tac := try_rewrite Associativity tac.
+Ltac try_associativity tac := try_rewrite_by AssociativityNoEvar ltac:(idtac; noEvar) tac.

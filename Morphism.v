@@ -107,3 +107,5 @@ Definition compose X Y Z (f : Y -> Z) (g : X -> Y) := λ x, f (g x).
 Arguments compose [X Y Z] f g x / .
 
 Infix "o" := (@compose _ _ _).
+
+Definition is_injective X Y (f : X -> Y) := forall x y, f x = f y -> x = y.

@@ -7,10 +7,6 @@
 (** printing '★' %\ensuremath{\star}% #&#9733;# *)
 (** printing '⊔' %\ensuremath{\sqcup}% #&#x2294;# *)
 (** printing ⊔ %\ensuremath{\sqcup}% #&#x2294;# *)
-(** printing ∪ %\ensuremath{\cup}% #&cup;# *)
-(** printing '∪' %\ensuremath{\cup}% #&cup;# *)
-(** printing ∩ %\ensuremath{\cap}% #&cap;# *)
-(** printing '∩' %\ensuremath{\cap}% #&cap;# *)
 (** printing 'π' %\ensuremath{\pi}% #&pi;# *)
 (** printing π %\ensuremath{\pi}% #&pi;# *)
 (** printing 'Σ' %\ensuremath{\Sigma}% #&Sigma;# *)
@@ -51,17 +47,11 @@
 (** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
 (** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
 (** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
-(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
 (** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
-(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
-(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
-(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
-(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
-(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -76,14 +66,12 @@
 (** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
 (** printing :> %:\ensuremath{>}% #:># *)
 (** printing ':>' %:\ensuremath{>}% #:># *)
-(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
-(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing _1_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
-(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
-(** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
 (** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
@@ -104,37 +92,87 @@
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
 (** printing ∨ %\ensuremath{\vee}% #&or;# *)
 (** printing ¬ %\ensuremath{\neg}% #&not;# *)
-(** printing ¬( %\ensuremath{\neg}(% #&not;(# *) (* ))) *)
+(** printing ¬( %\ensuremath{\neg}(% #&not;(# *)
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import Setoid JMeq.
+Require Export Category.
+Require Import Common Notations CategoryIsomorphisms.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** * Products *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+Local Open Scope category_scope.
+Local Open Scope morphism_scope.
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+Section category_product.
+  Context `(C : @Category objC).
 
-Reserved Infix "o" (at level 40, left associativity).
+  Variables X Y : C.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  (** Define products by the universal property *)
+  Class is_product (productXY : C) :=
+    {
+      product_fst : Morphism C productXY X;
+      product_snd : Morphism C productXY Y;
+      product_map : forall A (f : A ~> X) (g : A ~> Y), A ~> productXY;
+      product_fst_commutes_prop := (fun A f g product_map =>
+                                      product_fst o product_map = f);
+      product_snd_commutes_prop := (fun A f g product_map =>
+                                      product_snd o product_map = g);
+      product_fst_commutes : forall A f g,
+                               product_fst_commutes_prop A f g (@product_map A f g);
+      product_snd_commutes : forall A f g,
+                               product_snd_commutes_prop A f g (@product_map A f g);
+      product_map_unique : forall A f g product_map',
+                             product_fst_commutes_prop A f g product_map'
+                             -> product_snd_commutes_prop A f g product_map'
+                             -> product_map' = product_map _ f g
+    }.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
+  Class > product :=
+    {
+      product_element :> C;
+      product_is_product :> is_product product_element
 
-Reserved Infix "≅" (at level 70).
+    }.
 
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
+  Global Existing Instance product_is_product.
+End category_product.
 
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+Arguments product_fst_commutes_prop _ _ _ _ _ _ _ _ _ _ / .
+Arguments product_snd_commutes_prop _ _ _ _ _ _ _ _ _ _ / .
+
+Infix "×" := (@product _ _) : object_scope.
+Infix "×" := (@product _ _) : object_type_scope.
+Notation "'π₁'" := (@product_fst _ _ _ _ _ _) : morphism_scope.
+Notation "'π₁'" := (@product_fst _ _ _ _ _ _) : object_scope.
+Notation "'π₂'" := (@product_snd _ _ _ _ _ _) : morphism_scope.
+Notation "'π₂'" := (@product_snd _ _ _ _ _ _) : object_scope.
+
+Section swap_product.
+  Context `(C : @Category objC).
+  (** Define swap via the universal property; note that the object
+      type doesn't change, but the projection maps are switched.  This
+      is because the objects are truely opaque. *)
+
+  Definition swap_product (X Y : C) : (X × Y)%object -> (Y × X)%object :=
+    fun xy =>
+      @Build_product objC C
+                     Y X
+                     (@product_element _ C _ _ xy)
+                     {|
+                       (*productXY := productXY xy;*)
+                       product_fst := π₂;
+                       product_snd := π₁;
+                       product_map := (fun _ f g => product_map _ g f);
+                       product_fst_commutes := (fun _ f g => product_snd_commutes _ g f);
+                       product_snd_commutes := (fun _ f g => product_fst_commutes _ g f);
+                       product_map_unique := (fun _ _ _ _ Hfst Hsnd => product_map_unique Hsnd Hfst)
+                     |}.
+End swap_product.

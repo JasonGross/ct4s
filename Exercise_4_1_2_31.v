@@ -121,9 +121,7 @@ Module Exercise_4_1_2_31.
       v)]?
 
       Here is a picture of the graph [G = (V, A, src, tgt):
-
-<<<
-
+<<
                                 g
                              ________
                v    f     w /        ↘
@@ -137,15 +135,12 @@ Module Exercise_4_1_2_31.
               i |    o y        o z
                  \__/ ↖________/
                           k
-
->>>
+>>
 
       We have [V = {v, w, x, y, z}] and [A = {f, g, h, i, j, k}]. The
       source and target functions [src, tgt : A -> V] can be captured in
       the table to the left below:
-
-<<<
-
+<<
       A || src | tgt                V
       --------------               ---
       f || v   | w                  v
@@ -154,8 +149,7 @@ Module Exercise_4_1_2_31.
       i || y   | y                  y
       j || y   | z                  z
       k || z   | y
-
->>>
+>>
 
    *)
   (** ** Solution *)
@@ -221,7 +215,7 @@ Module Exercise_4_1_2_31.
       negation.  (There-after, the conclusion is proven by unfolding
       definitions, using the axiom that heterogeneous equality implies
       homogeneous equality, and concluding absurdities. *)
-  Lemma Hom_C_x_v_empty_helper : ~Morphism C x v.
+  Lemma Hom_C_x_v_empty_helper : Morphism C x v -> False.
     intro m; hnf in m.
     match goal with
       | [ m : path _ ?a ?b |- _ ] => let a' := fresh in

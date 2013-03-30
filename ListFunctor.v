@@ -108,33 +108,44 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import FunctionalExtensionality.
+Require Export List.
+Require Export Category Functor SetCategory.
+Require Import Common.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** * List Functor *)
+Section ListFunctor.
+  (** For any set [X], there is a set [List(X)] consisting of all
+      lists whose entries are elements of [X]. In fact [List : Set -> Set]
+      is a functor because for any function [f : X -> Y] we can apply it
+      entry-by-entry to a list of [X]'s to get a list of [Y]'s (this was
+      worked out in Exercise 4.1.2.17). But then we can compose [List]
+      with itself to get a functor [ListList : Set -> Set]. Given [X :
+      Ob Set], the set [ListList X] is the set of lists of lists.  For
+      example if [X := {1, 2, 3} then [ListList X] contains [[[1, 2, 3,
+      2], [2, 2] , [], [3]]. *)
 
-Infix "==" := JMeq (at level 70, right associativity).
-
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
-
-Reserved Infix "o" (at level 40, left associativity).
-
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
-
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+  Definition ListFunctor : Functor CategoryOfTypes CategoryOfTypes.
+    refine (Build_Functor CategoryOfTypes CategoryOfTypes
+                          list
+                          map
+                          _
+                          _);
+    abstract (
+        simpl; intros;
+        let x := fresh in
+        apply functional_extensionality_dep; intro x;
+        induction x;
+        trivial;
+        simpl;
+        match goal with
+          | [ H : _ |- _ ] => rewrite H; reflexivity
+        end
+      ).
+  Defined.
+End ListFunctor.

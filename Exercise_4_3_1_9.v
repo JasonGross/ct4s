@@ -108,33 +108,49 @@
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
-Require Import JMeq Ensembles.
+Require Import Utf8.
+Require Import List.
+Require Import ListFunctor NaturalTransformation SetCategory.
+Require Import Common.
 
-Notation "∅" := Datatypes.Empty_set.
+Set Implicit Arguments.
 
-Notation ℕ := nat.
+Generalizable All Variables.
 
-Infix "×" := prod (at level 40, left associativity): type_scope.
+(** ------------------------------------------------------------------------ *)
 
-Infix "==" := JMeq (at level 70, right associativity).
+(** * Exercise 4.3.1.9 *)
+Section Exercise_4_3_1_9.
+  (** ** Problem *)
+  (** Let [List : Set -> Set] be as above. If someone said "singleton
+      lists give a natural transformation from [id_Set] to [List]", what
+      might they mean? Would they be correct? *)
+  (** ** Solution *)
+  (** They mean that for any set [S], you can obtain a function from
+      [id_Set S = S] to [List S] by sending each element to its
+      singleton list, and that this function satisfies the natural
+      transformation commutative square.
 
-Infix "⊔" := sum (at level 50, left associativity) : type_scope.
+      This is true, by unfolding of definitions (that is, β (reduction
+      of functional application), δ (unfolding of transparent
+      constants), ι (reduction of pattern-matching over a constructed
+      term, and unfolding of fix and cofix expressions) and ζ
+      (contraction of local definitions) reductions) and applying
+      reflexivity of equality. *)
 
-Reserved Infix "o" (at level 40, left associativity).
+  Definition SingletonList (S : CategoryOfTypes)
+  : Morphism CategoryOfTypes
+             ((IdentityFunctor CategoryOfTypes) S)
+             (ListFunctor S)
+    := fun x => x :: nil.
 
-(** [Reserved Notation "i ⁻¹" (at level 10).] *)
+  Definition SingletonNaturalTransformation
+  : NaturalTransformation (IdentityFunctor CategoryOfTypes)
+                          ListFunctor.
+    refine {| ComponentsOf := SingletonList |}.
+    compute.
+    reflexivity.
+  Defined.
+End Exercise_4_3_1_9.
 
-(* begin hide *)
-Reserved Notation "i ⁻¹" (at level 10).
-(* end hide *)
-
-Reserved Infix "≅" (at level 70).
-
-Reserved Infix "~>" (at level 90, right associativity).
-Reserved Infix "~~>" (at level 90, right associativity).
-Reserved Infix "~~~>" (at level 90, right associativity).
-
-Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
-Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
-Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
-Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+(** ------------------------------------------------------------------------ *)
