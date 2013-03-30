@@ -1,5 +1,5 @@
 from __future__ import with_statement
-import os
+import os, subprocess, re
 
 file_contents = {}
 file_imports = {}
@@ -94,9 +94,42 @@ def build_pset(pset_n, *file_names):
     global file_imports
     file_contents = {}
     file_imports = {}
+    reg = re.compile('^Exercise_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)(?:.v)?$')
+    extra_file_names = [i for i in file_names if reg.match(i) is None]
+    file_name_data = sorted(tuple(map(int, reg.match(i).groups())) for i in file_names if reg.match(i) is not None)
+    file_names = extra_file_names + ['Exercise_%d_%d_%d_%d.v' % i for i in file_name_data]
     rtn = include_imports(*file_names)
+    lines = rtn.split('\n')
+    printings = '\n'.join([i for i in lines if i[:len('(** printing ')] == '(** printing '])
+    rest = '\n'.join([i for i in lines if i[:len('(** printing ')] != '(** printing '])
     with open('../Homework%d.v' % pset_n, 'w') as f:
-        f.write("(** * Homework %d, By Jason Gross *)\n\n" % pset_n)
-        f.write(rtn)
+        f.write(printings)
+        f.write("\n\n(** * Homework %d, By Jason Gross *)\n\n" % pset_n)
+        f.write(rest)
+    p = subprocess.Popen(['coqc', '-q', '-I', '.', 'Homework%d' % pset_n],
+                         cwd=os.path.abspath('../'),
+                         stderr=subprocess.PIPE,
+                         stdout=subprocess.PIPE)
+    (stdout, stderr) = p.communicate()
+    if stdout:
+        print('Out:')
+        print(stdout)
+    if stderr:
+        print('Error:')
+        print(stderr)
+    p = subprocess.Popen(['coqdoc', '--utf8', '--html', 'Homework%d.v' % pset_n],
+                         cwd=os.path.abspath('../'),
+                         stderr=subprocess.PIPE,
+                         stdout=subprocess.PIPE)
+    (stdout, stderr) = p.communicate()
+    if stdout:
+        print('Out:')
+        print(stdout)
+    if stderr:
+        print('Error:')
+        print(stderr)
+                    
         
 # build_pset(6, 'Exercise_4_1_2_29.v', 'Exercise_4_1_2_28.v', 'Exercise_4_1_2_30.v', 'Exercise_4_1_2_31.v', 'Exercise_4_2_1_10.v', 'Exercise_4_2_1_13.v', 'Exercise_4_2_1_14.v', 'Exercise_4_2_1_16.v', 'Exercise_4_2_3_2.v', 'Exercise_4_2_3_12.v', 'Exercise_4_2_4_3.v', 'Exercise_4_2_4_4.v')
+os.chdir(r'D:\Documents\Dropbox\MIT\2012-2013\18.S996 Category theory for scientists\jasonssubmissions')
+build_pset(7, 'Exercise_4_3_1_10.v', 'Exercise_4_3_1_3.v', 'Exercise_4_3_1_9.v', 'Exercise_4_3_2_5.v', 'Exercise_4_4_1_1.v', 'Exercise_4_4_1_5.v', 'Exercise_4_4_1_6.v', 'Exercise_4_4_1_7.v', 'Exercise_4_5_1_14.v', 'Exercise_4_5_1_16.v', 'Exercise_4_5_1_28.v', 'Exercise_4_5_1_4.v')
