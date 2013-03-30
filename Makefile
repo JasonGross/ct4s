@@ -1,6 +1,6 @@
 VS := $(shell ls *.v)
 
-.PHONY: coq clean html
+.PHONY: coq clean html zip
 
 coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
@@ -14,9 +14,7 @@ clean:: Makefile.coq
 
 html:: Makefile.coq
 	$(MAKE) -f Makefile.coq html
-
-index: html
 	python ./make-index.py
 
-zip: html index
+zip: html
 	zip jasonssubmissions.zip html/ html/* *.v index.html Makefile 2013*.pdf
