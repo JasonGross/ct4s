@@ -122,7 +122,11 @@ Generalizable All Variables.
 (** * Exercise 4.4.1.1 *)
 Module Exercise_4_4_1_1.
   (** ** Problem *)
-  (** Let [[2]] denote the linear order graph of length 2 (see
+  (** Note: This is an out-dated version of the problem statement,
+      which requires that the maps be injective as graph
+      homomorphisms, rather than just injective on edges.
+
+      Let [[2]] denote the linear order graph of length 2 (see
       Exercise 4.1.1.8 and Proposition 4.1.2.6), and let [Loop] denote
       the unique graph having one vertex and one arrow (pictured in
       Diagram (3.15)).
