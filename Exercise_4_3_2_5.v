@@ -123,7 +123,7 @@ Generalizable All Variables.
 Section Exercise_4_3_2_5.
   (** ** Problem *)
   (** Let [C := {A}] be the category with [Ob C = {A}], and
-      [Hom_C(A,A) = {id_A}. What is [Fun(C, Set)]? In particular,
+      [Hom_C(A,A) = {id_A}]. What is [Fun(C, Set)]? In particular,
       characterize the objects and the morphisms. *)
   (** ** Solution *)
   (** The objects are functors [C -> Set], which can be identified
