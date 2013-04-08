@@ -161,6 +161,48 @@ Section Functors_Equal.
   Lemma Functor_Eq objC C objD D :
     forall (F G : @Functor objC C objD D),
       (forall x, ObjectOf F x = ObjectOf G x)
+      -> (forall H : (forall x, ObjectOf F x = ObjectOf G x),
+          forall s d m, match H s in (_ = y) return y ~> G d with
+                          | eq_refl => match H d in (_ = y) return F s ~> y with
+                                         | eq_refl => MorphismOf F (s := s) (d := d) m
+                                       end
+                        end
+                        = MorphismOf G (s := s) (d := d) m)
+      -> F = G.
+    intros.
+    assert (H' : ObjectOf F = ObjectOf G)
+      by (apply functional_extensionality_dep; assumption);
+      pose F as F'; pose G as G';
+      destruct F, G;
+      simpl in *;
+      intuition.
+    assert (match H' in (_ = y) return ∀ s d : objC, (s ~> d) → y s ~> y d with
+              | eq_refl => MorphismOf F'
+            end
+            = MorphismOf G');
+      [ repeat (apply functional_extensionality_dep; intro); subst_body; simpl in *
+      | ].
+    - rewrite <- (H0 H).
+      clear.
+      subst.
+      repeat match goal with
+               | [ |- appcontext[match ?f ?x with _ => _ end] ] => generalize (f x); clear; intros
+             end.
+      repeat match goal with
+               | [ H : ?x = ?x |- _ ] => assert (H = eq_refl) by apply ProofIrrelevance.proof_irrelevance;
+                                        subst H
+             end.
+      reflexivity.
+    - subst_body.
+      simpl in *.
+      repeat subst.
+      f_equal;
+        apply ProofIrrelevance.proof_irrelevance.
+  Qed.
+
+  Lemma Functor_Eq_by_JMeq objC C objD D :
+    forall (F G : @Functor objC C objD D),
+      (forall x, ObjectOf F x = ObjectOf G x)
       -> (ObjectOf F = ObjectOf G
           -> forall s d m, MorphismOf F (s := s) (d := d) m
                            == MorphismOf G (s := s) (d := d) m)
@@ -184,6 +226,15 @@ Section Functors_Equal.
   Qed.
 End Functors_Equal.
 
+Ltac functor_eq :=
+  simpl;
+  repeat intro;
+  simpl;
+  apply Functor_Eq;
+  intros;
+  subst_eq_refl_in_match;
+  try easy.
+
 Section FunctorComposition.
   Context `(B : @Category objB).
   Context `(C : @Category objC).
@@ -204,6 +255,8 @@ Section FunctorComposition.
   Defined.
 End FunctorComposition.
 
+Infix "o" := (@ComposeFunctors _ _ _ _ _ _) : functor_scope.
+
 Section IdentityFunctor.
   Context `(C : @Category objC).
 
@@ -222,12 +275,12 @@ Section IdentityFunctorLemmas.
 
   Lemma LeftIdentityFunctor (F : Functor D C)
   : ComposeFunctors (IdentityFunctor _) F = F.
-    apply Functor_Eq; reflexivity.
+    functor_eq.
   Qed.
 
   Lemma RightIdentityFunctor (F : Functor C D)
   : ComposeFunctors F (IdentityFunctor _) = F.
-    apply Functor_Eq; reflexivity.
+    functor_eq.
   Qed.
 End IdentityFunctorLemmas.
 
@@ -248,7 +301,7 @@ Section FunctorCompositionLemmas.
         (H : Functor D E)
   : ComposeFunctors (ComposeFunctors H G) F
     = ComposeFunctors H (ComposeFunctors G F).
-    apply Functor_Eq; reflexivity.
+    functor_eq.
    Qed.
 End FunctorCompositionLemmas.
 

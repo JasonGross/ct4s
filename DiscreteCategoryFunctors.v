@@ -141,12 +141,15 @@ Notation ObjectFunctorTo Index2Object Index2Cat Sets :=
 Section Obj.
   Definition ObjectFunctor I (Index2Object : I -> Type)
              `(Index2Cat : forall i : I, @Category (@Index2Object i))
+  : Functor _ CategoryOfTypes
     := ObjectFunctorTo Index2Object Index2Cat Type.
   Definition ObjectFunctorToSet I (Index2Object : I -> Set)
              `(Index2Cat : forall i : I, @Category (@Index2Object i))
+  : Functor _ CategoryOfSets
     := ObjectFunctorTo Index2Object Index2Cat Set.
   Definition ObjectFunctorToProp I (Index2Object : I -> Prop)
              `(Index2Cat : forall i : I, @Category (@Index2Object i))
+  : Functor _ CategoryOfProps
     := ObjectFunctorTo Index2Object Index2Cat Prop.
 End Obj.
 
@@ -180,9 +183,8 @@ Section InducedFunctor.
 End InducedFunctor.
 
 Section disc.
-  Local Ltac t := simpl; intros; apply Functor_Eq; simpl; intros;
-                  repeat (apply functional_extensionality_dep; intro);
-                  hnf in *; subst;
+  Local Ltac t := functor_eq;
+                  subst;
                   auto.
 
   Definition DiscreteFunctor : Functor CategoryOfTypes CategoryOfCategories.
@@ -208,6 +210,6 @@ End disc.
 
 Section DiscreteAdjoints.
   Lemma DiscreteObjectIdentity : ComposeFunctors ObjectFunctor DiscreteFunctor = IdentityFunctor _.
-    apply Functor_Eq; repeat intro; simpl; reflexivity.
+    functor_eq.
   Qed.
 End DiscreteAdjoints.

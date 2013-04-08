@@ -209,13 +209,13 @@ Section sig_obj.
     = IdentityFunctor _
     /\ ComposeFunctors sig_functor_obj_inv sig_functor_obj
        = IdentityFunctor _.
-    split; apply Functor_Eq; intros; destruct_sig; destruct_head True; reflexivity.
+    split; functor_eq; destruct_sig; destruct_head True; reflexivity.
   Qed.
 
   Lemma sig_obj_compat
   : ComposeFunctors proj1_sig_obj_functor sig_functor_obj
     = proj1_sig_functor.
-    apply Functor_Eq; reflexivity.
+    functor_eq.
   Qed.
 End sig_obj.
 
@@ -280,12 +280,14 @@ Section sig_mor.
   Lemma sig_mor_eq
   : ComposeFunctors sig_functor_mor sig_functor_mor_inv = IdentityFunctor _
     /\ ComposeFunctors sig_functor_mor_inv sig_functor_mor = IdentityFunctor _.
-    split; apply Functor_Eq; intros; destruct_sig; destruct_head True; reflexivity.
+    split; apply Functor_Eq; repeat intro; destruct_sig; destruct_head True;
+    subst_eq_refl_in_match;
+    reflexivity.
   Qed.
 
   Lemma sig_mor_compat
   : ComposeFunctors proj1_sig_mor_functor sig_functor_mor = proj1_sig_functor.
-    apply Functor_Eq; reflexivity.
+    functor_eq.
   Qed.
 End sig_mor.
 

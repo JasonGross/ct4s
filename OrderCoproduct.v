@@ -149,6 +149,6 @@ Section relation_coproduct.
          match (xx, yy) as p return {(R + R')%relation (fst p) (snd p)} + {~(R + R')%relation (fst p) (snd p)} with
            | (inl _, inl _) => H _ _
            | (inr _, inr _) => H' _ _
-           | (_, _) => right (@id False)
+           | (_, _) => right (fun x : False => x)
          end.
 End relation_coproduct.

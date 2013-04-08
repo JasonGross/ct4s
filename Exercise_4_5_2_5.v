@@ -62,6 +62,7 @@
 (** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
 (** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
 (** printing o %\ensuremath{\circ}% #&#x25cb;# *)
@@ -84,6 +85,7 @@
 (** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
 (** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
+(** printing ℙ %\ensuremath{\mathbb{P}}% #&#x2119;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
 (** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
@@ -109,9 +111,8 @@
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import FunctionalExtensionality.
-Require Import NaturalTransformation FunctorCategory InitialTerminalCategory SetCategory Isomorphism.
-Require Import Common FEqualDep.
+Require Import ChainCategory Functor.
+Require Import Common Notations.
 
 Set Implicit Arguments.
 
@@ -119,67 +120,128 @@ Generalizable All Variables.
 
 (** ------------------------------------------------------------------------ *)
 
-(** * Exercise 4.3.2.5 *)
-Section Exercise_4_3_2_5.
+(** * Exercise 4.5.2.5 *)
+Module Exercise_4_5_2_5.
+  Local Open Scope category_scope.
+  Local Open Scope morphism_scope.
   (** ** Problem *)
-  (** Let [C := {A}] be the category with [Ob C = {A}], and
-      [Hom_C(A,A) = {id_A}]. What is [Fun(C, Set)]? In particular,
-      characterize the objects and the morphisms. *)
+  (** Let [C] be a category, [A : Ob C] an object, and [f : A -> A] a
+      morphism in [C]. Consider the two diagrams in [C] drawn below:
+
+<<
+        f    f    f
+      A -> A -> A -> ...
+
+          _
+         / \
+      f |   A
+         \_↗
+>>
+
+      (a) Should these two diagrams have the same indexing category?
+
+      (b) If they should have the same indexing category, what is
+          causing or allowing the pictures to appear different?
+
+      (c) If they should not have the same indexing category, what
+          coincidence makes the two pictures have so much in common? *)
   (** ** Solution *)
-  (** The objects are functors [C -> Set], which can be identified
-      with sets, and the morphisms are natural transformations, which
-      can be identified with functions in [Set]. *)
-  Let C := TerminalCategory.
-  Let FunCSet := FunctorCategory C CategoryOfSets.
-  Eval hnf in Object FunCSet.
-  (** [Functor C CategoryOfSets] *)
-  Eval hnf in Morphism FunCSet.
-  (** [NaturalTransformation (C:=C) (D:=CategoryOfSets)] *)
+  (** (a) No.
 
-  (** The objects of [Fun(C, Set)] are functors from [C] to [Set],
-      which are just [Set]s.  The functions of the isomorphism are
-      "evaluation of [F : C -> Set] on the unique element of [C]" and
-      "sending a set [S] to the unique functor from [C] to [Set]
-      defined by sending everything to [S]".  The proof of isomorphism
-      goes by unfolding definitions, applying the definition of what
-      it means for functors to be equal (that they're equal on objects
-      and morphisms), and using the fact that [F id_x = id_{F x}] for
-      all functors [F]. *)
-  Lemma FunCSet_Iso_Set : Object FunCSet ≅ Set.
-    refine {| isomorphic_morphism := (fun F : FunCSet => F tt) |}.
-    refine {| isomorphism_inverse := (fun S : Set => FunctorFromTerminal CategoryOfSets S) |};
-      abstract (repeat (reflexivity
-                          || intros []
-                          || intro
-                          || apply Functor_Eq
-                          || rewrite FIdentityOf
-                          || subst_eq_refl_in_match
-                          || compute)).
+      (b) N/A
+
+      (c) The left/first diagram factors through the right/second one.
+      *)
+
+  Parameter objC : Type.
+  Parameter C : @Category objC.
+  Parameter A : C.
+  Parameter f : Morphism C A A.
+
+  (** There is a category loop with one object and a morphism for
+      every natural number from that object to itself.  We use [+] for
+      composition, and [0] for the identity, and let the [omega]
+      tactic take care of goals about natural numbers. *)
+  Definition NatGroup : @Category unit.
+    refine (@Build_Category unit
+                            (fun _ _ => ℕ)
+                            (fun _ => 0)
+                            (fun _ _ _ => plus)
+                            _
+                            _
+                            _);
+    abstract (intros; omega).
   Defined.
 
-  (** The morphisms of [Fun(C, Set)] from [X] to [Y] are natural
-      transformations from [X] to [Y], which (treating [X] and [Y] as
-      sets as per above, are just functions [X -> Y]. This is proven
-      by unfolding definitions, applying the definition of equality of
-      natural transformations (equality on components), applying the
-      fact that there is only one element in [C], rewriting with the
-      fact that [F id_X = id_{F X}] for all functors [F], and applying
-      reflexivity of equality. *)
-  Lemma FunCSet_Hom_Iso_Set (X Y : FunCSet)
-        (X' := FunCSet_Iso_Set X)
-        (Y' := FunCSet_Iso_Set Y)
-  : Morphism FunCSet X Y ≅ (X' -> Y').
-    refine {| isomorphic_morphism := (fun T : NaturalTransformation X Y => T tt) |}.
-    refine {| isomorphism_inverse := (fun f : X' -> Y' => Build_NaturalTransformation X Y
-                                                                                      (fun x => match x with tt => f end)
-                                                                                      _) |};
-      intros;
-      try apply NaturalTransformation_Eq;
-      simpl;
-      abstract (repeat (reflexivity || intros [])).
-    Grab Existential Variables.
-    abstract (intros [] ? []; simpl; repeat rewrite FIdentityOf; reflexivity).
+  (** The indexing category of the left/first diagram is [ω], the
+      category [0 -> 1 -> 2 -> 3 -> ...], which has one object for
+      each natural number and a morphism [n -> m] if [n <= m]. *)
+
+  Definition FirstIndex : Category := [ω].
+
+  (** The indexing category of the right/second diagram is a category
+      with one object, and one morphism from that object to itself for
+      each natural number. *)
+
+  Definition SecondIndex : Category := NatGroup.
+
+  Fixpoint SecondDiagram_MorphismOf (n : ℕ) : Morphism C A A
+    := match n with
+         | O => Identity A
+         | S n' => Compose (SecondDiagram_MorphismOf n') f
+       end.
+
+  (** We prove that the [MorphismOf] that we defined above commutes
+      with composition with [f], by induction. *)
+
+  Lemma SecondDiagram_MorphismOf_commut n : f o SecondDiagram_MorphismOf n = SecondDiagram_MorphismOf n o f.
+    induction n; simpl;
+    autorewrite with category;
+    repeat rewrite <- Associativity;
+    try apply f_equal2;
+    intuition.
+  Qed.
+
+  (** The second diagram (with a single object) sends the morphism [n]
+      to [f^n].  This is a functor because [f^n o f^m = f^{n+m}],
+      which we prove by induction and using the above commutativity
+      law. *)
+
+  Definition SecondDiagram : Functor SecondIndex C.
+    refine (Build_Functor SecondIndex C
+                          (fun _ => A)
+                          (fun _ _ => SecondDiagram_MorphismOf)
+                          _
+                          _);
+    abstract (repeat match goal with
+                       | _ => reflexivity
+                       | [ |- ?T -> _ ] => match eval hnf in T with
+                                             | unit => intros []
+                                             | ℕ => let H := fresh in intro H; induction H
+                                           end
+                       | [ H : _ |- _ ] => simpl in H |- *; rewrite H
+                       | _ => progress (simpl in *; autorewrite with category; reflexivity)
+                       | _ => progress repeat rewrite <- Associativity
+                       | [ |- _ = ?a o ?b o ?c o ?d ] => transitivity (a o (b o c) o d);
+                       try (repeat rewrite Associativity; reflexivity);
+                       rewrite SecondDiagram_MorphismOf_commut
+                     end).
   Defined.
-End Exercise_4_3_2_5.
+
+  (** The first diagram factors through the first, by way of a
+      morphism which sends the arrow [m -> n] to [n - m]. *)
+
+  Definition FirstDiagram_helper : Functor FirstIndex SecondIndex.
+    refine (Build_Functor FirstIndex SecondIndex
+                          (fun _ => tt)
+                          (fun m n _ => n - m)
+                          _
+                          _);
+    abstract (intros; simpl in *; omega).
+  Defined.
+
+  Definition FirstDiagram : Functor FirstIndex C
+    := (SecondDiagram o FirstDiagram_helper)%functor.
+End Exercise_4_5_2_5.
 
 (** ------------------------------------------------------------------------ *)

@@ -122,10 +122,10 @@ Class IsGroup G' (G : ComputationalGroup G') : Prop :=
 
 Existing Instance GroupIsMonoid.
 
-Record Group (G : Type) :=
+Record > Group (G : Type) :=
   {
     cgroup :> ComputationalGroup G;
-    is_group : IsGroup cgroup
+    is_group :> IsGroup cgroup
   }.
 
 (** [Notation "i ⁻¹" := (@group_inverse _ _ i) (at level 10) : type_scope.] *)

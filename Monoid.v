@@ -121,6 +121,11 @@ Class IsMonoid (M : Type) (cmonoid : ComputationalMonoid M) : Prop :=
     assoc : forall a b c : cmonoid, (a ★ b) ★ c = a ★ (b ★ c)
   }.
 
+Create HintDb monoid discriminated.
+Hint Resolve left_id right_id : monoid.
+Hint Immediate @assoc @left_id @right_id : monoid.
+Hint Rewrite @left_id @right_id using typeclasses eauto : monoid.
+
 Record Monoid (M : Type) :=
   {
     cmonoid :> ComputationalMonoid M;

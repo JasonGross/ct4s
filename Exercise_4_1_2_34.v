@@ -158,6 +158,7 @@ Section Exercise_4_1_2_34.
                  induction x0;
                  simpl;
                  omega
+             | _ => simpl; apply ProofIrrelevance.proof_irrelevance
            end.
   Qed.
 End Exercise_4_1_2_34.

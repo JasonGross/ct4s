@@ -7,10 +7,6 @@
 (** printing '★' %\ensuremath{\star}% #&#9733;# *)
 (** printing '⊔' %\ensuremath{\sqcup}% #&#x2294;# *)
 (** printing ⊔ %\ensuremath{\sqcup}% #&#x2294;# *)
-(** printing ∪ %\ensuremath{\cup}% #&cup;# *)
-(** printing '∪' %\ensuremath{\cup}% #&cup;# *)
-(** printing ∩ %\ensuremath{\cap}% #&cap;# *)
-(** printing '∩' %\ensuremath{\cap}% #&cap;# *)
 (** printing 'π' %\ensuremath{\pi}% #&pi;# *)
 (** printing π %\ensuremath{\pi}% #&pi;# *)
 (** printing 'Σ' %\ensuremath{\Sigma}% #&Sigma;# *)
@@ -56,10 +52,6 @@
 (** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
 (** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
 (** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
-(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
-(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
-(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
-(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
 (** printing ≅ %\ensuremath{\cong}% #&cong;# *)
 (** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
 (** printing λ %\ensuremath{\lambda}% #&lambda;# *)
@@ -83,7 +75,6 @@
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
 (** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
-(** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
 (** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
 (** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
 (** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
@@ -104,82 +95,43 @@
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
 (** printing ∨ %\ensuremath{\vee}% #&or;# *)
 (** printing ¬ %\ensuremath{\neg}% #&not;# *)
-(** printing ¬( %\ensuremath{\neg}(% #&not;(# *) (* ))) *)
+(** printing ¬( %\ensuremath{\neg}(% #&not;(# *)
 (* must \usepackage{mathabx} in LaTeX *)
 (** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
 
 Require Import Utf8.
-Require Import FunctionalExtensionality.
-Require Import NaturalTransformation FunctorCategory InitialTerminalCategory SetCategory Isomorphism.
-Require Import Common FEqualDep.
+Require Export Category Functor.
+Require Import Common.
 
 Set Implicit Arguments.
 
 Generalizable All Variables.
 
-(** ------------------------------------------------------------------------ *)
+(** * Indiscrete Category *)
 
-(** * Exercise 4.3.2.5 *)
-Section Exercise_4_3_2_5.
-  (** ** Problem *)
-  (** Let [C := {A}] be the category with [Ob C = {A}], and
-      [Hom_C(A,A) = {id_A}]. What is [Fun(C, Set)]? In particular,
-      characterize the objects and the morphisms. *)
-  (** ** Solution *)
-  (** The objects are functors [C -> Set], which can be identified
-      with sets, and the morphisms are natural transformations, which
-      can be identified with functions in [Set]. *)
-  Let C := TerminalCategory.
-  Let FunCSet := FunctorCategory C CategoryOfSets.
-  Eval hnf in Object FunCSet.
-  (** [Functor C CategoryOfSets] *)
-  Eval hnf in Morphism FunCSet.
-  (** [NaturalTransformation (C:=C) (D:=CategoryOfSets)] *)
+Section IndiscreteCategory.
+  (** The indiscrete category has exactly one morphism between any two objects. *)
+  Variable O : Type.
 
-  (** The objects of [Fun(C, Set)] are functors from [C] to [Set],
-      which are just [Set]s.  The functions of the isomorphism are
-      "evaluation of [F : C -> Set] on the unique element of [C]" and
-      "sending a set [S] to the unique functor from [C] to [Set]
-      defined by sending everything to [S]".  The proof of isomorphism
-      goes by unfolding definitions, applying the definition of what
-      it means for functors to be equal (that they're equal on objects
-      and morphisms), and using the fact that [F id_x = id_{F x}] for
-      all functors [F]. *)
-  Lemma FunCSet_Iso_Set : Object FunCSet ≅ Set.
-    refine {| isomorphic_morphism := (fun F : FunCSet => F tt) |}.
-    refine {| isomorphism_inverse := (fun S : Set => FunctorFromTerminal CategoryOfSets S) |};
-      abstract (repeat (reflexivity
-                          || intros []
-                          || intro
-                          || apply Functor_Eq
-                          || rewrite FIdentityOf
-                          || subst_eq_refl_in_match
-                          || compute)).
-  Defined.
+  Definition IndiscreteCategory : @Category O
+    := @Build_Category O
+                       (fun _ _ => unit)
+                       (fun _ => tt)
+                       (fun _ _ _ _ _ => tt)
+                       (fun _ _ _ _ _ _ _ => eq_refl)
+                       (fun _ _ f => match f with tt => eq_refl end)
+                       (fun _ _ f => match f with tt => eq_refl end).
+End IndiscreteCategory.
 
-  (** The morphisms of [Fun(C, Set)] from [X] to [Y] are natural
-      transformations from [X] to [Y], which (treating [X] and [Y] as
-      sets as per above, are just functions [X -> Y]. This is proven
-      by unfolding definitions, applying the definition of equality of
-      natural transformations (equality on components), applying the
-      fact that there is only one element in [C], rewriting with the
-      fact that [F id_X = id_{F X}] for all functors [F], and applying
-      reflexivity of equality. *)
-  Lemma FunCSet_Hom_Iso_Set (X Y : FunCSet)
-        (X' := FunCSet_Iso_Set X)
-        (Y' := FunCSet_Iso_Set Y)
-  : Morphism FunCSet X Y ≅ (X' -> Y').
-    refine {| isomorphic_morphism := (fun T : NaturalTransformation X Y => T tt) |}.
-    refine {| isomorphism_inverse := (fun f : X' -> Y' => Build_NaturalTransformation X Y
-                                                                                      (fun x => match x with tt => f end)
-                                                                                      _) |};
-      intros;
-      try apply NaturalTransformation_Eq;
-      simpl;
-      abstract (repeat (reflexivity || intros [])).
-    Grab Existential Variables.
-    abstract (intros [] ? []; simpl; repeat rewrite FIdentityOf; reflexivity).
-  Defined.
-End Exercise_4_3_2_5.
+Section FunctorToIndiscrete.
+  Variable O : Type.
+  Context `(C : @Category objC).
+  Variable objOf : objC -> O.
 
-(** ------------------------------------------------------------------------ *)
+  Definition FunctorToIndiscrete : Functor C (IndiscreteCategory O)
+    := Build_Functor C (IndiscreteCategory O)
+                     objOf
+                     (fun _ _ _ => tt)
+                     (fun _ _ _ _ _ => eq_refl)
+                     (fun _ => eq_refl).
+End FunctorToIndiscrete.

@@ -125,7 +125,7 @@ Section nat_le_order.
 End nat_le_order.
 
 (** ** The order "divides" *)
-Definition divides n m := exists p, m = p * n.
+Definition divides n m := exists p, m = (p * n)%nat.
 Notation "( x | y )" := (divides x y) (at level 0) : nat_scope.
 
 Create HintDb nat_orders discriminated.
@@ -135,6 +135,8 @@ Hint Rewrite mult_assoc plus_assoc mult_0_r plus_0_r : nat_orders_simple.
 Hint Rewrite mult_assoc plus_assoc mult_0_r plus_0_r mult_plus_distr_l : nat_orders.
 
 Section nat_le_div.
+  Local Open Scope nat_scope.
+
   Local Ltac t := repeat ((abstract omega)
                             || (simpl in *; cbv beta iota zeta delta -[mult plus] in *; idtac)
                             || intro
@@ -217,7 +219,7 @@ Section nat_le_div.
           subst x'
         end;
         match goal with
-          | [ H : ?x * S ?x' = ?x0 * S ?x' + _ |- _ ] =>
+          | [ H : (?x * S ?x' = ?x0 * S ?x' + _)%nat |- _ ] =>
             assert (x < S x0) by (apply (Nat.mul_lt_mono_pos_r (S x')); simpl; omega);
           assert (x0 < x) by (apply (Nat.mul_lt_mono_pos_r (S x')); simpl; omega);
           omega

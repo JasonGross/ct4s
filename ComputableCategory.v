@@ -127,7 +127,7 @@ Section ComputableCategory.
                             _
                             _
                             _);
-    abstract (intros; apply Functor_Eq; reflexivity).
+    abstract functor_eq.
   Defined.
 End ComputableCategory.
 

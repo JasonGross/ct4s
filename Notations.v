@@ -138,3 +138,9 @@ Notation "x ∈ X" := (Ensembles.In _ X x) (at level 50, no associativity).
 Notation "A ∩ B" := (Ensembles.Intersection _ A B) (at level 50, no associativity).
 Notation "A ∪ B" := (Ensembles.Union _ A B) (at level 50, no associativity).
 Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity).
+
+(* I'm not terribly happy with this notation, but '('s don't work
+   because they interfere with things like [prod]s and grouping,
+   and '['s interfere with list notation in Program. *)
+Reserved Notation "F ⟨ c , - ⟩" (at level 70, no associativity).
+Reserved Notation "F ⟨ - , d ⟩" (at level 70, no associativity).
