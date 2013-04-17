@@ -138,3 +138,5 @@ Section InitialTerminalFunctors.
   Definition FunctorFromInitial : Functor InitialCategory C
     := Build_Functor InitialCategory C (fun x => match x with end) (fun x _ _ => match x with end) (fun x _ _ _ _ => match x with end) (fun x => match x with end).
 End InitialTerminalFunctors.
+
+Coercion FunctorFromTerminal : Object >-> Functor.

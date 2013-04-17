@@ -117,16 +117,16 @@ Section category_isomorphisms.
 
   (* [m'] is the inverse of [m] if both compositions are
      equivalent to the relevant identity morphisms. *)
-  Definition IsInverseOf'1 s d (m : C.(Morphism) s d) (m' : C.(Morphism) d s) : Prop
+  Definition IsInverseOf1 s d (m : C.(Morphism) s d) (m' : C.(Morphism) d s) : Prop
     := m' o m = Identity s.
-  Definition IsInverseOf'2 s d (m : C.(Morphism) s d) (m' : C.(Morphism) d s) : Prop
+  Definition IsInverseOf2 s d (m : C.(Morphism) s d) (m' : C.(Morphism) d s) : Prop
     := m o m' = Identity d.
 
-  Global Arguments IsInverseOf'1 / _ _ _ _.
-  Global Arguments IsInverseOf'2 / _ _ _ _.
+  Global Arguments IsInverseOf1 / _ _ _ _.
+  Global Arguments IsInverseOf2 / _ _ _ _.
 
   Definition IsInverseOf {s d} (m : C.(Morphism) s d) (m' : C.(Morphism) d s) : Prop
-    := Eval simpl in @IsInverseOf'1 s d m m' /\ @IsInverseOf'2 s d m m'.
+    := Eval simpl in @IsInverseOf1 s d m m' /\ @IsInverseOf2 s d m m'.
 
   Lemma IsInverseOf_sym s d m m' : @IsInverseOf s d m m' -> @IsInverseOf d s m' m.
     firstorder.
@@ -327,3 +327,36 @@ Notation "i ⁻¹" := (Inverse i) : morphism_scope.
 (* end hide *)
 
 Infix "≅" := (@Isomorphism _ _) : category_scope.
+
+Arguments IsomorphismOf {_ C} [s d] m.
+Arguments IsIsomorphism {_ C} [s d] m.
+
+Ltac eapply_by_compose H :=
+  match goal with
+    | [ |- @eq (@Morphism ?obj ?mor ?C) _ _ ] => eapply (H obj mor C)
+    | [ |- @Compose ?obj ?mor ?C _ _ _ _ _ = _ ] => eapply (H obj mor C)
+    | [ |- _ = @Compose ?obj ?mor ?C _ _ _ _ _ ] => eapply (H obj mor C)
+    | _ => eapply H
+    | [ C : @Category ?obj ?mor |- _ ] => eapply (H obj mor C)
+    | [ C : ?T |- _ ] => match eval hnf in T with | @Category ?obj ?mor => eapply (H obj mor C) end
+  end.
+
+Ltac solve_isomorphism := destruct_hypotheses;
+  solve [ eauto ] ||
+    match goal with
+      | [ _ : Compose ?x ?x' = Identity _ |- IsIsomorphism ?x ] => solve [ exists x'; hnf; eauto ]
+      | [ _ : Compose ?x ?x' = Identity _ |- Isomorphism ?x ] => solve [ exists x'; hnf; eauto ]
+      | [ _ : Compose ?x ?x' = Identity _ |- IsomorphismOf ?x ] => solve [ exists x'; hnf; eauto ]
+      | [ _ : Compose ?x ?x' = Identity _ |- context[Compose ?x _ = Identity _] ] => solve [ try exists x'; hnf; eauto ]
+    end.
+
+(* [eapply] the theorem to get a pre/post composed mono/epi, then find the right one by looking
+   for an [Identity], then solve the requirement that it's an isomorphism *)
+Ltac post_compose_to_identity :=
+  eapply_by_compose @iso_is_epi;
+  [ | repeat rewrite AssociativityNoEvar by noEvar; find_composition_to_identity; rewrite RightIdentity ];
+  [ solve_isomorphism | ].
+Ltac pre_compose_to_identity :=
+  eapply_by_compose @iso_is_mono;
+  [ | repeat rewrite <- AssociativityNoEvar by noEvar; find_composition_to_identity; rewrite LeftIdentity ];
+  [ solve_isomorphism | ].

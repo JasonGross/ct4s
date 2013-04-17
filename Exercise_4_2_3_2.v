@@ -184,7 +184,7 @@ Section Exercise_4_2_3_2.
     hnf in m, m'.
     simpl in *.
     destruct m as [ f c ]; simpl in *.
-    repeat unfold In, inverse_image in *.
+    repeat unfold Ensembles.In, inverse_image in *.
     intuition.
   Qed.
 

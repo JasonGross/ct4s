@@ -132,7 +132,7 @@ Section subspace_topology.
   Local Ltac subspace_t :=
     try apply Extensionality_Ensembles; hnf;
     repeat split; simpl in *; hnf in *;
-    destruct_hypotheses; unfold In in *; simpl in *;
+    destruct_hypotheses; unfold Ensembles.In in *; simpl in *;
     destruct_head_hnf @Intersection;
     auto;
     specialize_all_ways;
@@ -170,7 +170,7 @@ Section subspace_topology.
     - refine (ex_intro _ (exist _ (Empty_set _) _) _)...
     - (*setoid_rewrite <- subset_ensemble_union;
       intros; esplit;
-      apply Extensionality_Ensembles; split; intros ? ?; destruct_sets; unfold In in *; simpl in *;
+      apply Extensionality_Ensembles; split; intros ? ?; destruct_sets; unfold Ensembles.In in *; simpl in *;
       destruct_sets; intuition; unfold Included in *;
       try remove_proj1_sig_evar;
       try constructor; intuition; try eassumption;
@@ -182,8 +182,8 @@ Section subspace_topology.
       intros A B HA HB; destruct HA as [ UA HA ], HB as [ UB HB ];
       rewrite HA, HB;
       refine (ex_intro _ (exist _ (Intersection _ _ _) _) _); simpl;
-      apply Extensionality_Ensembles; split; intros ? ?; destruct_sets; unfold In in *; simpl in *;
-      repeat constructor; try assumption; unfold In in *; [ | | eassumption | eassumption ]; assumption.
+      apply Extensionality_Ensembles; split; intros ? ?; destruct_sets; unfold Ensembles.In in *; simpl in *;
+      repeat constructor; try assumption; unfold Ensembles.In in *; [ | | eassumption | eassumption ]; assumption.
       Grab Existential Variables.
       abstract (destruct_sig; simpl; auto with topology).
       abstract (destruct_sig; simpl; auto with topology).

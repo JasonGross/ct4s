@@ -115,10 +115,10 @@ Section CategoryObjects1.
   Context `(C : @Category obj).
 
   Definition UniqueUpToUniqueIsomorphism' (P : C.(Object) -> Prop) : Prop :=
-    forall x, P x -> forall x', P x' -> exists m : C.(Morphism) x x', IsIsomorphism C m /\ is_unique m.
+    forall x, P x -> forall x', P x' -> exists m : C.(Morphism) x x', IsIsomorphism m /\ is_unique m.
 
   Definition UniqueUpToUniqueIsomorphism (P : C.(Object) -> Type) :=
-    forall x, P x -> forall x', P x' -> { m : C.(Morphism) x x' | IsIsomorphism C m & is_unique m }.
+    forall x, P x -> forall x', P x' -> { m : C.(Morphism) x x' | IsIsomorphism m & is_unique m }.
 
   Section terminal.
     (* A terminal object is an object with a unique morphism from every other object. *)

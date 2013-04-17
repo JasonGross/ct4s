@@ -125,10 +125,6 @@ Create HintDb topology discriminated.
 
 Delimit Scope topology_scope with topology.
 
-Notation "x ∈ X" := (In _ X x) (at level 50, no associativity) : topology_scope.
-Notation "A ∩ B" := (Intersection _ A B) (at level 50, no associativity) : topology_scope.
-Notation "A ⊆ B" := (Included _ A B) (at level 50, no associativity) : topology_scope.
-
 Local Open Scope topology_scope.
 
 Section inclusion.
@@ -263,7 +259,7 @@ Lemma subset_ensemble_iff1 U V W
 : forall x H, x ∈ (@subset_ensemble U V W) -> (exist _ x H) ∈ W.
 Proof.
   intros; hnf in *.
-  destruct_hypotheses; unfold In in *; intuition.
+  destruct_hypotheses; unfold Ensembles.In in *; intuition.
 Qed.
 
 Lemma subset_ensemble_iff2 U V W
@@ -325,7 +321,7 @@ Section subset_ensemble_union_intersection.
     apply Extensionality_Ensembles; pre_union_intersection;
     specialize_all_ways; intuition; hnf in *.
     generalize_sig_then_destruct_sets.
-    unfold In in *.
+    unfold Ensembles.In in *.
     destruct_sig; simpl in *; do_proof_irrelevance.
     exists (subset_ensemble Xj); pre_union_intersection;
     match goal with
@@ -384,14 +380,14 @@ Section inverse_compose.
   Defined.
 End inverse_compose.
 
-Add Parametric Morphism T : (@In T)
+Add Parametric Morphism T : (@Ensembles.In T)
     with signature (@Included T) ==> (@eq T) ==> Basics.impl
       as Included_In_mor.
   repeat intro.
   firstorder.
 Qed.
 
-Add Parametric Morphism T : (@In T)
+Add Parametric Morphism T : (@Ensembles.In T)
     with signature (Basics.flip (@Included T)) ==> (@eq T) ==> (Basics.flip Basics.impl)
       as Included_In_mor'.
   repeat intro.
@@ -416,7 +412,7 @@ Section complement_idempotent.
              | _ => apply Extensionality_Ensembles
              | _ => progress (repeat (intro || split))
              | _ => progress destruct_head_hnf ArbitraryUnion
-             | _ => progress (repeat unfold Complement, In in *; trivial)
+             | _ => progress (repeat unfold Complement, Ensembles.In in *; trivial)
              | _ => eassumption
              | _ => eexists; try eassumption; []
              | [ H : _ |- _ ] => apply H
@@ -460,7 +456,7 @@ Section disjoint_union.
     let H := fresh in pose proof (DisjointUnionIsUnion DU) as H;
                      rewrite <- H.
     hnf.
-    econstructor; unfold In in *; simpl in *; eassumption.
+    econstructor; unfold Ensembles.In in *; simpl in *; eassumption.
   Qed.
 End disjoint_union.
 

@@ -115,7 +115,7 @@ Generalizable All Variables.
 
 Class IsGroupoid `(C : @Category obj) :=
   { is_groupoid :> forall s d (m : Morphism C s d),
-                     IsomorphismOf C m }.
+                     IsomorphismOf m }.
 
 Record > Groupoid :=
   {

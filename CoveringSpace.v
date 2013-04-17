@@ -414,7 +414,7 @@ Section p3.
       assert (X_cover_is_open : cover_open _ X_cover); [ apply IntersectionCover_open | ];
       [ destruct p; simpl; assumption | | ].
       + hnf; intros U U_in_cover.
-        subst_body; unfold In in *; simpl in *.
+        subst_body; unfold Ensembles.In in *; simpl in *.
         specialize (X'_cover_open _ U_in_cover).
         pose proof (covering_space_open_to_open p (inverse_image p U)); simpl in *.
 

@@ -132,7 +132,7 @@ Section Exercise_4_1_1_13.
         (f : Morphism Grph G G')
         (f0 := OnVertices' f)
         (f1 := OnArrows' f)
-  : IsomorphismOf Grph f -> IsomorphismOf CategoryOfTypes f0 * IsomorphismOf CategoryOfTypes f1.
+  : IsomorphismOf (C := Grph) f -> IsomorphismOf (C := CategoryOfTypes) f0 * IsomorphismOf (C := CategoryOfTypes) f1.
     intro i.
     split;
       [ (exists (OnVertices' (Inverse i)))

@@ -99,6 +99,7 @@
 (** printing ⊂ %\ensuremath{\subset}% #&sub;# *)
 (** printing ∈ %\ensuremath{\in}% #&isin;# *)
 (** printing ∅ %\ensuremath{\emptyset}% #&empty;# *)
+(** printing ∫ %\ensuremath{\int}% #&int;# *)
 (** printing ≤ %\ensuremath{\le}% #&le;# *)
 (** printing ≤) %\ensuremath{\le)}% #&le;)# *)
 (** printing ∧ %\ensuremath{\wedge}% #&and;# *)
@@ -144,3 +145,39 @@ Notation "A ⊆ B" := (Ensembles.Included _ A B) (at level 50, no associativity)
    and '['s interfere with list notation in Program. *)
 Reserved Notation "F ⟨ c , - ⟩" (at level 70, no associativity).
 Reserved Notation "F ⟨ - , d ⟩" (at level 70, no associativity).
+
+
+
+Reserved Notation "i ⁻¹" (at level 10).
+Reserved Notation "C ᵒᵖ" (at level 10).
+
+Reserved Notation "C ★^ M D" (at level 70, no associativity).
+Reserved Notation "C ★^{ M } D" (at level 70, no associativity).
+
+Reserved Notation "S ↓ T" (at level 70, no associativity).
+
+Reserved Notation "S ⇑ T" (at level 70, no associativity).
+Reserved Notation "S ⇓ T" (at level 70, no associativity).
+Reserved Notation "'CAT' ⇑ D" (at level 70, no associativity).
+Reserved Notation "'CAT' ⇓ D" (at level 70, no associativity).
+
+Reserved Notation "x ⊗ y" (at level 40, left associativity).
+Reserved Notation "x ⊗m y" (at level 40, left associativity).
+
+Reserved Notation "f ○ g" (at level 70, right associativity).
+
+Reserved Notation "x ∏ y" (at level 40, left associativity).
+Reserved Notation "x ∐ y" (at level 50, left associativity).
+
+Reserved Notation "∏_{ x } f" (at level 0, x at level 99).
+Reserved Notation "∏_{ x : A } f" (at level 0, x at level 99).
+Reserved Notation "∐_{ x } f" (at level 0, x at level 99).
+Reserved Notation "∐_{ x : A } f" (at level 0, x at level 99).
+
+(* Forced by the notation in Program *)
+Reserved Notation "[ x ]" (at level 0, x at level 200).
+
+Reserved Notation "∫ F" (at level 0).
+
+Reserved Infix "⊣" (at level 90, no associativity).
+Reserved Infix "-|" (at level 90, no associativity).

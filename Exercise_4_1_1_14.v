@@ -142,7 +142,7 @@ Section Exercise_4_1_1_14.
                | _ => reflexivity
                | _ => intro
                | [ H := _ |- _ ] => subst H
-               | [ H : IsomorphismOf _ _ |- _ ] => destruct H
+               | [ H : IsomorphismOf _ |- _ ] => destruct H
                | _ => progress (simpl in *; fg_equal)
                | [ H : _ |- _ ] => rewrite H
                | [ H0 : forall x, ?f (?g x) = x,
@@ -161,9 +161,9 @@ Section Exercise_4_1_1_14.
         (f : Morphism Grph G G')
         (f0 := OnVertices' f)
         (f1 := OnArrows' f)
-  : IsomorphismOf CategoryOfTypes f0
-    -> IsomorphismOf CategoryOfTypes f1
-    -> IsomorphismOf Grph f.
+  : IsomorphismOf (C := CategoryOfTypes) f0
+    -> IsomorphismOf (C := CategoryOfTypes) f1
+    -> IsomorphismOf (C := Grph) f.
     intros i0 i1.
     eexists {| OnVertices' := (Inverse i0);
                OnArrows' := (Inverse i1) |};

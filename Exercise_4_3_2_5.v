@@ -146,7 +146,7 @@ Section Exercise_4_3_2_5.
       and morphisms), and using the fact that [F id_x = id_{F x}] for
       all functors [F]. *)
   Lemma FunCSet_Iso_Set : Object FunCSet ≅ Set.
-    refine {| isomorphic_morphism := (fun F : FunCSet => F tt) |}.
+    refine {| isomorphic_morphism := (fun F : FunCSet => ObjectOf F tt) |}.
     refine {| isomorphism_inverse := (fun S : Set => FunctorFromTerminal CategoryOfSets S) |};
       abstract (repeat (reflexivity
                           || intros []
