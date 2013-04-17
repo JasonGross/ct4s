@@ -238,9 +238,9 @@ Module Exercise_4_6_1_5.
   End Exercise_4_2_3_2.
   (** ------------------------------------------------------------------------ *)
 
-  (** * Exercise 4.2.4.3 *)
+  (** *** Exercise 4.2.4.3 *)
   Module Exercise_4_2_4_3.
-    (** ** Problem *)
+    (** **** Problem *)
     (** Consider the set of possible laws (most likely an infinite set)
       that can be dictated to hold throughout a jurisdiction. Consider
       each law as a proposition ("such and such is (dictated to be)
@@ -260,7 +260,7 @@ Module Exercise_4_6_1_5.
       both [J] and [Prop] to be categories (by Proposition 4.2.1.17),
       we have a function [L : Ob J -> Ob Prop]; this question is
       asking whether [L] extends to a functor [J -> Prop]. *)
-    (** ** Solution *)
+    (** **** Solution *)
     (** If [U ⊆ V], then [L(U) ≤ L(V)], because whenever all the laws
         of [U] hold, so must the laws of [V], because [U] can only add
         more laws.
@@ -325,9 +325,9 @@ Module Exercise_4_6_1_5.
 
   (** ------------------------------------------------------------------------ *)
 
-  (** * Exercise 4.2.4.4 *)
+  (** *** Exercise 4.2.4.4 *)
   Module Exercise_4_2_4_4.
-    (** ** Problem *)
+    (** **** Problem *)
     (** Take again the preorder [J] of jurisdictions from Exercise
         4.2.4.3 and the idea that laws are propositions. But this
         time, let [R(V)] be the set of all possible laws (not just
@@ -341,7 +341,7 @@ Module Exercise_4_6_1_5.
         assign to each jurisdiction the maximal law respected
         throughout. Does this assignment [Ob J -> Ob Prop] extend to a
         functor [J -> Prop]? *)
-    (** ** Solution *)
+    (** **** Solution *)
     (** If [U ⊆ V], then [R(V) ⊆ R(U)], because all the people in [U]
         are also people in [V], and so respect all the laws which
         everyone in [V] respects.  However, people in [U] might

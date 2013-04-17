@@ -149,7 +149,7 @@ Infix "↷" := (@monoid_action _ _ _) (at level 70).
 Infix "↷" := (@MonoidAction _) (at level 70) : type_scope.
 
 (** ** Monoid Homomorphism *)
-(** Definition 3.1.4.1. Let [M := ( M, id, ★ ) and [M' := ( M', id', ★
+(** Definition 3.1.4.1. Let [M := ( M, id, ★ )] and [M' := ( M', id', ★
     )] be monoids. A monoid homomorphism [f] from [M] to [M'], denoted
     [f : M -> M'], is a function [f : M -> M'] satisfying two
     conditions:
