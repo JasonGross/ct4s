@@ -1,0 +1,620 @@
+(* printing '*' %\ensuremath{\times}% #&times;# *)
+(* printing * %\ensuremath{\times}% #&times;# *)
+(** printing '×' %\ensuremath{\times}% #&times;# *)
+(** printing × %\ensuremath{\times}% #&times;# *)
+(** printing ★ %\ensuremath{\star}% #&#9733;# *)
+(** printing "★" %\ensuremath{\star}% #&#9733;# *)
+(** printing '★' %\ensuremath{\star}% #&#9733;# *)
+(** printing '⊔' %\ensuremath{\sqcup}% #&#x2294;# *)
+(** printing ⊔ %\ensuremath{\sqcup}% #&#x2294;# *)
+(** printing ∪ %\ensuremath{\cup}% #&cup;# *)
+(** printing '∪' %\ensuremath{\cup}% #&cup;# *)
+(** printing ∩ %\ensuremath{\cap}% #&cap;# *)
+(** printing '∩' %\ensuremath{\cap}% #&cap;# *)
+(** printing 'π' %\ensuremath{\pi}% #&pi;# *)
+(** printing π %\ensuremath{\pi}% #&pi;# *)
+(** printing 'Σ' %\ensuremath{\Sigma}% #&Sigma;# *)
+(** printing Σ %\ensuremath{\Sigma}% #&Sigma;# *)
+(** printing ⁰ %\ensuremath{^0}% #<sup>0</sup># *)
+(** printing ¹ %\ensuremath{^1}% #<sup>1</sup># *)
+(** printing ² %\ensuremath{^2}% #<sup>2</sup># *)
+(** printing ³ %\ensuremath{^3}% #<sup>3</sup># *)
+(** printing ⁴ %\ensuremath{^4}% #<sup>4</sup># *)
+(** printing ⁵ %\ensuremath{^5}% #<sup>5</sup># *)
+(** printing ⁶ %\ensuremath{^6}% #<sup>6</sup># *)
+(** printing ⁷ %\ensuremath{^7}% #<sup>7</sup># *)
+(** printing ⁸ %\ensuremath{^8}% #<sup>8</sup># *)
+(** printing ⁹ %\ensuremath{^9}% #<sup>9</sup># *)
+(** printing ⁱ %\ensuremath{^i}% #<sup>i</sup># *)
+(** printing ⁺ %\ensuremath{^+}% #<sup>+</sup># *)
+(** printing ⁻ %\ensuremath{^-}% #<sup>-</sup># *)
+(** printing ⁼ %\ensuremath{^=}% #<sup>=</sup># *)
+(** printing ⁽ %\ensuremath{^(}% #<sup>(</sup># *)
+(** printing ⁾ %\ensuremath{^)}% #<sup>)</sup># *)
+(** printing ⁿ %\ensuremath{^n}% #<sup>n</sup># *)
+(** printing ₀ %\ensuremath{_0}% #<sub>0</sub># *)
+(** printing ₁ %\ensuremath{_1}% #<sub>1</sub># *)
+(** printing ₂ %\ensuremath{_2}% #<sub>2</sub># *)
+(** printing ₃ %\ensuremath{_3}% #<sub>3</sub># *)
+(** printing ₄ %\ensuremath{_4}% #<sub>4</sub># *)
+(** printing ₅ %\ensuremath{_5}% #<sub>5</sub># *)
+(** printing ₆ %\ensuremath{_6}% #<sub>6</sub># *)
+(** printing ₇ %\ensuremath{_7}% #<sub>7</sub># *)
+(** printing ₈ %\ensuremath{_8}% #<sub>8</sub># *)
+(** printing ₉ %\ensuremath{_9}% #<sub>9</sub># *)
+(** printing ₊ %\ensuremath{_+}% #<sub>+</sub># *)
+(** printing ₋ %\ensuremath{_-}% #<sub>-</sub># *)
+(** printing ₌ %\ensuremath{_=}% #<sub>=</sub># *)
+(** printing ₍ %\ensuremath{_(}% #<sub>(</sub># *)
+(** printing ₎ %\ensuremath{_)}% #<sub>)</sub># *)
+(** printing ₐ %\ensuremath{_a}% #<sub>a</sub># *)
+(** printing ₑ %\ensuremath{_e}% #<sub>e</sub># *)
+(** printing ₒ %\ensuremath{_o}% #<sub>o</sub># *)
+(** printing ₓ %\ensuremath{_x}% #<sub>x</sub># *)
+(** printing ᵒᵖ %\ensuremath{^{\text{op}}}% #<sup>op</sup># *)
+(** printing π₁ %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
+(** printing π₂ %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
+(** printing 'π₁' %\ensuremath{\pi_1}% #&pi;<sub>1</sub># *)
+(** printing 'π₂' %\ensuremath{\pi_2}% #&pi;<sub>2</sub># *)
+(** printing f₀ %\ensuremath{f_0}% #f<sub>0</sub># *)
+(** printing f₀) %\ensuremath{f_0})% #f<sub>0</sub>)# *)
+(** printing f₁ %\ensuremath{f_1}% #f<sub>1</sub># *)
+(** printing f₁) %\ensuremath{f_1})% #f<sub>1</sub>)# *)
+(** printing ≅ %\ensuremath{\cong}% #&cong;# *)
+(** printing ≃ %\ensuremath{\simeq}% #&#x2243;# *)
+(** printing ≄ %\ensuremath{\not\simeq}% #&#8772;# *)
+(** printing λ %\ensuremath{\lambda}% #&lambda;# *)
+(** printing 'o' %\ensuremath{\circ}% #&#x25cb;# *)
+(** printing o %\ensuremath{\circ}% #&#x25cb;# *)
+(** printing i ⁻¹ %\ensuremath{i^{-1}}% #i<sup>-1</sup># *)
+(** printing 'i ⁻¹' %\ensuremath{i^{-1}}% #i<sup>-1</sup># *)
+(** printing "i ⁻¹" %\ensuremath{i^{-1}}% #i<sup>-1</sup># *)
+(** printing ⁻¹ %\ensuremath{^{-1}}% #<sup>-1</sup># *)
+(** printing '⁻¹' %\ensuremath{^{-1}}% #<sup>-1</sup># *)
+(** printing '⁻' %\ensuremath{^{-}}% #<sup>-</sup># *)
+(** printing '¹' %\ensuremath{^{1}}% #<sup>1</sup># *)
+(** printing ⁻ %\ensuremath{^{-}}% #<sup>-</sup># *)
+(** printing ¹ %\ensuremath{^{1}}% #<sup>1</sup># *)
+(** printing :> %:\ensuremath{>}% #:># *)
+(** printing ':>' %:\ensuremath{>}% #:># *)
+(** printing _1_ %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
+(** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
+(** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
+(** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
+(** printing ℤ %\ensuremath{\mathbb{Z}}% #&#x2124;# *)
+(** printing ℙ %\ensuremath{\mathbb{P}}% #&#x2119;# *)
+(** printing ← %\ensuremath{\leftarrow}% #&larr;# *)
+(** printing ↑ %\ensuremath{\uparrow}% #&uarr;# *)
+(** printing → %\ensuremath{\rightarrow}% #&rarr;# *)
+(** printing ↓ %\ensuremath{\downarrow}% #&darr;# *)
+(** printing ↔ %\ensuremath{\leftrightarrow}% #&harr;# *)
+(** printing ↕ %\ensuremath{\updownarrow}% #&#x2195# *)
+(** printing ↖ %\ensuremath{\nwarrow}% #&#x2196# *)
+(** printing ↗ %\ensuremath{\nearrow}% #&#x2197# *)
+(** printing ↘ %\ensuremath{\searrow}% #&#x2198# *)
+(** printing ↙ %\ensuremath{\swarrow}% #&#x2199# *)
+(** printing ⇉ %\ensuremath{\rightrightarrows} #&#x21c9# *)
+(** printing ↦ %\ensuremath{\mapsto}% #&#21A6# *)
+(** printing ↪ %\ensuremath{\hookrightarrow}% #&rarrhk;# *)
+(** printing ⊆ %\ensuremath{\subseteq}% #&sube;# *)
+(** printing ⊂ %\ensuremath{\subset}% #&sub;# *)
+(** printing ∈ %\ensuremath{\in}% #&isin;# *)
+(** printing ∅ %\ensuremath{\emptyset}% #&empty;# *)
+(** printing ▻ %\ensuremath{\triangleright}% #&#x25BB;# *)
+(** printing ◅ %\ensuremath{\triangleleft}% #&#x25C5;# *)
+(** printing ≤ %\ensuremath{\le}% #&le;# *)
+(** printing ≤) %\ensuremath{\le)}% #&le;)# *)
+(** printing ≰ %\ensuremath{\not\le}% #&#x2270;# *)
+(** printing ≱ %\ensuremath{\not\ge}% #&#x2271;# *)
+(** printing ≼ %\ensuremath{\preceq}% #&#x227c;# *)
+(** printing ≽ %\ensuremath{\succeq}% #&#x227d;# *)
+(** printing ∧ %\ensuremath{\wedge}% #&and;# *)
+(** printing ∨ %\ensuremath{\vee}% #&or;# *)
+(** printing ¬ %\ensuremath{\neg}% #&not;# *)
+(** printing ¬( %\ensuremath{\neg}(% #&not;(# *) (* ))) *)
+(* must \usepackage{mathabx} in LaTeX *)
+(** printing ↷ %\ensuremath{\lefttorightarrow}% #<div style="display:inline-block; transform:rotate(90deg);-o-transform:rotate(90deg);-mod-transform:rotate(90deg);-webkit-transform:rotate(90deg);">&#x21ba;</div># *)
+
+Require Import Utf8.
+Require Import JMeq ProofIrrelevance.
+Require Import Adjoint AdjointUnit GraphCategory SetCategory.
+Require Import Common Notations FEqualDep.
+
+Set Implicit Arguments.
+
+Generalizable All Variables.
+
+(** ------------------------------------------------------------------------ *)
+
+(** * Exercise 5.1.1.8 *)
+Section Exercise_5_1_1_8.
+  (** ** Problem *)
+  (** Let [F : C -> D] and [G : D -> C] be mutually inverse equivalences of
+      categories (see Definition 4.3.4.1). Are they adjoint in one
+      direction or the other? *)
+  (** ** Solution *)
+  (** They are adjoint in both directions. *)
+
+  Context `(C : @Category objC).
+  Context `(D : @Category objD).
+
+  (** [NaturalIsomorphismOfCategories] is the name I gave to a natural
+      equivalence of categories that lives entirely in [Type], rather
+      than [Prop]. *)
+
+  Variable E : NaturalIsomorphismOfCategories C D.
+
+
+  Let F := NaturalIsomorphismOfCategories_F E.
+  Let G := NaturalIsomorphismOfCategories_G E.
+  Let T_C := NaturalIsomorphismOfCategories_Isomorphism_C E.
+  Let T_D := NaturalIsomorphismOfCategories_Isomorphism_D E.
+
+  Hypothesis zig_zag1 : forall d, T_C (G d) = MorphismOf G (T_D d).
+  (*Hypothesis zig_zag2 : forall c, T_C (G d) = MorphismOf G (T_D d).*)
+(*
+  Definition IndiscreteCategory (T : Type) : @Category T
+    := {| Morphism := (fun _ _ : T => unit);
+          Identity := (fun _ => tt);
+          Compose := (fun _ _ _ _ _ => tt);
+          LeftIdentity := (fun _ _ u => match u with tt => eq_refl end);
+          RightIdentity := (fun _ _ u => match u with tt => eq_refl end);
+          Associativity := (fun _ _ _ _ _ _ _ => eq_refl)
+       |}.
+
+  Definition F0 A B (b : B) : Functor (IndiscreteCategory A) (IndiscreteCategory B).
+    refine {| MorphismOf := (fun s d (m : Morphism (IndiscreteCategory A) s d)
+                             => tt : Morphism (IndiscreteCategory B) b b) |};
+    reflexivity.
+  Defined.
+
+
+  Example bad A B (a : A) (b: B) : NaturalIsomorphismOfCategories (IndiscreteCategory A) (IndiscreteCategory B).
+  exists (@F0 A B b) (@F0 B A a);
+    repeat (esplit || intro).
+  Grab Existential Variables.
+  repeat (esplit || intro).
+  repeat (esplit || intro).
+  repeat (esplit || intro).
+  repeat (esplit || intro).
+  Grab Existential Variables.
+  repeat (esplit || intro).
+  repeat (esplit || intro).
+  Defined.
+
+  Definition bad_adjoint A B (a : A) (b: B)
+  : NaturalIsomorphismOfCategories_F (bad a b) -| NaturalIsomorphismOfCategories_G (bad a b).
+    refine (_ : AdjunctionUnitCounit _ _).
+    simpl.
+    repeat (esplit || intro).
+    Grab Existential Variables.
+    repeat (esplit || intro).
+    repeat (esplit || intro).
+    Grab Existential Variables.
+    repeat (esplit || intro).
+    repeat (esplit || intro).
+    simpl.
+    simpl.
+  esplit.
+  simpl.
+  Print NaturalIsomorphism.
+*)
+  Local Open Scope functor_scope.
+
+  Require Import Hom.
+
+  Example Exercise_5_1_1_8_FAdjointG : F -| G.
+  Proof.
+    constructor.
+    refine (_ : HomAdjunction _ _).
+    Unset Printing Notations.
+    assert (forall (A : objC) (A' : objD),
+                    @Morphism Type CategoryOfTypes
+                      ((@HomFunctor objD D) (@pair objD objD (F A) A'))
+                      ((@HomFunctor objC C) (@pair objC objC A (G A')))).
+    simpl in *.
+    intros.
+
+    assert (∀ (A : objC) (A' : objD),
+                    (HomFunctor D) (F A, A') ~> (HomFunctor C) (A, G A')).
+
+
+  Lemma helper (c : C) (d : D)
+        (m m0 : F c ~> F (G d))
+  :  MorphismOf G m = MorphismOf G m0 → m = m0.
+    intros.
+    assert (MorphismOf F (MorphismOf G m) = MorphismOf F (MorphismOf G m0))
+      by (apply f_equal; assumption).
+    subst_body; destruct E as [F G [T_C T_C_iso] [T_D T_D_iso]]; simpl in *.
+
+
+
+
+  Example Exercise_5_1_1_8_FAdjointG : F -| G.
+  Proof.
+    refine (_ : AdjunctionUnit _ _).
+    exists (NaturalIsomorphism_Transformation (NaturalIsomorphismOfCategories_Isomorphism_C E)).
+    change ((NaturalIsomorphismOfCategories_F E)) with F;
+      change ((NaturalIsomorphismOfCategories_G E)) with G;
+      intros.
+    subst_body.
+    destruct E as [F G [T_C T_C_iso] [T_D T_D_iso]]; simpl in *.
+    (*destruct (T_C_iso c), (T_C_iso (G d)), (T_D_iso d), (T_D_iso (F c)).
+    do 30 match goal with
+             | [ H : _ |- _ ] => match type of H with
+                                   | Morphism _ _ _ => fail 1
+                                   | _ => move H at top
+                                 end
+           end.
+    pose (MorphismOf F f).
+    rename Inverse into Inverse'.*)
+    exists (Inverse (T_D_iso d) o MorphismOf F f)%morphism.
+    split; simpl; intros.
+    - rewrite FCompositionOf.
+      pose proof (Commutes T_C); simpl in *.
+      repeat rewrite Associativity.
+      rewrite <- H.
+      repeat rewrite <- Associativity.
+      destruct (T_D_iso d); simpl in *.
+      match goal with
+        | [ H1 : (?a o ?b)%morphism = Identity _,
+                 H2 : (?b o ?a)%morphism = Identity _
+            |- context[@MorphismOf ?objC ?C ?objD ?D ?F ?s ?d ?a] ]
+          => assert ((@MorphismOf objC C objD D F s d a) o (MorphismOf F b) = Identity _)%morphism
+            by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H1, FIdentityOf; reflexivity);
+            assert ((MorphismOf F b) o (@MorphismOf objC C objD D F s d a) = Identity _)%morphism
+               by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H2, FIdentityOf; reflexivity)
+      end.
+      pre_compose_to_identity; autorewrite with morphism.
+      simpl.
+      apply f_equal2; try reflexivity; [].
+      apply zig_zag1.
+    - destruct (T_D_iso d); simpl in *.
+      pre_compose_to_identity.
+      match goal with
+        | [ |- ?a = ?b ] => assert (MorphismOf G a = MorphismOf G b)
+      end.
+      + rewrite FCompositionOf.
+        rename Inverse into Inverse'.
+        rename LeftInverse into LeftInverse'.
+        rename RightInverse into RightInverse'.
+        match goal with
+          | [ |- ?a = ?b ] => cut (a o T_C c = b o T_C c)%morphism;
+                             [ let H := fresh in
+                               intro H;
+                                 cut (a o T_C c o (Inverse (T_C_iso c)) = b o T_C c o (Inverse (T_C_iso c)))%morphism;
+                                 [ let H' := fresh in
+                                   intro H';
+                                     repeat rewrite Associativity in H';
+                                     simpl in *;
+                                     rewrite (RightInverse (T_C_iso c)) in H';
+                                     autorewrite with morphism in H';
+                                     exact H'
+                                 | repeat rewrite <- Associativity; apply f_equal2; try reflexivity; []; exact H ]
+                             | ]
+        end.
+        repeat rewrite Associativity.
+        simpl in *.
+        rewrite_hyp.
+        rewrite <- zig_zag1.
+        pose proof (Commutes T_C); simpl in *.
+        rewrite <- H0.
+        reflexivity.
+      + Local Open Scope morphism_scope.
+        revert H0.
+        clear.
+        match goal with
+          | [ |- _ -> ?a = ?b ] => generalize a; intro; generalize b; intro; clear
+        end.
+        simpl in *.
+        repeat match goal with
+                 | [ H : _ |- _ ] => clear H || revert H
+               end.
+        generalize (T_D d o x').
+        clear.
+
+        revert x'.
+        revert f.
+        revert d.
+        revert c.
+        revert
+        revert x'.
+        simpl in *.
+        rewrite e in H1.
+        * intro H0.
+          destruct (T_C_iso c).
+          match goal with
+            |
+          |
+          |
+    cut (MorphismOf G (Morphs
+
+
+
+
+
+
+
+
+
+    refine (_ : AdjunctionUnitCounit _ _).
+    exists (NaturalIsomorphism_Transformation (NaturalIsomorphismOfCategories_Isomorphism_C E))
+           (NaturalIsomorphism_Transformation (InverseNaturalIsomorphism (NaturalIsomorphismOfCategories_Isomorphism_D E)));
+      change ((NaturalIsomorphismOfCategories_F E)) with F;
+      change ((NaturalIsomorphismOfCategories_G E)) with G;
+      intros.
+    Local Open Scope morphism_scope.
+    subst_body; destruct E as [F G [T_C T_C_iso] [T_D T_D_iso]]; simpl in *.
+    pose proof (Commutes T_C); simpl in *.
+    match goal with
+      | [ |- ((ComponentsOf (NaturalIsomorphism_Transformation ?T) _) o _)%morphism = _ ] => generalize T; intro
+    end.
+    pose proof (Commutes n); simpl in *.
+
+
+
+
+
+
+
+
+
+    refine (_ : AdjunctionUnit _ _).
+    exists (NaturalIsomorphism_Transformation (NaturalIsomorphismOfCategories_Isomorphism_C E)).
+    change ((NaturalIsomorphismOfCategories_F E)) with F;
+      change ((NaturalIsomorphismOfCategories_G E)) with G;
+      intros.
+    subst_body.
+    destruct E as [F G [T_C T_C_iso] [T_D T_D_iso]]; simpl in *.
+    (*destruct (T_C_iso c), (T_C_iso (G d)), (T_D_iso d), (T_D_iso (F c)).
+    do 30 match goal with
+             | [ H : _ |- _ ] => match type of H with
+                                   | Morphism _ _ _ => fail 1
+                                   | _ => move H at top
+                                 end
+           end.
+    pose (MorphismOf F f).
+    rename Inverse into Inverse'.*)
+    exists (Inverse (T_D_iso d) o MorphismOf F f)%morphism.
+    split; simpl; intros.
+    rewrite FCompositionOf.
+    pose proof (Commutes T_C); simpl in *.
+    repeat rewrite Associativity.
+    rewrite <- H.
+    repeat rewrite <- Associativity.
+    destruct (T_D_iso d); simpl in *.
+    match goal with
+      | [ H1 : (?a o ?b)%morphism = Identity _,
+               H2 : (?b o ?a)%morphism = Identity _
+          |- context[@MorphismOf ?objC ?C ?objD ?D ?F ?s ?d ?a] ]
+        => assert ((@MorphismOf objC C objD D F s d a) o (MorphismOf F b) = Identity _)%morphism
+          by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H1, FIdentityOf; reflexivity);
+          assert ((MorphismOf F b) o (@MorphismOf objC C objD D F s d a) = Identity _)%morphism
+             by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H2, FIdentityOf; reflexivity)
+    end.
+    pre_compose_to_identity; autorewrite with morphism.
+
+
+    Print IsomorphismOf.
+    simpl in *.
+    specialize_all_ways.
+    destruct_head_h
+    match goal with
+      | [ |- ((ComponentsOf (NaturalIsomorphism_Transformation ?T) _) o _)%morphism = _ ] => generalize T; intro
+    end.
+    Local Open Scope morphism_scope.
+    pose proof (Commutes n); simpl in *.
+
+
+
+
+
+
+    refine (_ : AdjunctionUnitCounit _ _).
+    exists (NaturalIsomorphism_Transformation (NaturalIsomorphismOfCategories_Isomorphism_C E))
+           (NaturalIsomorphism_Transformation (InverseNaturalIsomorphism (NaturalIsomorphismOfCategories_Isomorphism_D E)));
+      change ((NaturalIsomorphismOfCategories_F E)) with F;
+      change ((NaturalIsomorphismOfCategories_G E)) with G;
+      intros.
+    match goal with
+      | [ |- ((ComponentsOf (NaturalIsomorphism_Transformation ?T) _) o _)%morphism = _ ] => generalize T; intro
+    end.
+    Local Open Scope morphism_scope.
+    pose proof (Commutes n); simpl in *.
+
+    subst_body.
+    Set Printing Coercions.
+
+    generalize (InverseNaturalIsomorphism
+       (NaturalIsomorphismOfCategories_Isomorphism_D E)).
+    intro.
+    simpl;
+      subst_body;
+      destruct E as [F G [T_C T_C_iso] [T_D T_D_iso]]; simpl.
+    destruct (T_D_iso (F Y)) as [T_D_FY T_D_FY_inv LeftInv RightInv]; simpl.
+    pre_compose_to_identity; autorewrite with morphism.
+    Focus 2.
+    destruct (T_D_iso X) as [T_D_X T_D_X_inv]; simpl.
+    simpl.
+    Local Open Scope morphism_scope.
+    match goal with
+      | [ H1 : ?a o ?b = Identity _,
+               H2 : ?b o ?a = Identity _
+          |- context[@MorphismOf ?objC ?C ?objD ?D ?F ?s ?d ?a] ]
+        => assert ((@MorphismOf objC C objD D F s d a) o (MorphismOf F b) = Identity _)
+          by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H1, FIdentityOf; reflexivity);
+          assert ((MorphismOf F b) o (@MorphismOf objC C objD D F s d a) = Identity _)
+             by abstract (rewrite <- (FCompositionOf F); simpl in *; rewrite H2, FIdentityOf; reflexivity)
+    end.
+    pre_compose_to_identity; autorewrite with morphism.
+    assert (T_C (G X) o MorphismOf G T_D_X_inv = Identity _).
+    pose proof (Commutes T_C); simpl in *.
+    rewrite H1.
+    rewrite
+
+
+    set (G_T_D_X_inv := MorphismOf G T_D_X_inv).
+    assert (
+    pre_compose_to_identity.
+    simpl in *.
+    Focus 2.
+
+    match goal with
+      | [ |- ?a = ?b ] => cut (T_D_FY o a = T_D_FY)%morphism;
+                         [ intro;
+                           cut (T_D_FY_inv o (T_D_FY o a) = T_D_FY_inv o T_D_FY)%morphism;
+                           [ repeat rewrite <- Associativity;
+                             subst T_D_FY; simpl in *;
+                             repeat rewrite LeftInv;
+                             repeat rewrite RightInv;
+                             autorewrite with morphism;
+                             intros; assumption
+                           | apply f_equal; assumption ]
+                         | repeat rewrite <- Associativity;
+                           subst T_D_FY; simpl in *;
+                           rewrite RightInv;
+                           autorewrite with morphism ]
+    end.
+    Focus 2.
+    simpl in *.
+    rewrite RightInv.
+    destruct_
+
+    set (T_D_iso := NaturalIsomorphismOfCategories_Isomorphism_D E).
+    set (T_C_iso := NaturalIsomorphismOfCategories_Isomorphism_C E).
+    simpl.
+    set (T_C := @NaturalIsomorphism_Transformation objC C objC C
+              (IdentityFunctor C) (G o F) T_C_iso).
+    Print NaturalIsomorphism.
+    Print IsomorphismOf.
+    Implicit Arguments NaturalIsomorphism_Isomorphism [].
+    Set Printing Coercions.
+    set (T_D := @NaturalIsomorphism_Transformation objD D objD D
+              (IdentityFunctor D) (F o G) T_D_iso).
+    simpl.
+    intros.
+    simpl in *.
+    destruct E; simpl in *.
+    destruct NaturalIsomorphismOfCategories_Isomorphism_C, NaturalIsomorphismOfCategories_Isomorphism_D; simpl in *.
+    subst_body.
+    rename NaturalIsomorphismOfCategories_F into F, NaturalIsomorphismOfCategories_G into G.
+    rename NaturalIsomorphism_Transformation into T_C.
+    rename NaturalIsomorphism_Isomorphism into T_C_iso.
+    rename NaturalIsomorphism_Transformation0 into T_D.
+    rename NaturalIsomorphism_Isomorphism0 into T_D_iso.
+    destruct (T_C_iso c).
+    destruct (T_D_iso (F c)).
+           (NaturalIsomorphism_Transformation (InverseNaturalIsomorphism (NaturalIsomorphismOfCategories_Isomorphism_D E))).
+    intros; simpl.
+    change ((NaturalIsomorphismOfCategories_F E)) with F.
+    change ((NaturalIsomorphismOfCategories_G E)) with G.
+    Print AdjunctionUnitCounit.
+
+  Section underlying.
+    Definition SetUnderlyingGraphFunctor : Functor CategoryOfGraphs CategoryOfTypes.
+      refine (Build_Functor CategoryOfGraphs CategoryOfTypes
+                            Vertex
+                            (fun _ _ m => m)
+                            _
+                            _);
+      reflexivity.
+    Defined.
+  End underlying.
+
+  Section uniform.
+    Variable edge_set : Type.
+
+    Definition UniformGraph (V : Type) : Graph
+      := {| Vertex := V;
+            Edge := (fun _ _ => edge_set) |}.
+
+    Let UniformGraphFunctor_MorphismOf s d (m : Morphism CategoryOfTypes s d)
+    : Morphism CategoryOfGraphs (UniformGraph s) (UniformGraph d).
+      exists m.
+      intros ? ? x.
+      exact x.
+    Defined.
+
+    Definition UniformGraphFunctor : Functor CategoryOfTypes CategoryOfGraphs.
+      refine {| MorphismOf := UniformGraphFunctor_MorphismOf |};
+      reflexivity.
+    Defined.
+  End uniform.
+
+  Section uniform_functors.
+    Definition UniformGraphSurjection E (e : E) (G : Graph)
+    : GraphHomomorphism G (UniformGraph E G)
+    := Build_GraphHomomorphism G (UniformGraph E G)
+                               (fun x => x)
+                               (fun _ _ _ => e).
+    Definition UniformGraphInjection E (G : Graph) (f : forall s d, E -> Edge G s d)
+    : GraphHomomorphism (UniformGraph E G) G
+    := Build_GraphHomomorphism (UniformGraph E G) G
+                               (fun x => x)
+                               f.
+  End uniform_functors.
+
+  Definition DiscreteGraph := (@UniformGraph ∅).
+  Definition DiscreteGraphFunctor := (@UniformGraphFunctor ∅).
+  Definition DiscreteGraphInjection (G : Graph)
+  : GraphHomomorphism (DiscreteGraph G) G
+    := @UniformGraphInjection _ G (fun _ _ (x : ∅) => match x with end).
+  Definition IndiscreteGraph := (@UniformGraph unit).
+  Definition IndiscreteGraphFunctor := (@UniformGraphFunctor unit).
+  Definition IndiscreteGraphSurjection (G : Graph)
+    : GraphHomomorphism G (IndiscreteGraph G)
+    := @UniformGraphSurjection _ tt G.
+
+  Local Ltac graph_adj_t :=
+    repeat match goal with
+             | _ => reflexivity
+             | _ => intros []
+             | _ => intro
+             | _ => progress simpl in *
+             | _ => progress expand
+             | _ => apply f_equal
+             | _ => apply functional_extensionality_dep
+           end.
+
+  Section discrete_adjunction.
+    Definition DiscreteGraphAdjunction
+    : DiscreteGraphFunctor -| SetUnderlyingGraphFunctor.
+      refine (_ : AdjunctionUnitCounit _ _).
+      refine {| Adjunction_Unit := Build_NaturalTransformation (IdentityFunctor _)
+                                                               (SetUnderlyingGraphFunctor o DiscreteGraphFunctor)
+                                                               (fun _ x => x)
+                                                               (fun _ _ _ => eq_refl);
+                Adjunction_Counit := Build_NaturalTransformation (DiscreteGraphFunctor o SetUnderlyingGraphFunctor)
+                                                                 (IdentityFunctor _)
+                                                                 DiscreteGraphInjection
+                                                                 _ |};
+        simpl;
+        abstract graph_adj_t.
+      Grab Existential Variables.
+      abstract graph_adj_t.
+    Defined.
+  End discrete_adjunction.
+
+  Section indiscrete_adjunction.
+    Definition IndiscreteGraphAdjunction
+    : SetUnderlyingGraphFunctor -| IndiscreteGraphFunctor.
+      refine (_ : AdjunctionUnitCounit _ _).
+      refine {| Adjunction_Counit := Build_NaturalTransformation (SetUnderlyingGraphFunctor o IndiscreteGraphFunctor)
+                                                                 (IdentityFunctor _)
+                                                                 (fun _ x => x)
+                                                                 (fun _ _ _ => eq_refl);
+                Adjunction_Unit := Build_NaturalTransformation (IdentityFunctor _)
+                                                               (IndiscreteGraphFunctor o SetUnderlyingGraphFunctor)
+                                                               IndiscreteGraphSurjection
+                                                               _ |};
+        simpl;
+        abstract graph_adj_t.
+      Grab Existential Variables.
+      abstract graph_adj_t.
+    Defined.
+  End indiscrete_adjunction.
+End Exercise_5_1_1_8.
+(** ------------------------------------------------------------------------ *)
