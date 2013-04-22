@@ -152,9 +152,10 @@ Module Exercise_4_6_2_4.
 
  *)
   (** ** Solution *)
-  (** The schema has as objects: action ids, people ids, date ids,
-      strings, and months.  It has as morphisms the listed predicates.
-      The instance is the obvious one, filled out below. *)
+  (** The schema has as objects: action ids, date ids, people ids,
+      strings, years, days, and months.  It has as morphisms the
+      listed predicates.  The instance is the obvious one, filled out
+      below. *)
 
   (** Define the data types *)
   Inductive DateIds := D13114.

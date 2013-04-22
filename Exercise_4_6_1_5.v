@@ -348,7 +348,7 @@ Module Exercise_4_6_1_5.
         respect additional laws.  Again, we do not have a functor [J
         -> Set], but [J ᵒᵖ -> Set].
 
-        The "maximal law" assignment does give us a functor [Set ->
+        The "maximal law" assignment does give us a functor [J ->
         Prop], because if [U ⊆ V], then the maximal law of [U] implies
         the maximal law of [V]. *)
 
