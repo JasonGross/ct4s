@@ -129,8 +129,8 @@ Section indiscrete_topology.
   Local Ltac t' :=
     repeat match goal with
              | [ H : ?X = ?Y, _ : ?x ∈ ?X |- ?x ∈ ?Y ] => rewrite <- H; assumption
-             | [ H : ?B = Empty_set _ |- _ \/ _ ∩ ?B = Empty_set _ ] => right
-             | [ H : ?A = Empty_set _ |- _ \/ ?A ∩ _ = Empty_set _ ] => right
+             | [ H : ?B = Ensembles.Empty_set _ |- _ \/ _ ∩ ?B = Ensembles.Empty_set _ ] => right
+             | [ H : ?A = Ensembles.Empty_set _ |- _ \/ ?A ∩ _ = Ensembles.Empty_set _ ] => right
              | [ HA : ?A = Full_set _, HB : ?B = Full_set _ |- ?A ∩ ?B = Full_set _ \/ _ ] => left
              | _ => intro
              | _ => split
@@ -145,7 +145,7 @@ Section indiscrete_topology.
   Local Ltac t := solve [ left; t' | right; t' | t' ].
 
   Definition IndiscreteTopology : Topology X.
-    refine {| Open := (fun U => U = Full_set _ \/ U = Empty_set _) |};
+    refine {| Open := (fun U => U = Full_set _ \/ U = Ensembles.Empty_set _) |};
     abstract (
         repeat intro;
         match goal with

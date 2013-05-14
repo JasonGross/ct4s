@@ -315,6 +315,65 @@ Section category_isomorphisms.
   Qed.
 End category_isomorphisms.
 
+
+Section identity_composition_lemmas.
+  Context `(C : @Category objC).
+
+  Local Open Scope morphism_scope.
+
+  Lemma pre_compose_identity
+        a b c
+        (x : Morphism C a b)
+        (y : Morphism C b a)
+        (z : Morphism C _ _)
+        (w : Morphism C c a)
+        (H : y o x = Identity _)
+  : z = x o w -> y o z = w.
+    intro H1.
+    subst.
+    rewrite <- Associativity.
+    rewrite H.
+    autorewrite with morphism.
+    reflexivity.
+  Qed.
+
+  Lemma post_compose_identity
+        a b c
+        (x : Morphism C a b)
+        (y : Morphism C b a)
+        (z : Morphism C _ _)
+        (w : Morphism C b c)
+        (H : x o y = Identity _)
+  : z = w o x -> z o y = w.
+    intro H1.
+    subst.
+    rewrite Associativity.
+    rewrite H.
+    autorewrite with morphism.
+    reflexivity.
+  Qed.
+
+  Corollary pre_compose_identity2
+            a b
+            (x : Morphism C a b)
+            (y : Morphism C b a)
+            (z : Morphism C _ _)
+            (H : y o x = Identity _)
+  : z = x -> y o z = Identity _.
+  intros; subst; assumption.
+  Qed.
+
+  Corollary post_compose_identity2
+            a b
+            (x : Morphism C a b)
+            (y : Morphism C b a)
+            (z : Morphism C _ _)
+            (H : x o y = Identity _)
+  : z = x -> z o y = Identity _.
+  intros; subst; assumption.
+  Qed.
+End identity_composition_lemmas.
+
 Hint Resolve @RightInverse @LeftInverse
      @IsomorphismOf_Identity @ComposeIsomorphismOf : category.
 Hint Resolve @RightInverse @LeftInverse
@@ -360,3 +419,25 @@ Ltac pre_compose_to_identity :=
   eapply_by_compose @iso_is_mono;
   [ | repeat rewrite <- AssociativityNoEvar by noEvar; find_composition_to_identity; rewrite LeftIdentity ];
   [ solve_isomorphism | ].
+
+(* match goal with
+      | [ H : ?y o ?x = Identity _ |- ?y o ?z = ?w ] =>
+        apply (@pre_compose_identity _ _ _ _ _ x y z w H)
+      | [ H : ?y o ?x = Identity _ |- ?y = ?w ] =>
+        apply (@pre_compose_identity2 _ _ _ _ x y w H)
+      | [ H : ?y o ?x = Identity _ |- ?w = ?y o ?z ] =>
+        symmetry; apply (@pre_compose_identity _ _ _ _ _ x y z w H)
+      | [ H : ?y o ?x = Identity _ |- ?w = ?y ] =>
+        symmetry; apply (@pre_compose_identity2 _ _ _ _ x y w H)
+    end.
+    match goal with
+      | [ H : ?x o ?y = Identity _ |- ?z o ?y = ?w ] =>
+        apply (@post_compose_identity _ _ _ _ _ x y z w H)
+      | [ H : ?x o ?y = Identity _ |- ?y = ?w ] =>
+        apply (@post_compose_identity2 _ _ _ _ x y w H)
+      | [ H : ?x o ?y = Identity _ |- ?w = ?z o ?y ] =>
+        symmetry; apply (@post_compose_identity _ _ _ _ _ x y z w H)
+      | [ H : ?x o ?y = Identity _ |- ?w = ?y ] =>
+        symmetry; apply (@post_compose_identity2 _ _ _ _ x y w H)
+    end.
+  *)

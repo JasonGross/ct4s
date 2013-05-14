@@ -113,6 +113,7 @@ Require Import Utf8 Setoid.
 Require Import ProofIrrelevance.
 Require Import Classical.
 Require Export Ensembles.
+Require Export Morphism.
 Require Import Notations Common Morphism.
 
 Set Implicit Arguments.
@@ -184,7 +185,7 @@ Section topology.
       Open : Ensemble (Ensemble X);
       OpenSet :> _ := { U | Open U };
       ContainsSpace : Open (Full_set _);
-      ContainsEmpty : Open (Empty_set _);
+      ContainsEmpty : Open (Ensembles.Empty_set _);
       ArbitraryUnionOpen : forall (XjP : Ensemble (Ensemble X)),
                              (forall Xj, Xj ∈ XjP -> Open Xj) -> Open (ArbitraryUnion XjP);
       FiniteIntersectionOpen : forall A B,
@@ -345,54 +346,7 @@ Section inclusion3.
     := (fun _ xH => (proj1_sig xH) ∈ U).
 End inclusion3.
 
-Section inverse.
-  Variables X Y : Type.
-
-  Definition inverse_map (f : X -> Y) : Y -> Ensemble X :=
-    fun y => (fun x => y = f x).
-
-  Definition image (f : X -> Y) : Ensemble X -> Ensemble Y :=
-    fun Px y => exists x, x ∈ Px /\ f x = y.
-
-  Definition inverse_image (f : X -> Y) : Ensemble Y -> Ensemble X :=
-    fun Uy x => (f x) ∈ Uy.
-
-  Definition restrict_domain (f : X -> Y) (P : Ensemble X) : { x | P x } -> Y
-    := fun x => f (proj1_sig x).
-
-  Definition restrict (f : X -> Y) (P : Ensemble X) (Q : Ensemble Y) (H : forall x, x ∈ P -> (f x) ∈ Q)
-  : { x | P x } -> { y | Q y }
-    := fun x => exist _ (f (proj1_sig x)) (H (proj1_sig x) (proj2_sig x)).
-
-  Definition restrict_range (f : X -> Y) (P : Ensemble Y) : sig (inverse_image f P) -> sig P
-    := fun x => exist _ (f (proj1_sig x)) (proj2_sig x).
-End inverse.
-
 Notation "p ⁻¹" := (inverse_image p) (at level 10) : topology_scope.
-
-Section inverse_compose.
-  Variables X Y Z : Type.
-  Variable f : X -> Y.
-  Variable g : Y -> Z.
-
-  Definition inverse_compose_commutes : f ⁻¹ o g ⁻¹ = (g o f) ⁻¹.
-    reflexivity.
-  Defined.
-End inverse_compose.
-
-Add Parametric Morphism T : (@Ensembles.In T)
-    with signature (@Included T) ==> (@eq T) ==> Basics.impl
-      as Included_In_mor.
-  repeat intro.
-  firstorder.
-Qed.
-
-Add Parametric Morphism T : (@Ensembles.In T)
-    with signature (Basics.flip (@Included T)) ==> (@eq T) ==> (Basics.flip Basics.impl)
-      as Included_In_mor'.
-  repeat intro.
-  firstorder.
-Qed.
 
 Section complement_idempotent.
   Context `(T : Topology X).

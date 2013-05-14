@@ -110,9 +110,9 @@
 
 Require Import Utf8.
 Require Import FunctionalExtensionality.
-Require Export Category SetCategory.
+Require Export Category SetCategory Product Coproduct.
 Require Import DiscreteCategory CategoryMorphisms CategoryObjects.
-Require Import Common.
+Require Import Common Morphism.
 
 Set Implicit Arguments.
 
@@ -135,7 +135,7 @@ Notation IndexedTTerminalOf obj coerce terminal_obj constr all_eq :=
                                                                                      (fun x : z => all_eq _ _)))
    : IsTerminalObject (C := IndexedCategoryOf obj coerce) terminal_obj%type).
 
-Notation IndexedEmptySetInitialOf obj coerce := (IndexedTInitialOf obj coerce Empty_set).
+Notation IndexedEmptySetInitialOf obj coerce := (IndexedTInitialOf obj coerce ∅).
 Notation IndexedFalseInitialOf obj coerce := (IndexedTInitialOf obj coerce False).
 
 Notation IndexedUnitTerminalOf obj coerce := (IndexedTTerminalOf obj coerce unit tt unit_eq).
@@ -158,8 +158,8 @@ Section InitialTerminal.
   Definition CategoryOfSetsFalseInitial : IsInitialObject (C := CategoryOfSets) False := Eval simpl in FalseInitialOf Set.
   Definition CategoryOfPropsFalseInitial : IsInitialObject (C := CategoryOfProps) False := Eval simpl in FalseInitialOf Prop.
 
-  Definition CategoryOfTypesEmptyInitial : IsInitialObject (C := CategoryOfTypes) Empty_set := Eval simpl in EmptySetInitialOf Type.
-  Definition CategoryOfSetsEmptyInitial : IsInitialObject (C := CategoryOfSets) Empty_set := Eval simpl in EmptySetInitialOf Set.
+  Definition CategoryOfTypesEmptyInitial : IsInitialObject (C := CategoryOfTypes) ∅ := Eval simpl in EmptySetInitialOf Type.
+  Definition CategoryOfSetsEmptyInitial : IsInitialObject (C := CategoryOfSets) ∅ := Eval simpl in EmptySetInitialOf Set.
 
   Definition CategoryOfTypesTrueTerminal : IsTerminalObject (C := CategoryOfTypes) True := Eval simpl in TrueTerminalOf Type.
   Definition CategoryOfSetsTrueTerminal : IsTerminalObject (C := CategoryOfSets) True := Eval simpl in TrueTerminalOf Set.
@@ -173,8 +173,6 @@ Section InitialTerminal.
 End InitialTerminal.
 
 Section EpiMono.
-  Definition compose {A B C : Type} (f : B -> C) (g : A -> B) := (fun x => f (g x)).
-
   Variables S : Type.
 
   Local Ltac t' :=
@@ -240,3 +238,107 @@ Section EpiMono.
     t.
   Qed.
 End EpiMono.
+
+Section set_cat_has_prod.
+  Local Ltac prod_t :=
+    repeat match goal with
+             | _ => apply functional_extensionality_dep
+             | _ => progress intros []
+             | _ => intro
+             | _ => progress simpl_eq
+             | _ => progress fg_equal
+             | _ => progress intuition
+             | [ |- @eq (_ /\ _) (?f ?x) _ ] => destruct (f x)
+           end.
+
+  Global Instance prodT_is_product X Y : is_product CategoryOfTypes X Y (X * Y)%type.
+  refine (@Build_is_product _ _
+                            X Y (X * Y)%type
+                            (@fst _ _)
+                            (@snd _ _)
+                            (fun A f g => fun x => (f x, g x))
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract prod_t.
+  Defined.
+
+  Global Instance prod_is_product X Y : is_product CategoryOfSets X Y (X * Y)%type.
+  refine (@Build_is_product _ _
+                            X Y (X * Y)%type
+                            (@fst _ _)
+                            (@snd _ _)
+                            (fun A f g => fun x => (f x, g x))
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract prod_t.
+  Defined.
+
+  Global Instance conj_is_product X Y : is_product CategoryOfProps X Y (X /\ Y).
+  refine (@Build_is_product _ _
+                            X Y (X /\ Y)
+                            (fun H => match H with conj A _ => A end)
+                            (fun H => match H with conj _ A => A end)
+                            (fun A f g => fun x => conj (f x) (g x))
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract prod_t.
+  Defined.
+End set_cat_has_prod.
+
+Section set_cat_has_coprod.
+  Local Ltac coprod_t :=
+    repeat match goal with
+             | _ => apply functional_extensionality_dep
+             | _ => progress intros []
+             | _ => intro
+             | _ => progress simpl_eq
+             | _ => progress fg_equal
+             | _ => progress intuition
+             | [ |- @eq (_ /\ _) (?f ?x) _ ] => destruct (f x)
+           end.
+
+  Global Instance sumT_is_coproduct X Y : is_coproduct CategoryOfTypes X Y (X + Y)%type.
+  refine (@Build_is_coproduct _ _
+                            X Y (X + Y)%type
+                            (@inl _ _)
+                            (@inr _ _)
+                            (fun A f g => fun x => match x with inl x => f x | inr x => g x end)
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract coprod_t.
+  Defined.
+
+  Global Instance sum_is_coproduct X Y : is_coproduct CategoryOfSets X Y (X + Y)%type.
+  refine (@Build_is_coproduct _ _
+                            X Y (X + Y)%type
+                            (@inl _ _)
+                            (@inr _ _)
+                            (fun A f g => fun x => match x with inl x => f x | inr x => g x end)
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract coprod_t.
+  Defined.
+
+  Global Instance or_is_coproduct X Y : is_coproduct CategoryOfProps X Y (X \/ Y).
+  refine (@Build_is_coproduct _ _
+                            X Y (X \/ Y)
+                            (@or_introl _ _)
+                            (@or_intror _ _)
+                            (fun A f g => fun x => match x with or_introl x => f x | or_intror x => g x end)
+                            _
+                            _
+                            _);
+    simpl; try reflexivity;
+    abstract coprod_t.
+  Defined.
+End set_cat_has_coprod.

@@ -80,6 +80,9 @@
 (** printing '_1_' %\ensuremath{\text{\underline{1}}}% #<u>1</u># *)
 (** printing _2_ %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
+(** printing _3_ %\ensuremath{\text{\underline{3}}}% #<u>3</u># *)
+(** printing '_3_' %\ensuremath{\text{\underline{3}}}% #<u>3</u># *)
+(** printing ◇ %\ensuremath{\diamond}% #&#x25c7;# *)
 (** printing ℝ %\ensuremath{\mathbb{R}}% #&#x211d;# *)
 (** printing ℝ³ %\ensuremath{\mathbb{R}^3}% #&#x211d;<sup>3</sup># *)
 (** printing ℕ %\ensuremath{\mathbb{N}}% #&#x2115;# *)
@@ -271,26 +274,48 @@ Section NaturalTransformationComposition.
   Defined.
 End NaturalTransformationComposition.
 
+Infix "◇" := NTComposeF : natural_transformation_scope.
+Infix "o" := NTComposeT : natural_transformation_scope.
+
 Section IdentityNaturalTransformation.
   Context `(C : @Category objC).
   Context `(D : @Category objD).
-  Variable F : Functor C D.
+  Section FullIdentity.
+    Variable F : Functor C D.
 
-  (* There is an identity natrual transformation. *)
-  Definition IdentityNaturalTransformation : NaturalTransformation F F.
-    exists (fun c => Identity (F c));
-    abstract (intros; autorewrite with morphism; reflexivity).
-  Defined.
+    (* There is an identity natrual transformation. *)
+    Definition IdentityNaturalTransformation : NaturalTransformation F F.
+      exists (fun c => Identity (F c));
+      abstract (intros; autorewrite with morphism; reflexivity).
+    Defined.
 
-  Lemma LeftIdentityNaturalTransformation (F' : Functor C D) (T : NaturalTransformation F' F) :
-    NTComposeT IdentityNaturalTransformation T = T.
-    apply NaturalTransformation_Eq; simpl; auto with morphism.
-  Qed.
+    Lemma LeftIdentityNaturalTransformation (F' : Functor C D) (T : NaturalTransformation F' F) :
+      NTComposeT IdentityNaturalTransformation T = T.
+      apply NaturalTransformation_Eq; simpl; auto with morphism.
+    Qed.
 
-  Lemma RightIdentityNaturalTransformation (F' : Functor C D) (T : NaturalTransformation F F') :
-    NTComposeT T IdentityNaturalTransformation = T.
-    apply NaturalTransformation_Eq; simpl; auto with morphism.
-  Qed.
+    Lemma RightIdentityNaturalTransformation (F' : Functor C D) (T : NaturalTransformation F F') :
+      NTComposeT T IdentityNaturalTransformation = T.
+      apply NaturalTransformation_Eq; simpl; auto with morphism.
+    Qed.
+  End FullIdentity.
+
+  Section ProofFreeIdentity.
+    Variable FOO : C -> D.
+    Variable FMO : forall s d, Morphism C s d -> Morphism D (FOO s) (FOO d).
+
+    Definition IdentityNaturalTransformation'
+               FCO FIO FCO' FIO'
+               (F := Build_Functor C D FOO FMO FCO FIO)
+               (F' := Build_Functor C D FOO FMO FCO' FIO')
+    : NaturalTransformation F F'.
+      refine (Build_NaturalTransformation F F'
+                                          (fun c => Identity (FOO c))
+                                          _);
+      subst F F'; simpl in *;
+      abstract (intros; autorewrite with morphism; reflexivity).
+    Defined.
+  End ProofFreeIdentity.
 End IdentityNaturalTransformation.
 
 Hint Rewrite @LeftIdentityNaturalTransformation @RightIdentityNaturalTransformation : category.

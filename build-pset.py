@@ -134,4 +134,6 @@ def build_pset(pset_n, *file_names):
 os.chdir(r'D:\Documents\Dropbox\MIT\2012-2013\18.S996 Category theory for scientists\jasonssubmissions')
 # build_pset(7, 'Exercise_4_3_1_10.v', 'Exercise_4_3_1_3.v', 'Exercise_4_3_1_9.v', 'Exercise_4_3_2_5.v', 'Exercise_4_4_1_1.v', 'Exercise_4_4_1_5.v', 'Exercise_4_4_1_6.v', 'Exercise_4_4_1_7.v', 'Exercise_4_5_1_14.v', 'Exercise_4_5_1_16.v', 'Exercise_4_5_1_28.v', 'Exercise_4_5_1_4.v')
 # build_pset(8, 'Exercise_4_5_2_12.v', 'Exercise_4_5_2_3.v', 'Exercise_4_5_2_5.v', 'Exercise_4_5_2_9.v', 'Exercise_4_5_3_11.v', 'Exercise_4_5_3_13.v', 'Exercise_4_5_3_6.v', 'Exercise_4_5_3_8.v')
-build_pset(9, 'Exercise_4_6_1_5.v', 'Exercise_4_6_4_3.v', 'Exercise_5_1_1_6.v', 'Exercise_4_6_2_4.v', 'Exercise_5_1_1_3.v', 'Exercise_5_1_1_9.v')
+# build_pset(9, 'Exercise_4_6_1_5.v', 'Exercise_4_6_4_3.v', 'Exercise_5_1_1_6.v', 'Exercise_4_6_2_4.v', 'Exercise_5_1_1_3.v', 'Exercise_5_1_1_9.v')
+#build_pset(10, 'Exercise_5_1_4_4.v', 'Exercise_5_1_4_5.v', 'Exercise_5_1_4_9.v')
+build_pset(11, 'Exercise_5_3_2_3.v', 'Exercise_5_3_2_5.v', 'Exercise_5_3_3_6.v', 'Exercise_5_3_3_7.v')

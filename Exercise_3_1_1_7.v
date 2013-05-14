@@ -34,7 +34,7 @@
 (** printing '_2_' %\ensuremath{\text{\underline{2}}}% #<u>2</u># *)
 
 Require Import Utf8 Setoid.
-Require Import Monoid.
+Require Import Monoid Notations.
 
 Set Implicit Arguments.
 
@@ -47,7 +47,7 @@ Definition smallest_monoid : Monoid unit.
   reflexivity.
 Defined.
 
-Lemma no_smaller_monoid : Monoid Empty_set -> False.
+Lemma no_smaller_monoid : Monoid ∅ -> False.
   intro M.
   destruct (@id _ M).
 Qed.

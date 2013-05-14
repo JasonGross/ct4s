@@ -136,7 +136,8 @@ Section subspace_topology.
     destruct_head_hnf @Intersection;
     auto;
     specialize_all_ways;
-    destruct_head_hnf @Empty_set.
+    destruct_head_hnf @Ensembles.Empty_set;
+    destruct_head_hnf ∅.
 
   (*Inductive SubspaceOpen : Ensemble (Ensemble (sig P)) :=
     SubspaceOpen_intro : forall (U' : T) (U : Ensemble (sig P)),
@@ -167,7 +168,7 @@ Section subspace_topology.
     {| Open := (fun U => exists U' : T, subset_ensemble U = (proj1_sig U') ∩ P) |}.
   Proof with simpl; try abstract solve [ subspace_t ].
     - refine (ex_intro _ (exist _ (Full_set _) _) _)...
-    - refine (ex_intro _ (exist _ (Empty_set _) _) _)...
+    - refine (ex_intro _ (exist _ (Ensembles.Empty_set _) _) _)...
     - (*setoid_rewrite <- subset_ensemble_union;
       intros; esplit;
       apply Extensionality_Ensembles; split; intros ? ?; destruct_sets; unfold Ensembles.In in *; simpl in *;
