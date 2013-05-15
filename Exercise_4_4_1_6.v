@@ -141,19 +141,6 @@ Module Exercise_4_4_1_6.
       (a) Is _1_ isomorphic to [L_1] in [Sch]?
 
       (b) Is it isomorphic to any (other) [L_n]? *)
-  (** ** Solution *)
-  (** (a) No; by (b), it's isomorphic to [L_0], which is clearly not
-          isomorphic to [L_1]. (Though proving this is a pain, because
-          equivalence relations are a pain.  The idea would be to show
-          that for [n <> 0], [f^1] is not equivalent to [f^0], but any
-          morphism which factors through [L_0] sends all paths to
-          equivalent paths, because all paths are equivalent in
-          [L_0].)
-
-      (b) Yes, _1_ is isomorphic to [L_0]; both have exactly one path,
-          up to path equivalence, and schema morphisms which are the
-          same up to path equivalence are defined to be equivalent.
-          *)
 
   Inductive Loop_Vertex := s.
   Inductive Loop_Edge : Loop_Vertex -> Loop_Vertex -> Set := f : Loop_Edge s s.
@@ -174,9 +161,6 @@ Module Exercise_4_4_1_6.
     revert x p1.
     induction p2; simpl in *; intuition.
   Qed.
-
-  (** We have [f^a ≃_n f^b] if and only if [a = b] or [a >= n /\ b >=
-      n]. *)
   Definition Loop_Equiv (n : ℕ) x y
   : Relation_Definitions.relation (path Loop_Edge x y)
     := fun p q => count_edges p = count_edges q
@@ -185,8 +169,6 @@ Module Exercise_4_4_1_6.
   Local Notation "x ≃_ n y" := (@Loop_Equiv n x y) (at level 70).
 
   Hint Extern 1 => etransitivity; (eassumption || (symmetry; eassumption)).
-
-  (** The schema [(Loop, ≃_n)]. *)
   Definition L (n : ℕ) : Schema.
     refine {| SVertex := Loop_Vertex;
               SEdge := Loop_Edge;
@@ -203,18 +185,12 @@ Module Exercise_4_4_1_6.
                  end
       ).
   Defined.
-
-  (** The schema with one vertex and no arrows. *)
   Definition SingletonSchema : Schema.
     refine {| SVertex := unit;
               SEdge := (fun _ _ => ∅);
               PathsEquivalent := (fun _ _ => @eq _) |};
     abstract (repeat (esplit || intro); intuition eauto).
   Defined.
-
-  (** We build an isomorphism between [L_0] and _1_ .  It sends
-      everything to [NoEdges].  We destruct paths and absurdities and
-      use reflexivity to prove that it's a schema morphism. *)
   Definition L0_to_singleton : SchemaMorphism (L 0) SingletonSchema.
     refine (@Build_SchemaMorphism (L 0) SingletonSchema
                                   (fun _ => tt)
@@ -249,11 +225,6 @@ Module Exercise_4_4_1_6.
         intuition
       ).
   Defined.
-
-  (** We prove the composition one way is the identity by using the
-      fact that there is only one element of the singleton set, and
-      the fact that having an element of the empty set is an
-      absurdity. *)
   Lemma singleton_to_L0_to_singleton_id
   : ComposeSchemaMorphisms L0_to_singleton singleton_to_L0
     = IdentitySchemaMorphism _.
@@ -261,11 +232,6 @@ Module Exercise_4_4_1_6.
     repeat intros [].
     reflexivity.
   Qed.
-
-  (** We prove the composition the other way is equivalent to the
-      identity by using the fact that there is only one element of the
-      singleton set, and by using the fact that all paths are
-      equivalent in [L_0]. *)
   Lemma L0_to_singleton_to_L0_id
   : SchemaMorphismsEquivalent (ComposeSchemaMorphisms singleton_to_L0 L0_to_singleton)
                               (IdentitySchemaMorphism _).

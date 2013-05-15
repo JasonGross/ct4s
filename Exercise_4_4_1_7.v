@@ -128,20 +128,6 @@ Module Exercise_4_4_1_7.
       (b) What is the cardinality of the set [Hom_Sch(L_5, L_3)]?
           Hint: the cardinality of the set [Hom_Sch(L_4, L_9)] is
           8. *)
-  (** ** Solution *)
-  (** A schema morphism from [L_n] to [L_m] is just a rule [f ↦ f^k].
-      Since [f^n ≃_n f^{n+1}], we must have [f^{nk} ≃_m f^{(n+1)k}].
-      Thus we must have [k = 0] or [nk >= m], that is, [k = 0] or [k
-      >= ceiling(m / n)].  Choosing [k > m] is no different from
-      choosing [k = m], so our choices of [k] are [0], along with
-      [ceiling(m / n), ..., m].  Thus the cardinality of [Hom_Sch(L_n,
-      L_m)] is [m - ceiling(m / n) + 2].
-
-      (a) Plugging [n = 3], [m = 5] into the formula above gives [5 -
-          ceiling(5 / 3) + 2 = 5 - 2 + 2], or a cardinality of [5].
-
-      (a) Plugging [n = 5], [m = 3] into the formula above gives [3 -
-          ceiling(3 / 5) + 2 = 3 - 1 + 2], or a cardinality of [4]. *)
 End Exercise_4_4_1_7.
 
 (** ------------------------------------------------------------------------ *)

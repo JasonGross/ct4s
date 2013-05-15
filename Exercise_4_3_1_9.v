@@ -125,18 +125,6 @@ Section Exercise_4_3_1_9.
   (** Let [List : Set -> Set] be as above. If someone said "singleton
       lists give a natural transformation from [id_Set] to [List]", what
       might they mean? Would they be correct? *)
-  (** ** Solution *)
-  (** They mean that for any set [S], you can obtain a function from
-      [id_Set S = S] to [List S] by sending each element to its
-      singleton list, and that this function satisfies the natural
-      transformation commutative square.
-
-      This is true, by unfolding of definitions (that is, β (reduction
-      of functional application), δ (unfolding of transparent
-      constants), ι (reduction of pattern-matching over a constructed
-      term, and unfolding of fix and cofix expressions) and ζ
-      (contraction of local definitions) reductions) and applying
-      reflexivity of equality. *)
 
   Definition SingletonList (S : CategoryOfTypes)
   : Morphism CategoryOfTypes

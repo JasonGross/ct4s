@@ -115,13 +115,6 @@ Section Exercise_3_4_1_7.
 
       Find a preorder [R' ⊆ S × S] such that the set [R'] is as large
       as possible. Is it a partial order? Is it a linear order? *)
-  (** ** Solution *)
-  (** The smallest [R] is the reflexive transitive closure of the
-      empty set, [R = {(1, 1), (2, 2), (3, 3), (4, 4)}], i.e., [=].
-      It's a partial order, but not a linear order.
-
-      The largest [R'] is the entire set, [R' = S × S].  It's not a
-      partial order. *)
 
   Let S := { n | 1 <= n <= 4 }.
 

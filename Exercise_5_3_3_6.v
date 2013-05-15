@@ -138,8 +138,6 @@ Module Exercise_5_3_3_6.
       is closed under binary products, i.e. every pair of objects [A B
       : Ob(Kls(T))] have a product in [Kls(T)]. What is the product of [A
       = {1,2,3}] and [B = {a, b}]? *)
-  (** ** Solution *)
-  (** The product is [{1, 2, 3, a, b}]. *)
 
   Local Open Scope morphism_scope.
 
@@ -147,10 +145,6 @@ Module Exercise_5_3_3_6.
 
   Let η := MonadUnit T.
   Let µ := MonadMultiplication T.
-
-  (** First we prove that [ℙ(X) * ℙ(Y) = ℙ(X + Y)].  We do this by
-      rewriting with hypotheses and applying
-      functional-extensionality. *)
 
   Global Instance PowerSumIsProductPower X Y
   : is_product CategoryOfTypes (T X) (T Y) (T (X + Y))%type.
@@ -168,13 +162,6 @@ Module Exercise_5_3_3_6.
                         || intros []
                         || intro)).
   Defined.
-
-  (** Now we use [KleisliCategory_has_is_products], which assumes that
-      [π₁ = µ X o MorphismOf T (π₁ o η XxY)] and [π₂ = µ Y o
-      MorphismOf T (π₂ o η XxY)], and do some standard application of
-      [Extensionality_Ensembles], functional-extensionality, unfolding
-      of definitions, case splitting, and guessing that we can figure
-      out what something is from context later ([eexists]). *)
 
   Global Instance PowerSetMonadProducts X Y : is_product (KleisliCategory T) X Y (X + Y)%type.
   apply KleisliCategory_has_is_products with (C_has_product := PowerSumIsProductPower _ _);

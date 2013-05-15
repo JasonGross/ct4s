@@ -11,10 +11,6 @@ Section Exercise_4_1_2_35.
   (** ** Problem *)
   (** If someone said "[Ob] is a functor from [Cat] to [Set]," what might
       they mean? *)
-  (** ** Solution *)
-  (** They might mean that there is a canonical or natural extension
-      to the function [Ob] which sends categories to sets. Here's such
-      a functor (defined above as [ObjectFunctor]). *)
   Let Cat := CategoryOfCategories.
   Let Sets := CategoryOfTypes.
 

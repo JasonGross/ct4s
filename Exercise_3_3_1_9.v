@@ -107,13 +107,6 @@ Generalizable All Variables.
 (** ------------------------------------------------------------------------ *)
 (** * Exercise 3.3.1.9 *)
 Section Exercise_3_3_1_9.
-  (** ** Solution *)
-  (** In the infinite graph given, the set of vertices is [ℕ × ℕ], the
-      set of arrows is the subset of pairs of pairs [{((n, m), (n',
-      m')) | (n = n' ∧ m + 1 = m') ∨ (m = m' ∧ n + 1 = n')}], and the
-      source and target functions are the first of the pair of pairs,
-      and the second of the pair of pairs. *)
-  (** I define this graph in both the book way, and the Coq way. *)
   Example Exercise_3_3_1_9' : Graph' :=
     {| Vertex' := ℕ × ℕ;
        Arrow' := { nmn'm' : (ℕ × ℕ) × (ℕ × ℕ)

@@ -124,12 +124,6 @@ Section Exercise_3_3_2_4.
       [G]. Is there an identity element and a multiplication formula
       for which [Path G] can naturally be given the structure of a
       monoid?  Why or why not? *)
-  (** ** Solution *)
-  (** Not unless there's only a single vertex in [G], in which case,
-      the identity is the empty path, and the formula is path
-      composition. Paths can only be composed if the source and target
-      line up; in a monoid, anything can be composed with anything
-      else. *)
 
   Definition Exercise_3_3_2_4_SingletonGraphCMonoid
              (G : Graph)
@@ -169,12 +163,6 @@ Section Exercise_3_3_2_4.
     auto;
     try rewrite concatenate_associative; reflexivity.
   Qed.
-
-  (** I can't prove that there's no non-singleton graph monoid,
-      because that's false.  I want to prove that there's no functor
-      from the category of graphs to the category of monoids-on-graphs
-      which is ... adjoint to the forgetful functor from
-      monoids-on-graphs to graphs? *)
 
   (*
   Lemma Exercise_3_3_2_4_NonSingleton_NoMonoid (G : Graph) (v v' : G) (H : v ≠ v')

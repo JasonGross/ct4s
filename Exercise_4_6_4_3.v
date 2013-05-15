@@ -135,16 +135,9 @@ Section Exercise_4_6_4_3.
   (** Let [C] be a category and let [c c' : Ob C] be objects. Consider
       them as functors [c c' : 1 -> C], and consider the setup [c : 1
       -> C <- 1 : c']. What is the comma category [c ↓ c']? *)
-  (** ** Solution *)
-  (** We have [c ↓ c' ≅ Disc(c -> c')], the discrete category on the
-      morphisms between [c] and [c']. *)
 
   Context `(C : @Category objC).
   Variables c c' : C.
-
-  (** Define how the functor [c ↓ c' -> Disc(c -> c')] acts on morphisms, by unfolding
-      definitions, rewriting with the definition of a category, and
-      using assumptions. *)
 
   Definition Exercise_4_6_4_3_F_MorphismOf s d (m : Morphism (c ↓ c') s d)
   : Morphism (DiscreteCategory (Morphism C c c')) (projT2 s) (projT2 d).
@@ -154,23 +147,14 @@ Section Exercise_4_6_4_3.
     assumption.
   Qed.
 
-  (** Prove that the action on morphisms extends to a functor [c ↓ c'
-  -> Disc(c -> c')] by applying proof-irrelevance. *)
-
   Definition Exercise_4_6_4_3_F : Functor (c ↓ c') (DiscreteCategory (Morphism C c c')).
     refine {| MorphismOf := Exercise_4_6_4_3_F_MorphismOf |};
     abstract (simpl; intros; apply ProofIrrelevance.proof_irrelevance).
   Defined.
 
-  (** Define the action of the functor [Disc(c -> c') -> c ↓ c'] on objects. *)
-
   Let G_ObjectOf (x : DiscreteCategory (Morphism C c c')) : (c ↓ c')%category
     := existT _ (tt, tt) x
        : CommaCategory_ObjectT (FunctorFromTerminal _ c) (FunctorFromTerminal _ c').
-
-  (** Define the action of the functor [Disc(c -> c') -> c ↓ c'] on
-      morphisms by unfolding definitions, using reflexivity, and
-      rewriting with the definition of a category. *)
 
   Definition Exercise_4_6_4_3_G_MorphismOf
              s d (m : Morphism (DiscreteCategory (Morphism C c c')) s d)
@@ -187,13 +171,6 @@ Section Exercise_4_6_4_3.
       ).
   Defined.
 
-  (** Now we show that the action on morphisms extends to a functor
-      [Disc(c -> c') -> c ↓ c'] by unfolding definitions, using
-      reflexivity, using the definition of equality of dependent pairs
-      (and using proof-irrelevance (via [simpl_eq]) when doing this),
-      using the fact that [x = y -> f x = f y], and using the
-      substitution property of equality. *)
-
   Definition Exercise_4_6_4_3_G : Functor (DiscreteCategory (Morphism C c c')) (c ↓ c').
     refine {| MorphismOf := Exercise_4_6_4_3_G_MorphismOf |};
     subst_body;
@@ -209,14 +186,6 @@ Section Exercise_4_6_4_3.
                end
       ).
   Defined.
-
-  (** Now we prove the isomorphism in [Cat].  We declare the existance
-      of the inverse functors, and then prove that they are inverses
-      by applying the definition of equality of functors, applying
-      proof-irrelevance, using reflexivity, unfolding definitions,
-      using the definition of equality of dependent pairs (along with
-      proof-irrelevance), using the fact that [x = y -> f x = f y],
-      and generalizing some variables being matched on. *)
 
   Lemma Exercise_4_6_4_3
   : ((DiscreteCategory (Morphism C c c') : CategoryOfCategories)

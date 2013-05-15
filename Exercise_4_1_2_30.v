@@ -118,8 +118,6 @@ Section Exercise_4_1_2_30.
       Example 4.1.2.27, and let [U : Cat -> Grph] denote the
       underlying graph functor from Example 4.1.2.27. We have seen the
       composition [U o F : Grph -> Grph] before; what was it called? *)
-  (** ** Solution *)
-  (** It was called the paths-graph in Example 4.1.2.19. *)
 End Exercise_4_1_2_30.
 
 (** ------------------------------------------------------------------------ *)

@@ -122,21 +122,8 @@ Section Exercise_4_1_1_14.
       [f] is an isomorphism in [Grph]? If so, why; and if not, show a
       counterexample (where [f₀] and [f₁] are isomorphisms but [f] is
       not). *)
-  (** ** Solution *)
-  (** Yes, but this is tricker, because the commutativity squares are non-trivial.  See below. *)
 
   Let Grph := CategoryOfGraph's.
-
-  (** The proof of commutativity uses the following steps, in some
-      order, some number of times:
-
-      - [reflexivity] (that is, [forall x, x = x])
-      - unfolding of definitions, in particular of isomorphism
-      - using the commutativity diagrams of graph homomorphisms
-      - using the fact that, if [f] is invertible, [f ⁻¹ x = f ⁻¹ y]
-        implies both [f (f ⁻¹ x) = f (f ⁻¹ y)] and, therefore, [x = y]
-
-      The tactic [t], defined below, expresses this fact. *)
   Local Ltac t :=
     repeat match goal with
                | _ => reflexivity
@@ -175,8 +162,6 @@ Section Exercise_4_1_1_14.
           fg_equal;
         intuition
       ).
-    (** We have left the proofs of commutativity as holes in
-        [eexists].  We must now fill them in. *)
     Grab Existential Variables.
     abstract (pose proof (TargetCommutes' f); pose proof (SourceCommutes' f); t).
     abstract (pose proof (TargetCommutes' f); pose proof (SourceCommutes' f); t).

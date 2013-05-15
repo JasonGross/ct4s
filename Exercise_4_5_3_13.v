@@ -130,19 +130,10 @@ Section Exercise_4_5_3_13.
       (a) Does [K_S] have an initial object?
 
       (b) Does it have a terminal object? *)
-  (** ** Solution *)
-  (** Every element of [S] is both an initial object of [K_S] and a
-      terminal object of [K_S].  Note that if [S] is empty, then [K_S]
-      has no objects, and thus no initial nor terminal objects. *)
 
   Let K S : @Category S := IndiscreteCategory S.
 
   Variable S : Type.
-
-  (** We prove that each element [s : S] is an initial/terminal object
-      by providing the unique morphism from/to [s], called [tt], and
-      we prove that it is unique by destructing any other morphism
-      with matching source and target (which is of type [unit]). *)
 
   Example Exercise_4_5_3_13_a (s : S) : @IsInitialObject _ (K S) s.
   Proof.

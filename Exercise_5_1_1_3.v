@@ -141,8 +141,6 @@ Module Exercise_5_1_1_3.
       [f(b) = 2], [f(c) = 2], and let [β_{X,M}: Hom_{Set}(X, R(M)) ->
       Hom_{Mon}(L(X), M)] be as in the proof of Proposition
       5.1.1.2. What is [β_{X,M}(f)([b, b, a, c])]? *)
-  (** ** Solution *)
-  (** 56 = 2 * 2 * 7 * 2 *)
   Inductive X := a | b | c.
   Let M : Monoid ℕ := NaturalNumbersMonoid.
   Let f : X -> ℕ
@@ -156,6 +154,5 @@ Module Exercise_5_1_1_3.
     := InverseNaturalIsomorphism (AMateOf MonoidFreeUnderlyingAdjunction) (X, existT _ _ M).
   Arguments β X {T} M _.
   Eval compute in β X M f (b :: b :: a :: c :: nil).
-  (** [= 56] *)
 End Exercise_5_1_1_3.
 (** ------------------------------------------------------------------------ *)

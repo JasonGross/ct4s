@@ -136,29 +136,13 @@ Module Exercise_4_2_4_4.
       assign to each jurisdiction the maximal law respected
       throughout. Does this assignment [Ob J -> Ob Prop] extend to a
       functor [J -> Prop]? *)
-  (** ** Solution *)
-  (** If [U ⊆ V], then [R(V) ⊆ R(U)], because all the people in [U]
-      are also people in [V], and so respect all the laws which
-      everyone in [V] respects.  However, people in [U] might respect
-      additional laws.  Again, we do not have a functor [J -> Set],
-      but [J -> Set ᵒᵖ].
-
-      The "maximal law" assignment does give us a functor a functor
-      [Set -> Prop], because if [U ⊆ V], then the maximal law of [U]
-      implies the maximal law of [V]. *)
 
   Variable Person : Type.
-  (** A jurisdiction is a set of people *)
   Definition Jurisdiction := Ensemble Person.
   Variable Law : Type.
   Variable LawAsProp : Law -> Prop.
-  (** The laws of a jurisdiction is a subset of the set of [Law]s *)
   Definition SetOfLaws := Ensemble Law.
-  (** Each person respects some set of laws *)
   Variable RespectedLawsOfPerson : Person -> SetOfLaws.
-
-  (** The laws respected by a jurisdiction is the set of laws
-      respected by every person in that jurisdiction *)
   Inductive RespectedLawsOf (J : Jurisdiction) : SetOfLaws :=
   | RespectedLawsOfAll : forall law,
                          (forall person,
@@ -183,12 +167,6 @@ Module Exercise_4_2_4_4.
 
   Hint Extern 1 => constructor.
   Hint Extern 1 => destruct_head_hnf @RespectedLawsOf.
-
-  (** If jurisdiction [s] is a subset of jurisdiction [d], we can show
-      by unfolding of definitions and firstorder logical reasoning
-      that the respected laws of [d] are a subset of the respected
-      laws of [s].  (Intuitively, everyone in [s] follows all the laws
-      respected by people in [d], and then some.) *)
   Definition RespectedLawsOfFunctor_MorphismOf
              s d (m : Morphism (PreOrderCategory JurisdictionPreOrder) s d)
   : Morphism (OppositeCategory (PreOrderCategory SetsPreOrder))
@@ -199,8 +177,6 @@ Module Exercise_4_2_4_4.
     destruct_head_hnf @RespectedLawsOf.
     intuition.
   Qed.
-
-  (** The fact that this is a functor follows by proof irrelevance. *)
   Definition RespectedLawsOfFunctor
   : Functor (PreOrderCategory JurisdictionPreOrder)
             (OppositeCategory (PreOrderCategory SetsPreOrder)).
@@ -215,9 +191,6 @@ Module Exercise_4_2_4_4.
 
   Section maximal_law.
     Variable S : SetOfLaws.
-
-    (** A [P : Prop] is a law of [V] if there is some [Law] which is
-        equal to [P] when treated as a [Prop]. *)
     Let SetOfLawsAsProp : Ensemble Prop := fun P =>
                                              exists L,
                                                L ∈ S
@@ -226,16 +199,6 @@ Module Exercise_4_2_4_4.
     Definition maximal_law : Prop :=
       EnsembleMeetElement (EnsembleMeetOf := PropHasEnsembleMeets SetOfLawsAsProp).
   End maximal_law.
-
-  (** If jurisdiction [s] is a subset of jurisdiction [d], we can show
-      by unfolding of definitions and firstorder logical reasoning
-      that the maximal respected law of [s] implies are a subset of
-      the respected laws of [s].  (Intuitively, everyone in [s]
-      follows all the laws respected by people in [d], and then some.) *)
-
-  (** This proof is done by a combination of unfolding of definitions,
-      firstorder logical reasoning, and educated guessing on the basis
-      of hypotheses. *)
   Definition MaximalRespectedLawOfFunctor_MorphismOf
              s d (m : Morphism (PreOrderCategory JurisdictionPreOrder) s d)
   : Morphism (PreOrderCategory Prop_PreOrder)
@@ -254,8 +217,6 @@ Module Exercise_4_2_4_4.
              | _ => solve [ firstorder ]
            end.
   Defined.
-
-  (** The fact that this is a functor follows by proof irrelevance. *)
   Definition MaximalRespectedLawOfFunctor
   : Functor (PreOrderCategory JurisdictionPreOrder)
             (PreOrderCategory Prop_PreOrder).

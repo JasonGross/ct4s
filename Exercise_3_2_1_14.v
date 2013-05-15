@@ -108,10 +108,6 @@ Section Exercise_3_2_1_14.
       b.) What are the orbits of the action of the permutation group
           [Σ {1, 2, 3}] on the set [{1, 2, 3}]?  (See Exercise 3.2.1.11.)
    *)
-  (** ** Solution *)
-  (** a.) The orbits are circles centered at [(0, 0, z)] for any [z]. *)
-  (** b.) The only orbit is the set [{1, 2, 3}]; for any element, there
-          is some permutation which sends it to any other element. *)
 End Exercise_3_2_1_14.
 
 (** ------------------------------------------------------------------------ *)

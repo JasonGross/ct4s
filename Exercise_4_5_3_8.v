@@ -127,14 +127,8 @@ Section Exercise_4_5_3_8.
   (** (a) What is the initial object in [Grp], the category of groups?
 
       (b) What is the terminal object in [Grp]? *)
-  (** ** Solution *)
-  (** The zero group, consisting of only the identity element, is both
-      initial and terminal. *)
 
   Let Grp := CategoryOfGroups.
-
-  (** We have previously proven that morphisms to and from the zero
-      group always exist and are unique.  Thus it is both initial and terminal. *)
 
   Example Exercise_4_5_3_8_a : InitialObject Grp.
   Proof.

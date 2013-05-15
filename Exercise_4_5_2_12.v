@@ -133,9 +133,6 @@ Module Exercise_4_5_2_12.
       the commutative diagram indexing category [[1] * [1]], is it the
       non-commutative diagram indexing category [F(G)], or is it
       something else? *)
-  (** ** Solution *)
-  (** I prove that [( _2_ ◅)▻ ≅ [1] * [1]] in the category of
-      categories. *)
 
   Inductive Two := A | B.
 
@@ -152,10 +149,6 @@ Module Exercise_4_5_2_12.
   Global Arguments obj_0 / .
   Global Arguments obj_1 / .
   Global Arguments mor_0_1 / .
-
-  (** We define functions between [C] and [[1] * [1]].  The stuff at
-      the bottom of [sq_to_C] is deriving abusrdity ([exfalso]) from
-      having supposed elements that aren't actually in [[1]]. *)
 
   Definition C_to_sq : C -> [1] * [1]
     := fun x => match x with
@@ -184,9 +177,6 @@ Module Exercise_4_5_2_12.
     abstract omega.
   Defined.
 
-  (** Now we define the transformation on morphisms.  As the morphisms
-      are unique, this isn't too hard. *)
-
   Definition C_to_sq_MorphismOf s d (m : Morphism C s d)
   : Morphism ([1] * [1]) (C_to_sq s) (C_to_sq d).
     revert m.
@@ -212,9 +202,6 @@ Module Exercise_4_5_2_12.
                     abstract inversion H ].
   Defined.
 
-  (** Every morphism is either [tt] or [eq_refl], and in the other
-      cases, we can find an absurdity. *)
-
   Definition sq_to_C_MorphismOf s d (m : Morphism ([1] * [1]) s d)
   : Morphism C (sq_to_C s) (sq_to_C d).
     destruct s as [[[|[|s1]] ?] [[|[|s2]] ?]],
@@ -231,10 +218,6 @@ Module Exercise_4_5_2_12.
         omega
       ).
   Defined.
-
-  (** Now the functors.  We prove functoriality by repeated
-      case-splitting, using uniqueness of some proofs, and some
-      definitions of equality. *)
 
   Definition C_to_sq_functor : Functor C ([1] * [1]).
     refine {| MorphismOf := C_to_sq_MorphismOf |};
@@ -274,12 +257,6 @@ Module Exercise_4_5_2_12.
                end
       ).
   Defined.
-
-  (** Now, finally, we prove that [[1] * [1]] and [( _2_ ◅)▻] are
-      isomorphic in [Cat].
-
-      To prove this goal, we exhaustively case-split and apply some
-      facts about uniqueness of proofs. *)
 
   Theorem Exercise_4_5_2_12 : ((C : CategoryOfCategories)
                                  ≅ ([1] * [1] : CategoryOfCategories))%category.

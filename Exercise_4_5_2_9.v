@@ -129,10 +129,6 @@ Module Exercise_4_5_2_9.
   (** ** Problem *)
   (** Let [C_0 := _0_] denote the empty category and for any natural number
       [n : ℕ], let [C_{n+1} := (C_n)◅].  Draw [C_4]. *)
-  (** ** Solution *)
-  (** I prove that [C_{n+1} ≅ [n]], the chain category on [n + 1]
-      nodes.  Thus, after some relabeling, [C_4] is [0 -> 1 -> 2 -> 3]
-      (where the compositions are left implicit. *)
 
   Fixpoint C_obj (n : ℕ) : Set :=
     match n with
@@ -146,22 +142,12 @@ Module Exercise_4_5_2_9.
       | S n' => (C n')◅
     end.
 
-  (** We prove that morphisms in [C_n] are unique, by induction on
-      [n]. *)
-
   Lemma C_morphism_unicity n s d (m1 m2 : Morphism (C n) s d) : m1 = m2.
     induction n; hnf in *;
     destruct_head_hnf @sum;
     destruct_head_hnf unit;
     easy.
   Qed.
-
-  (** We turn elements of [C_{n + 1}] into elements of [[n]] by
-      recursion on [n]. For [0], we construct the unique element of
-      [[0]].  For [n + 1], if the object we're given is initial, then
-      we send it to the initial object of [[n]].  Otherwise, it's an
-      object of [C_n], so we find where it is in [[n - 1]], and bump
-      it up by one. *)
 
   Fixpoint C_to_chain (n : ℕ) : C (S n) -> [n].
   Proof.
@@ -194,9 +180,6 @@ Module Exercise_4_5_2_9.
     abstract (intros; omega).
   Defined.
 
-  (** Now we define the functor on morphisms.  This is easier, because
-      the morphisms are unique. *)
-
   Lemma C_to_chain_MorphismOf (n : ℕ)
   : forall s d (m : Morphism (C (S n)) s d),
       Morphism [n] (C_to_chain s) (C_to_chain d).
@@ -210,8 +193,6 @@ Module Exercise_4_5_2_9.
     apply IHn;
     hnf; trivial.
   Qed.
-
-  (** We prove this primarily by induction and [omega]. *)
 
   Lemma chain_to_C_MorphismOf (n : ℕ)
   : forall s d (m : Morphism [n] s d),
@@ -229,9 +210,6 @@ Module Exercise_4_5_2_9.
     omega.
   Qed.
 
-  (** Now we define the functors; the functoriality follows from
-      decidable proof irrelevance. *)
-
   Definition C_to_chain_functor (n : ℕ) : Functor (C (S n)) [n].
     refine {| MorphismOf := @C_to_chain_MorphismOf n |};
     abstract (
@@ -248,14 +226,6 @@ Module Exercise_4_5_2_9.
         apply C_morphism_unicity
       ).
   Defined.
-
-  (** Now, finally, we prove that [[n]] and [C_{n + 1}] are isomorphic
-      in [Cat].
-
-      To prove this goal, we exhaustively apply the tactics in [t'],
-      then proceed by induction on [n] (after reverting the necessary
-      hypotheses), and then again exhaustively apply the tactics in
-      [t'] as well as the tactic in [t]. *)
 
   Local Ltac t' IHn :=
     repeat match goal with

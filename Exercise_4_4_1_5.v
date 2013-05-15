@@ -144,16 +144,6 @@ Module Exercise_4_4_1_5.
 
       (b) How many schema morphisms are there [C -> [2]] that send [a]
           to [0]? *)
-  (** ** Solution *)
-  (** (a) There are 8.  See the definitions of
-          [Exercise_4_4_1_5_a_SchemaMorphism]n for a list.
-
-      (b) There is at most one path between any two vertices in [[2]].
-          Thus the map is uniquely determined by where the vertices
-          are sent.  If we send [c] to [0], then we must send [b] to
-          [0].  If we send [c] to [1], then we can send [b] to [0] or
-          [1].  If we send [c] to [2], we can send [b] to [0], [1], or
-          [2].  Thus we have 6 morphisms which send [a] to [0].  *)
 
   Inductive C_Vertex := a | b | c.
   Inductive C_Edge : C_Vertex -> C_Vertex -> Set :=
@@ -169,9 +159,6 @@ Module Exercise_4_4_1_5.
                           _);
     abstract (repeat (intro || split); subst; reflexivity).
   Defined.
-
-  (** The graph [2] is [0 -> 1 -> 2]; we have three vertices, and an
-      edge from [Zero] to [One], and one from [One] to [Two] *)
   Inductive LinearOrder2Schema_Vertex := Zero | One | Two.
   Inductive LinearOrder2Schema_Edge
   : LinearOrder2Schema_Vertex -> LinearOrder2Schema_Vertex -> Set :=
@@ -186,9 +173,6 @@ Module Exercise_4_4_1_5.
                           _);
     abstract (repeat (intro || split); subst; reflexivity).
   Defined.
-
-  (** Since the relation is equality, we don't need to prove anything
-      about path equivalence each time. *)
   Definition SchemaMorphism_template
              (VO : LinearOrder2Schema -> C)
              (PO : forall s d,
@@ -214,11 +198,6 @@ Module Exercise_4_4_1_5.
                                   _).
     abstract (intros; hnf in *; subst; reflexivity).
   Defined.
-
-  (** We prove uniqueness of paths by repeatedly destructing paths,
-        and observing that we have caught all of the values which
-        type-check.  All of the extra tactic code here is to deal with
-        annoyances in dependent typing. *)
   Local Ltac paths_unique_t :=
     intros; compute;
     try apply JMeq_eq;
@@ -260,10 +239,6 @@ Module Exercise_4_4_1_5.
   Local Ltac mk_f_x f x fx :=
     let H := fresh in
     pose (f x) as fx; assert (f x = fx) by reflexivity; clearbody fx.
-
-  (** This tactic will solve the monster uniqueness proof at the
-        end; it attempts to prove that two schema morphisms are equal
-        by rewriting with hypotheses and reflexivity. *)
   Local Ltac t_unique_solve :=
     solve [
         apply SchemaMorphism_Eq; simpl;
@@ -275,16 +250,10 @@ Module Exercise_4_4_1_5.
           | [ H : _ |- _ ] => rewrite H; reflexivity
         end
       ].
-
-  (** When we have all of the information we need about a function,
-        we use this tactic to (exhaustively) figure out which branch
-        of the [or] we can prove. *)
   Local Ltac t_unique_solve_recr :=
     t_unique_solve || (left; t_unique_solve_recr) || (right; t_unique_solve_recr).
 
   Section part_a.
-    (** We define the possibilities of what the morphisms does on
-        vertices. *)
     Definition a_OnVertices0 : LinearOrder2Schema -> C :=
       fun v => match v with Zero => a | One => a | Two => a end.
     Definition a_OnVertices1 : LinearOrder2Schema -> C :=
@@ -303,9 +272,6 @@ Module Exercise_4_4_1_5.
       fun v => match v with Zero => a | One => c | Two => b end.
     Definition a_OnVertices8 : LinearOrder2Schema -> C :=
       fun v => match v with Zero => a | One => c | Two => c end.
-
-    (** We define the possibilities of what the morphisms does on
-        edges. *)
     Definition a_path_a_a_0 : path C_Edge a a := NoEdges.
     Definition a_path_b_b_0 : path C_Edge b b := NoEdges.
     Definition a_path_c_c_0 : path C_Edge c c := NoEdges.
@@ -313,9 +279,6 @@ Module Exercise_4_4_1_5.
     Definition a_path_b_c_0 : path C_Edge b c := AddEdge NoEdges h.
     Definition a_path_a_c_0 : path C_Edge a c := AddEdge NoEdges i.
     Definition a_path_a_c_1 : path C_Edge a c := AddEdge (AddEdge NoEdges g) h.
-
-    (** Here we list all the possible morphisms.  We prove that these
-        are the only ones below. *)
     Definition Exercise_4_4_1_5_a_SchemaMorphism0 : SchemaMorphism LinearOrder2Schema C
       := SchemaMorphism_template a_OnVertices0 (fun _ _ e => match e with Zero_One => a_path_a_a_0 | One_Two => a_path_a_a_0 end).
     Definition Exercise_4_4_1_5_a_SchemaMorphism1 : SchemaMorphism LinearOrder2Schema C
@@ -342,15 +305,6 @@ Module Exercise_4_4_1_5.
     Lemma a_path_b_a_only : path C_Edge b a -> False. paths_unique_t. Qed.
     Lemma a_path_c_b_only : path C_Edge c b -> False. paths_unique_t. Qed.
     Lemma a_path_c_a_only : path C_Edge c a -> False. paths_unique_t. Qed.
-
-
-    (** To prove that we have all of the functions on vertices, we
-        first prove by extensionality that each function is determined
-        by what it does on the three vertices, and we prove by
-        assumption that it must be [a] on the first vertex.  We then
-        exhastively list all possible options for the other two
-        vertices (this is [destruct fOne, fTwo]), and let Coq figure
-        out that one of the options is the one we want ([intuition]). *)
 
     Lemma a_OnVertices_only : forall f : LinearOrder2Schema -> C,
                                 f Zero = a
@@ -380,9 +334,6 @@ Module Exercise_4_4_1_5.
         destruct fOne, fTwo;
         intuition.
     Qed.
-
-    (** We now prove that all schema morphisms we're interested in
-        come from [SchemaMorphism_template]. *)
     Lemma a_schema_morphism_all_template
     : forall F : SchemaMorphism LinearOrder2Schema C,
         F = SchemaMorphism_template (VertexOf F) (PathOf F).
@@ -400,13 +351,6 @@ Module Exercise_4_4_1_5.
       match goal with | [ |- context[match ?E with _ => _ end] ] => destruct E end;
         reflexivity.
     Qed.
-
-
-    (** Now we get to this monster of a proof, where we prove that
-        we've found all of the schema morphisms.  By exhaustion.  (The
-        proof is exhaustive, but not intentionally exhausing.) *)
-
-    (** Try to pose each of the uniqueness lemmas about path uniqueness. *)
     Local Ltac pose_path_uniqueness_proof p :=
       ((pose proof (a_path_a_a_only p))
          || (pose proof (a_path_a_b_only p))
@@ -417,14 +361,6 @@ Module Exercise_4_4_1_5.
          || (pose proof (a_path_c_a_only p))
          || (pose proof (a_path_c_b_only p))
          || (pose proof (a_path_c_c_only p))).
-
-    (** Now, the proof.  We use the lemmas we've proven above about
-        uniqueness of schema morphism parts.  The gigantic [match]
-        statement is mostly silliness with dependent types done to
-        appease Coq.  The key part of it is where we get to
-        [pose_path_uniqueness_proof] of the paths at the end of the
-        match, and then use the information to figure out which branch
-        of the [or] we can prove. *)
     Theorem a_schema_morphism_all
     : forall F : SchemaMorphism LinearOrder2Schema C,
         F Zero = a
@@ -477,8 +413,6 @@ Module Exercise_4_4_1_5.
   End part_a.
 
   Section part_b.
-    (** We define the possibilities of what the morphisms does on
-        vertices. *)
     Definition b_OnVertices0 : C -> LinearOrder2Schema :=
       fun v => match v with a => Zero | b => Zero | c => Zero end.
     Definition b_OnVertices1 : C -> LinearOrder2Schema :=
@@ -497,18 +431,12 @@ Module Exercise_4_4_1_5.
       fun v => match v with a => Zero | b => Two  | c => One  end.
     Definition b_OnVertices8 : C -> LinearOrder2Schema :=
       fun v => match v with a => Zero | b => Two  | c => Two  end.
-
-    (** We define the possibilities of what the morphisms does on
-        edges. *)
     Definition b_path_0_0 : path LinearOrder2Schema_Edge Zero Zero := NoEdges.
     Definition b_path_1_1 : path LinearOrder2Schema_Edge One One := NoEdges.
     Definition b_path_2_2 : path LinearOrder2Schema_Edge Two Two := NoEdges.
     Definition b_path_0_1 : path LinearOrder2Schema_Edge Zero One := AddEdge NoEdges Zero_One.
     Definition b_path_1_2 : path LinearOrder2Schema_Edge One Two := AddEdge NoEdges One_Two.
     Definition b_path_0_2 : path LinearOrder2Schema_Edge Zero Two := AddEdge (AddEdge NoEdges Zero_One) One_Two.
-
-    (** Here we list all the possible morphisms.  We prove that these
-        are the only ones below. *)
     Definition Exercise_4_4_1_5_b_SchemaMorphism0 : SchemaMorphism C LinearOrder2Schema
       := SchemaMorphism_template' b_OnVertices0 (fun _ _ e => match e with g => b_path_0_0 | h => b_path_0_0 | i => b_path_0_0 end).
     Definition Exercise_4_4_1_5_b_SchemaMorphism1 : SchemaMorphism C LinearOrder2Schema
@@ -532,15 +460,6 @@ Module Exercise_4_4_1_5.
     Lemma b_path_1_0_only : path LinearOrder2Schema_Edge One Zero -> False. paths_unique_t. Qed.
     Lemma b_path_2_1_only : path LinearOrder2Schema_Edge Two One -> False. paths_unique_t. Qed.
     Lemma b_path_2_0_only : path LinearOrder2Schema_Edge Two Zero -> False. paths_unique_t. Qed.
-
-
-    (** To prove that we have all of the functions on vertices, we
-        first prove by extensionality that each function is determined
-        by what it does on the three vertices, and we prove by
-        assumption that it must be [a] on the first vertex.  We then
-        exhastively list all possible options for the other two
-        vertices (this is [destruct fOne, fTwo]), and let Coq figure
-        out that one of the options is the one we want ([intuition]). *)
 
     Lemma b_OnVertices_only : forall f : C -> LinearOrder2Schema,
                                 f a = Zero
@@ -570,9 +489,6 @@ Module Exercise_4_4_1_5.
         destruct fb, fc;
         intuition.
     Qed.
-
-    (** We now prove that all schema morphisms we're interested in
-        come from [SchemaMorphism_template]. *)
     Lemma b_schema_morphism_all_template'
     : forall F : SchemaMorphism C LinearOrder2Schema,
         F = SchemaMorphism_template' (VertexOf F) (PathOf F).
@@ -590,13 +506,6 @@ Module Exercise_4_4_1_5.
       match goal with | [ |- context[match ?E with _ => _ end] ] => destruct E end;
         reflexivity.
     Qed.
-
-
-    (** Now we get to this monster of a proof, where we prove that
-        we've found all of the schema morphisms.  By exhaustion.  (The
-        proof is exhaustive, but not intentionally exhausing.) *)
-
-    (** Try to pose each of the uniqueness lemmas about path uniqueness. *)
     Local Ltac pose_path_uniqueness_proof p :=
       ((pose proof (b_path_0_0_only p))
          || (pose proof (b_path_0_1_only p))
@@ -607,14 +516,6 @@ Module Exercise_4_4_1_5.
          || (pose proof (b_path_2_0_only p))
          || (pose proof (b_path_2_1_only p))
          || (pose proof (b_path_2_2_only p))).
-
-    (** Now, the proof.  We use the lemmas we've proven above about
-        uniqueness of schema morphism parts.  The gigantic [match]
-        statement is mostly silliness with dependent types done to
-        appease Coq.  The key part of it is where we get to
-        [pose_path_uniqueness_proof] of the paths at the end of the
-        match, and then use the information to figure out which branch
-        of the [or] we can prove. *)
     Theorem b_schema_morphism_all
     : forall F : SchemaMorphism C LinearOrder2Schema,
         F a = Zero

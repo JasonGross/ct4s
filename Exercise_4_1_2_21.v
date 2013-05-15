@@ -118,18 +118,12 @@ Section Exercise_4_1_2_21.
       objects, and [F : C -> D] is a functor. Suppose that [c] and
       [c'] are isomorphic in [C]. Show that this implies that [F(c)]
       and [F(c')] are isomorphic in [D]. *)
-  (** ** Solution *)
-  (** In short, composition and identities are preserved, so the
-      isomorphism morphisms are preserved. *)
 
   Context `(C : @Category objC).
   Context `(D : @Category objD).
   Variable F : Functor C D.
 
   Local Open Scope category_scope.
-
-  (** Coq requires a bit of extra typing information to infer the type
-      of the isomorphism. *)
   Definition FIsomorphismOf
              (c c' : C)
              (Fc : D := F c)

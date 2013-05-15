@@ -119,11 +119,6 @@ Section Exercise_4_2_1_14.
   (** Suppose that [C] is a preorder (considered as a category). Let
       [x y : Ob C] be objects such that [x ≤ y] and [y ≤ x]. Prove
       that there is an isomorphism [x ≅ y] in [C]. *)
-  (** ** Solution *)
-  (** The objects of the hom sets are unique (by, e.g.,
-      [proof_irrelevance]).  Therefore, we have composed morphisms [x
-      -> x] and [y -> y], which are, by uniqueness, the identity
-      morphisms. *)
 
   Local Open Scope category_scope.
 

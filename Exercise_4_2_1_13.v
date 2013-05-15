@@ -121,9 +121,6 @@ Section Exercise_4_2_1_13.
       preorder with an additional property.  Phrase the defining
       property for preorders in terms of isomorphisms in the category
       [P]. *)
-  (** ** Solution *)
-  (** A preorder category [P] is a partial order category if the only
-      isomorphisms are identity morphisms. *)
 
   Local Open Scope category_scope.
 

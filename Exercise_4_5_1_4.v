@@ -135,22 +135,14 @@ Section Exercise_4_5_1_4.
 
       [(2, 4) ≼ (3, 4)]?  [(2, 4) ≼ (3, 5)]?  [(2, 4) ≼ (8, 0)]?  [(2,
       4) ≼ (0, 0)]? *)
-  (** ** Solution *)
-  (** By computation, [(2, 4) ≼ (3, 4)] is true and [(2, 4) ≼ (8, 0)]
-      is true.  (We have that [2 ≤ 3, 8] and [2 ≰ 0], and [4 divides
-      4, 0], but not [4 divides 5].*)
 
   Local Infix "≤" := le.
   Local Infix "≼" := (fun n m => @dec_rel _ (le * divides)%relation _ n m) (at level 70, right associativity).
 
   Eval hnf in (2, 4) ≼ (3, 4).
-  (** [= true : bool] *)
   Eval hnf in (2, 4) ≼ (3, 5).
-  (** [= false : bool] *)
   Eval hnf in (2, 4) ≼ (8, 0).
-  (** [= true : bool] *)
   Eval hnf in (2, 4) ≼ (0, 0).
-  (** [= false : bool] *)
 End Exercise_4_5_1_4.
 
 (** ------------------------------------------------------------------------ *)

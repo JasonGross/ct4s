@@ -135,12 +135,8 @@ Section Exercise_5_1_1_6.
   (** Let [U : Grph -> Set] denote the functor sending a graph to its
       underlying set of vertices. This functor has both a left and a
       right adjoint. What are they? *)
-  (** ** Solution *)
-  (** The left adjoint is the discrete graph functor, and the right
-      adjoint is the indiscrete graph functor. *)
 
   Section underlying.
-    (** We define the underlying set functor. *)
 
     Definition SetUnderlyingGraphFunctor : Functor CategoryOfGraphs CategoryOfTypes.
       refine (Build_Functor CategoryOfGraphs CategoryOfTypes
@@ -153,9 +149,6 @@ Section Exercise_5_1_1_6.
   End underlying.
 
   Section uniform.
-    (** We define graphs which have the same set of edges between any
-        two vertices; this captures both the discrete and indiscrete
-        graphs. *)
 
     Variable edge_set : Type.
 
@@ -177,7 +170,6 @@ Section Exercise_5_1_1_6.
   End uniform.
 
   Section uniform_functors.
-    (** Define some functors involving uniform graphs. *)
 
     Definition UniformGraphSurjection E (e : E) (G : Graph)
     : GraphHomomorphism G (UniformGraph E G)
@@ -201,10 +193,6 @@ Section Exercise_5_1_1_6.
   Definition IndiscreteGraphSurjection (G : Graph)
     : GraphHomomorphism G (IndiscreteGraph G)
     := @UniformGraphSurjection _ tt G.
-
-  (** We prove the adjunctions by using a combination of functional
-      extensionality, reflexivity, unfolding of definitions, and the
-      fact that [x = y -> f x = f y]. *)
 
   Local Ltac graph_adj_t :=
     repeat match goal with

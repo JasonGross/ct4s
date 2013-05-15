@@ -108,14 +108,6 @@ Section Exercise_3_5_2_12.
       Example 3.5.2.9? If so, what is it and how many equivalence
       classes of paths in Loop are there after you impose that
       relation? *)
-  (** ** Solution *)
-  (** Yes.  We have [f f f f ≃ f f].  No sequence of two or more [f]s
-      is equal to one [f], because [f f] takes [A] to [C], but [f]
-      takes [A] to [B], and nothing takes [C] to [B].  We don't have
-      [f f f ≃ f f] because [f f f] takes [F] to [G], but [f f] takes
-      [F] to [H].  After this, there is the empty path, the path [f],
-      the path [f f], and the path [f f f]. Everything else is
-      equivalent to one of these four paths. *)
 
 End Exercise_3_5_2_12.
 

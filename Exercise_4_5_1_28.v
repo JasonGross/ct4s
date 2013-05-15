@@ -125,21 +125,10 @@ Section Exercise_4_5_1_28.
   (** Let [X] be a set, and consider it as a discrete category. Given
       two objects [x y : Ob X], under what conditions will there exist
       a product [x ⊔ y]? *)
-  (** ** Solution *)
-  (** [x ⊔ y] exists if and only if [x = y = x ⊔ y], for the existance
-      of the injection morphisms requires that [x = x ⊔ y = y], and
-      all the necesary morphisms exist if [x = x ⊔ y = y]. *)
 
   Variable X : Type.
 
   Let X' := DiscreteCategory X.
-
-  (** The morphisms from [x] to [y] are proofs of [x = y].  We have
-      proofs that [x = x] ([@eq_refl X' x]), and the product map is
-      just the identity on either of the two proofs we're given.  The
-      proofs of universality come from proof irrelevance.  (We
-      actually only need proof irrelevance for one of the proofs, but
-      we might as well use it for all of them.) *)
 
   Definition Exercise_4_5_1_28_ex (x : X') : (x ⊔ x)%object.
     subst_body; compute in *.
@@ -151,10 +140,6 @@ Section Exercise_4_5_1_28.
           apply ProofIrrelevance.proof_irrelevance
         ).
   Defined.
-
-  (** The fact that the existance of [x ⊔ y] implies [x = y] follows
-      trivially from unfolding definitions and the substitution
-      property of equality. *)
   Lemma Exercise_4_5_1_28_only (x y : X') : (x ⊔ y)%object -> x = y.
     intros [? []]; compute; intros.
     subst; reflexivity.

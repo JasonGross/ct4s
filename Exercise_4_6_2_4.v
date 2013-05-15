@@ -151,24 +151,13 @@ Module Exercise_4_6_2_4.
 >>
 
  *)
-  (** ** Solution *)
-  (** The schema has as objects: action ids, date ids, people ids,
-      strings, years, days, and months.  It has as morphisms the
-      listed predicates.  The instance is the obvious one, filled out
-      below. *)
-
-  (** Define the data types *)
   Inductive DateIds := D13114.
   Inductive PersonIds := P44.
   Inductive ActionIds := A01.
   Inductive Months := January | February | March | April | May | June
                       | July | August | September | October | November
                       | December.
-
-  (** Define the type of objects. *)
   Inductive objC := ActionId | DateId | PersonId | String | Year | Day | Month.
-
-  (** Define the type of morphisms by specifying which edges exist. *)
 
   Inductive morC : objC -> objC -> Type :=
   | occuredOn         : ActionId ~~> DateId
@@ -183,12 +172,8 @@ Module Exercise_4_6_2_4.
 
   Local Infix "~~>" := morC.
   Local Infix "~~~>" := (path morC).
-
-  (** Define the schema *)
   Definition C : @Category objC
     := PathsCategory morC.
-
-  (** Define the action of the instance on objects. *)
   Definition Inst_ObjectOf : C -> Set
     := fun x => match x with
                   | ActionId => ActionIds
@@ -199,9 +184,6 @@ Module Exercise_4_6_2_4.
                   | Day => nat
                   | Month => Months
                 end.
-
-  (** Define the generating function of the action of the instance on
-      morphisms (here, edges). *)
 
   Definition Inst_MorphismOf_Gen s d
   : morC s d -> (Inst_ObjectOf s -> Inst_ObjectOf d)
@@ -248,16 +230,9 @@ Module Exercise_4_6_2_4.
                           end
                 end.
 
-  (** Lift the action on edges to an action on paths. *)
-
   Definition Inst_MorphismOf s d (m : Morphism C s d)
   : Morphism CategoryOfTypes (Inst_ObjectOf s) (Inst_ObjectOf d)
   := compose_path Inst_ObjectOf Inst_MorphismOf_Gen m.
-
-  (** To prove that the instance is a functor, we do some combination
-      of: path induction, applying [reflexivity], applying [simpl],
-      using functional extensionality, rewriting with the induction
-      hypothesis, and rewriting with hypotheses. *)
 
   Local Ltac t_fin :=
     repeat match goal with
@@ -286,15 +261,9 @@ Module Exercise_4_6_2_4.
     abstract inst_t.
   Defined.
 
-  (** Define the type of RDF triples, the [CategoryOfElements]. *)
-
   Definition RDF := ∫ I.
 
   Local Notation "[ a ]" := (AddEdge NoEdges a).
-
-  (** Define a helper function for the type of morphisms in [RDF] (the
-      type is [sigT P], and a helper notation/alias for building
-      elements in the RDF store. *)
 
   Definition P := (fun sd : RDF * RDF => Morphism RDF (fst sd) (snd sd)).
   Notation Build_RDF a b e c d :=
@@ -304,13 +273,8 @@ Module Exercise_4_6_2_4.
             (exist _ e eq_refl)).
 
   Local Open Scope string_scope.
-  (** Since Coq is bad at dealing with big numbers (they're stored in
-      unary), we need to alias 2013. *)
 
   Let Year_2013 := 2013.
-
-  (** Now we show that all of the relevant examples are captured by
-      our RDF. *)
 
   Example RDF_1 := Build_RDF  ActionId A01     [occuredOn]         DateId   D13114.
   Example RDF_2 := Build_RDF  ActionId A01     [performedBy]       PersonId P44.
@@ -320,9 +284,6 @@ Module Exercise_4_6_2_4.
   Example RDF_6 := Build_RDF  DateId   D13114  [hasDay]            Day      14.
   Example RDF_7 := Build_RDF  PersonId P44     [FirstName]         String   "Barack".
   Example RDF_8 := Build_RDF  PersonId P44     [LastName]          String   "Obama".
-
-  (** Note that [Build_RDF] fails if we have an RDF triple that
-      doesn't come from the given instance. *)
 
   Fail Example RDF_bad := Build_RDF  PersonId P44     [LastName]          String   "Barck".
 End Exercise_4_6_2_4.

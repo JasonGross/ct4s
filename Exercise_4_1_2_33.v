@@ -118,13 +118,6 @@ Section Exercise_4_1_2_33.
   (** Recall the definition of the set [ _n_ ] for any natural number
       [n : ℕ], and let [D_n := Disc( _n_ ) : Ob Cat]. List all the
       morphisms in [D_4].  List all the functors [D_3 -> D_2]. *)
-  (** ** Solution *)
-  (** I defined the discrete categories above, as coercions from the
-      natural numbers.  The functors [D_3 -> D_2] are the functions
-      [{1, 2, 3} -> {1, 2}].  There is the function which sends
-      everything to 1, the function which sends everything to 2, and
-      functions which send two numbers to 1 and the other one to 2,
-      and vice versa. *)
 
   Let D_3 := NatCategory 3.
   Let D_2 := NatCategory 2.

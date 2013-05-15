@@ -142,21 +142,10 @@ Module Exercise_4_6_1_5.
       about whether a certain function [Ob(C) -> Ob(D)] extended to a
       functor [C -> D]. In each case, see if the proposed function would
       extend to a "contravariant functor" i.e. to a functor [C ᵒᵖ -> D]. *)
-  (** ** Solution *)
-  (** In each case that we don't have a functor [C -> D] (4.2.3.2 and
-  4.2.4.4), we do have a functor [C ᵒᵖ -> D]. *)
 
   (** *** Exercise 4.2.3.2 *)
   Section Exercise_4_2_3_2.
     (** **** Problem *)
-    (** Explain how "looking at points" gives a functor [Top ->
-        Set]. Does "looking at open sets" give a functor [Top -> PrO]?
-     *)
-    (** **** Solution *)
-    (** Every topology has an underlying set of points, and every
-        continuous function is a function on these sets.  Looking at
-        open sets gives a functor [Top ᵒᵖ -> PrO] where the open sets
-        are ordered by inclusion. *)
 
     Record > EOpenSet `(Topology X) :=
       {
@@ -215,8 +204,6 @@ Module Exercise_4_6_1_5.
                 MorphismOf := (continuous_induced_functor_morphism_of m) |};
       abstract (intros; simpl; apply ProofIrrelevance.proof_irrelevance).
     Defined.
-
-    (** Here's the open-set functor *)
     Definition PreOrderedSets
     : Functor (OppositeCategory CategoryOfTopologies) CategoryOfPreOrders.
       refine (Build_Functor (OppositeCategory CategoryOfTopologies)
@@ -241,37 +228,10 @@ Module Exercise_4_6_1_5.
   (** *** Exercise 4.2.4.3 *)
   Module Exercise_4_2_4_3.
     (** **** Problem *)
-    (** Consider the set of possible laws (most likely an infinite set)
-      that can be dictated to hold throughout a jurisdiction. Consider
-      each law as a proposition ("such and such is (dictated to be)
-      the case"), i.e as an object of our preorder [Prop]. Given a
-      jurisdiction [V], and a set of laws [{L1, L2, ..., Ln}] that are
-      dictated to hold throughout [V], we take their meet [L(V) := L1
-      /\ L2 /\ ... /\ Ln] and consider it to be the single law of the
-      land [V]. Suppose that [V] is a jurisdiction and [U ⊆ V] is a
-      sub-jurisdiction (e.g. [U] is a county and [V] is a state);
-      then clearly any law dictated by the large jurisdiction (the
-      state) must also hold throughout the small jurisdiction (the
-      county). What is the relation in [Prop] between L(U) and L(V)?
-
-      Consider the obvious preorder [J] on jurisdictions, where [U ⊆
-      V] means [U ≤ V]. Is "the law of the land" a morphism of
-      preorders [J -> Prop]? To be a bit more highbrow, considering
-      both [J] and [Prop] to be categories (by Proposition 4.2.1.17),
-      we have a function [L : Ob J -> Ob Prop]; this question is
-      asking whether [L] extends to a functor [J -> Prop]. *)
-    (** **** Solution *)
-    (** If [U ⊆ V], then [L(U) ≤ L(V)], because whenever all the laws
-        of [U] hold, so must the laws of [V], because [U] can only add
-        more laws.
-
-        We have a functor [J -> Prop]. *)
 
     Variable Law : Type.
     Variable LawAsProp : Law -> Prop.
-    (** The type of jurisdictions *)
     Variable Jurisdiction : Type.
-    (** The laws of a jurisdiction is a subset of the set of [Law]s *)
     Variable LawsOf : Jurisdiction -> Ensemble Law.
 
     Local Infix "<=" := impl.
@@ -279,17 +239,11 @@ Module Exercise_4_6_1_5.
 
     Section LawOfTheLand.
       Variable V : Jurisdiction.
-      (** An [Ensemble T] is a subset of [T]. *)
       Let V_Laws : Ensemble Law := LawsOf V.
-      (** A [P : Prop] is a law of [V] if there is some [Law] which is
-        equal to [P] when treated as a [Prop]. *)
       Let V_LawsAsProp : Ensemble Prop := fun P =>
                                             exists L,
                                               L ∈ V_Laws
                                               /\ LawAsProp L = P.
-      (** Since [Prop] has all meets (defined by subsets, i.e.,
-       [Ensemble Prop]s), we can define the law of the land as the
-       meet of all of the laws of [V]. *)
       Definition LawOfTheLand := PropHasEnsembleMeets V_LawsAsProp.
     End LawOfTheLand.
 
@@ -328,42 +282,13 @@ Module Exercise_4_6_1_5.
   (** *** Exercise 4.2.4.4 *)
   Module Exercise_4_2_4_4.
     (** **** Problem *)
-    (** Take again the preorder [J] of jurisdictions from Exercise
-        4.2.4.3 and the idea that laws are propositions. But this
-        time, let [R(V)] be the set of all possible laws (not just
-        those dictated to hold) that are in actuality being respected,
-        i.e. followed, by all people in [V]. This assigns to each
-        jurisdiction a set. Since preorders can be considered
-        categories, does our "the set of respected laws" function [R :
-        Ob J -> Ob Set] extend to a functor [J -> Set]?
-
-        What about if instead we take the meet of all these laws and
-        assign to each jurisdiction the maximal law respected
-        throughout. Does this assignment [Ob J -> Ob Prop] extend to a
-        functor [J -> Prop]? *)
-    (** **** Solution *)
-    (** If [U ⊆ V], then [R(V) ⊆ R(U)], because all the people in [U]
-        are also people in [V], and so respect all the laws which
-        everyone in [V] respects.  However, people in [U] might
-        respect additional laws.  Again, we do not have a functor [J
-        -> Set], but [J ᵒᵖ -> Set].
-
-        The "maximal law" assignment does give us a functor [J ->
-        Prop], because if [U ⊆ V], then the maximal law of [U] implies
-        the maximal law of [V]. *)
 
     Variable Person : Type.
-    (** A jurisdiction is a set of people *)
     Definition Jurisdiction := Ensemble Person.
     Variable Law : Type.
     Variable LawAsProp : Law -> Prop.
-    (** The laws of a jurisdiction is a subset of the set of [Law]s *)
     Definition SetOfLaws := Ensemble Law.
-    (** Each person respects some set of laws *)
     Variable RespectedLawsOfPerson : Person -> SetOfLaws.
-
-    (** The laws respected by a jurisdiction is the set of laws
-      respected by every person in that jurisdiction *)
     Inductive RespectedLawsOf (J : Jurisdiction) : SetOfLaws :=
     | RespectedLawsOfAll : forall law,
                              (forall person,
@@ -381,12 +306,6 @@ Module Exercise_4_6_1_5.
 
     Hint Extern 1 => constructor.
     Hint Extern 1 => destruct_head_hnf @RespectedLawsOf.
-
-    (** If jurisdiction [s] is a subset of jurisdiction [d], we can show
-      by unfolding of definitions and firstorder logical reasoning
-      that the respected laws of [d] are a subset of the respected
-      laws of [s].  (Intuitively, everyone in [s] follows all the laws
-      respected by people in [d], and then some.) *)
     Definition RespectedLawsOfFunctor_MorphismOf
                s d (m : Morphism (OppositeCategory (PreOrderCategory JurisdictionPreOrder)) s d)
     : Morphism (PreOrderCategory SetsPreOrder)
@@ -397,8 +316,6 @@ Module Exercise_4_6_1_5.
       destruct_head_hnf @RespectedLawsOf.
       intuition.
     Qed.
-
-    (** The fact that this is a functor follows by proof irrelevance. *)
     Definition RespectedLawsOfFunctor
     : Functor (OppositeCategory (PreOrderCategory JurisdictionPreOrder))
               (PreOrderCategory SetsPreOrder).
@@ -413,9 +330,6 @@ Module Exercise_4_6_1_5.
 
     Section maximal_law.
       Variable S : SetOfLaws.
-
-      (** A [P : Prop] is a law of [V] if there is some [Law] which is
-        equal to [P] when treated as a [Prop]. *)
       Let SetOfLawsAsProp : Ensemble Prop := fun P =>
                                                exists L,
                                                  L ∈ S
@@ -424,16 +338,6 @@ Module Exercise_4_6_1_5.
       Definition maximal_law : Prop :=
         EnsembleMeetElement (EnsembleMeetOf := PropHasEnsembleMeets SetOfLawsAsProp).
     End maximal_law.
-
-    (** If jurisdiction [s] is a subset of jurisdiction [d], we can show
-      by unfolding of definitions and firstorder logical reasoning
-      that the maximal respected law of [s] implies are a subset of
-      the respected laws of [s].  (Intuitively, everyone in [s]
-      follows all the laws respected by people in [d], and then some.) *)
-
-    (** This proof is done by a combination of unfolding of definitions,
-      firstorder logical reasoning, and educated guessing on the basis
-      of hypotheses. *)
     Definition MaximalRespectedLawOfFunctor_MorphismOf
                s d (m : Morphism (PreOrderCategory JurisdictionPreOrder) s d)
     : Morphism (PreOrderCategory Prop_PreOrder)
@@ -452,8 +356,6 @@ Module Exercise_4_6_1_5.
                | _ => solve [ firstorder ]
              end.
     Defined.
-
-    (** The fact that this is a functor follows by proof irrelevance. *)
     Definition MaximalRespectedLawOfFunctor
     : Functor (PreOrderCategory JurisdictionPreOrder)
               (PreOrderCategory Prop_PreOrder).

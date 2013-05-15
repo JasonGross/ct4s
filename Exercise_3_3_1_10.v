@@ -108,12 +108,5 @@ Section Exercise_3_3_1_10.
       of its source and target functions? What feature of a graph is
       captured by the coequalizer of its source and target functions?
       *)
-  (** ** Solution *)
-  (** The equalizer is the set of edges which have the same source and
-      target, i.e., all edges which go from a vertex to itself.  The
-      coequalizer is the set of vertices modulo the equivalence
-      relation that two vertices are the same if there is an edge
-      between them, i.e., a set isomorphic to the set of connected
-      components of the graph. *)
 End Exercise_3_3_1_10.
 (** ------------------------------------------------------------------------ *)

@@ -114,13 +114,6 @@ Section Exercise_3_3_1_5.
       Given [V], is there any other ``canonical'' or somehow automatic
       non-random procedure for generating a graph with those vertices?
       *)
-  (** ** Solution *)
-  (** Yes, it's called the discrete graph.  There's also a complete
-      graph.  In general, for any set [S], there is a graph obtained
-      by letting the set of edges from [s] to [d] be [S] for each [s]
-      and [d].  There's also a graph for which [S] is the set of edges
-      between any vertex and itself, [T] is the set of edges between
-      non-equal vertices. *)
 
   Variable V : Type.
 
@@ -133,12 +126,7 @@ Section Exercise_3_3_1_5.
   Definition ExtendedConstantGraph (E_same E_diff : Type) : Graph
     := {| Vertex := V;
           Edge := (fun s d => ((s = d) × E_same) + ((s <> d) × E_diff)) |}.
-
-  (** In the discrete graph, there are no edges. *)
   Definition DiscreteGraph := ConstantGraph ∅.
-
-  (** In a complete graph, there is exactly one edge between any two
-      non-equal vertices. *)
   Definition CompleteGraph := ExtendedConstantGraph ∅ unit.
 End Exercise_3_3_1_5.
 (** ------------------------------------------------------------------------ *)

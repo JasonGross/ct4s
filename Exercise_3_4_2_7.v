@@ -112,10 +112,6 @@ Section Exercise_3_4_2_7.
       order, is [S']$^{\text{op}}$#<sup>op</sup># also a partial
       order? If [S'] is a linear order, is
       [S']$^{\text{op}}$#<sup>op</sup># a linear order? *)
-  (** ** Solution *)
-  (** Yes yes, and yes, by straightforward firstorder logical
-      reasoning.  (See proofs below.)  All of the required identities
-      are symmetric with respect to flipping variable orders.  *)
 
   Variable S : Type.
   Variable le : Relation_Definitions.relation S.

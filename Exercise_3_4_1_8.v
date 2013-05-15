@@ -113,23 +113,8 @@ Section Exercise_3_4_1_8.
 
       For any [n ∈ ℕ], how many linear orders exist on the set [{1, 2,
       3, ..., n}]. Does your formula work when [n = 0]? *)
-  (** ** Solution *)
-  (** All preorder relations contain [(x, x)] for all [x].  Then we
-      can either have the relations
-      - [{(1, 1), (2, 2)}]
-      - [{(1, 1), (2, 2), (1, 2)}]
-      - [{(1, 1), (2, 2), (2, 1)]}
-      - [{(1, 1), (2, 2), (1, 2), (2, 1)}]
-
-      A linear order on a finite set is just a permutation on that
-      set.  So there are [n!] linear orders in [{1, 2, ..., n}].  My
-      formula works for 0; 0! = 1 is the number of trivial orders on
-      [{}] *)
 
   Let finite_set n := { m | 1 <= m <= n }.
-
-  (** Define a function for going from relations on natural numbers to
-      relations on finite sets. *)
   Let finite_set_relation n : Relation_Definitions.relation ℕ -> Relation_Definitions.relation (finite_set n)
     := fun r => (fun x y => r (proj1_sig x) (proj1_sig y)).
 
@@ -164,11 +149,6 @@ Section Exercise_3_4_1_8.
   Proof. t. Qed.
   Example Exercise_3_4_1_8_R4_preorder : PreOrder Exercise_3_4_1_8_R4.
   Proof. t. Qed.
-
-  (** It's non-trivial to prove that these are the only ones, so I
-       will not do it.  It's also non-trivial to construct a linear
-       order given a relation; the basic idea is to repeatedly find
-       lower bounds. *)
 (*
   Example Exercise_3_4_1_8_R_all (R : Relation_Definitions.relation (finite_set 2))
           (R_dec : forall x y, {R x y} + {¬R x y})

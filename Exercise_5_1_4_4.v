@@ -140,21 +140,6 @@ Module Exercise_5_1_4_4.
 
       In the language of categories, is there a difference between a
       terminal object and a leaf table? *)
-  (** ** Solution *)
-  (** (a)
-
-      - Graphs: A leaf table is a vertex [v : V] such that no edge has
-        as source [v]. (see below for symbolic version)
-
-      - Categories: A leaf table is an object [c : C] such that there
-        is no non-identity morphism from [c].
-
-      - Tables: A leaf table is a table with exactly one column.
-
-      (b) A leaf table has no outgoing arrows except the identity
-          arrow.  In the discrete schema, every table is a leaf table.
-          A terminal object has exactly one incoming arrow for every
-          other object.  They're not the same. *)
 
   Section GraphLeafTable.
     Variable G : Graph'.

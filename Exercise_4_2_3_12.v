@@ -136,15 +136,6 @@ Section Exercise_4_2_3_12.
       )], which is equivalent to [10 * 11 + 2]. I’ve basically
       described a groupoid. What are its objects and what are its
       morphisms? *)
-  (** ** Solution *)
-  (** The objects are formal (valid) arithmetic expressions.  The
-      morphisms are proofs (justifications) that two arithmetic
-      expressions compute the same value.  Note that applying symmetry
-      twice is equivalent to doing nothing, and so all proofs have an
-      inverse. *)
-
-  (** Here's a proof that, at least in Coq, [symmetry] ([eq_sym]) is
-      an "inverse of" operator. *)
   Lemma eq_trans_id : forall T x y (pf : @eq T x y),
                         eq_trans (eq_sym pf) pf = eq_refl.
     compute.
@@ -152,10 +143,6 @@ Section Exercise_4_2_3_12.
     destruct pf.
     reflexivity.
   Qed.
-
-  (** Here's a reification of the relevant fragment of arithmetic.
-      Note that I take the integers as fundamental, and let
-      parenthetization be implicit; it's simpler that way. *)
   Inductive Expression :=
   | Constant : ℤ -> Expression
   | Pos : Expression -> Expression
@@ -163,11 +150,6 @@ Section Exercise_4_2_3_12.
   | Add : Expression -> Expression -> Expression
   | Subtract : Expression -> Expression -> Expression
   | Multiply : Expression -> Expression -> Expression.
-
-  (** This converts expressions into numbers, which makes it easier to
-      reason about them.  In particular, we can use Coq's built in
-      equality reasoning on integers to determine whether or not two
-      expressions represent the same value. *)
   Fixpoint DenoteExpression (e : Expression) : ℤ :=
     match e with
       | Constant z => z
@@ -177,8 +159,6 @@ Section Exercise_4_2_3_12.
       | Subtract a b => (DenoteExpression a) - (DenoteExpression b)
       | Multiply a b => (DenoteExpression a) * (DenoteExpression b)
     end.
-
-  (** Here's the category; the morphisms are equalities. *)
   Definition ArithmeticCategory : @Category Expression.
     refine {| Morphism := (fun x y => DenoteExpression x = DenoteExpression y);
               Identity := (fun x => eq_refl);
@@ -187,10 +167,6 @@ Section Exercise_4_2_3_12.
     destruct_head_hnf @eq;
     reflexivity.
   Defined.
-
-  (** Here's the groupoid; the inversion operation is symmetry (note
-      the [exists (eq_sym m)]; [eq_sym] is symmetry of equality for
-      Coq). *)
   Definition ArithmeticGroupoid : Groupoid.
     refine {| GroupoidCategory := ArithmeticCategory |}.
     constructor.

@@ -133,25 +133,11 @@ Section Exercise_4_5_3_6.
       (a) What is the initial object in [ℙ(X)]?
 
       (b) What is the terminal object in [ℙ(X)]? *)
-  (** ** Solution *)
-  (** (a) The empty set.
-
-      (b) [X] *)
 
   Variable X : Type.
-
-  (** In Coq, a subset of [X] is an [Ensemble X], a function [X ->
-      Prop].  This corresponds to the common mathematical practice of
-      saying that [ℙ(X) = 2 ^ X], the set of functions [X -> 2].  *)
   Notation ℙ X := (Ensemble X).
 
   Let ℙX : @Category (ℙ X) := PreOrderCategory (Ensemble_PreOrder X).
-
-  (** We prove that the empty set is initial by destructing on the
-      absurdity of having an element of the empty set to define
-      whatever we'd like; we do this to define the unique function
-      from the empty set, and also to prove that this function is
-      unique (by functional extensionality). *)
 
   Local Ltac t :=
     repeat match goal with
@@ -175,12 +161,6 @@ Section Exercise_4_5_3_6.
               _).
     abstract t.
   Defined.
-
-  (** We prove that the full set [X] is terminal by being able to
-      construct a unique proof that any given element is in the full
-      set [X] (that is, [Full_intro]).  We prove that the inclusion to
-      the full set is unique by the fact that there is a unique proof
-      that any given element is in the full set. *)
 
   Example Exercise_4_5_3_6_b : TerminalObject ℙX.
   Proof.

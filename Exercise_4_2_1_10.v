@@ -122,10 +122,6 @@ Module Exercise_4_2_1_10.
       Recall from Example 4.1.2.3 that every group has an underlying
       monoid [U(G)]; is the endomorphism monoid of [S] the underlying
       monoid of the automorphism group of [S]? *)
-  (** ** Solution *)
-  (** The automorphism group is the set of permutations of [S].  There
-      are [4! = 24] of them.  The endomorphism monoid is the set of
-      functions [f : S -> S].  There are [4 ^ 4 = 256] of them.  *)
 End Exercise_4_2_1_10.
 
 (** ------------------------------------------------------------------------ *)

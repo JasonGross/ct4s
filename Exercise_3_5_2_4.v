@@ -124,12 +124,6 @@ Module Exercise_3_5_2_4.
       What about
 
       [[Department secretary manager worksIn name ≃ Department name?]] *)
-  (** ** Solution *)
-  (** Yes; no (unless every department has only one employee); yes.
-      Here's a proof. *)
-
-  (** I use [=], because then we don't have to encode that [compose]
-      respects [≃]. *)
   Local Infix "≃" := eq (at level 70, right associativity).
 
   Inductive Node := Employee | Department | FirstNameString

@@ -152,11 +152,6 @@ Module Exercise_4_1_2_31.
 >>
 
    *)
-  (** ** Solution *)
-  (** We have
-      - [Hom_C(v, x) = {gf, hf}]
-      - [Hom_C(x, v) = {}]
-   *)
 
   Inductive V := v | w | x | y | z.
   Inductive A : V -> V -> Set :=
@@ -209,12 +204,6 @@ Module Exercise_4_1_2_31.
                                                  | right; t''' idtac ])
              | [ H : _ = _ |- _ ] => destruct H
            end.
-
-  (** We first show that [Hom_C(x, v)] contains no elements.  We do
-      this by induction on the path [m], which is assumed for
-      negation.  (There-after, the conclusion is proven by unfolding
-      definitions, using the axiom that heterogeneous equality implies
-      homogeneous equality, and concluding absurdities. *)
   Lemma Hom_C_x_v_empty_helper : Morphism C x v -> False.
     intro m; hnf in m.
     match goal with
@@ -229,10 +218,6 @@ Module Exercise_4_1_2_31.
                                        t' subst
     end.
   Qed.
-
-  (** We now show that [Hom_C(v, x)] contains only gf and hf.  We do
-      this by repeated induction on paths, and by the brute force
-      tactics specified above. *)
   Lemma Hom_C_v_x_only_helper S D (m : Morphism C S D)
         (Hs : v = S)
         (Hd : x = D)
@@ -258,13 +243,6 @@ Module Exercise_4_1_2_31.
   Qed.
 
   Let Hom {obj} C := @Morphism obj C.
-
-  (** Now, the relevant proofs.  I first show that [Hom_C(x, v)] is
-      isomorphic to the empty set.  We use the absurdity of the claim
-      that [Hom_C(x, v)] has an element, proven above, to construct a
-      function out of it.  Constructing a function out of the empty
-      set is trivial.  Unfolding and reducing pattern matches and
-      brute force sufficies to conclude the proof.  *)
   Lemma Hom_C_x_v_empty : (Hom C x v ≅ ∅).
   Proof.
     exists (fun x : Hom C x v => match Hom_C_x_v_empty_helper x return ∅ with end).
@@ -272,10 +250,6 @@ Module Exercise_4_1_2_31.
       simpl;
       intro; t' idtac.
   Qed.
-
-  (** Now, I show that [Hom_C(v, x)] is isomorphic to a two element
-      set.  I construct the relevant functions, and complete the proof
-      by reducing matches and brute force. *)
 
   Lemma Hom_C_v_x_two_elements : (Hom C v x ≅ Hom_C_v_x).
   Proof.

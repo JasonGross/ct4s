@@ -126,9 +126,6 @@ Section Exercise_3_4_1_2.
   0 | 3      6 | 30            2 | 2
 >>
    *)
-  (** ** Solution *)
-  (** The table on the left is a linear order.  The middle table is
-      not reflexive.  The rightmost table is not transitive. *)
 
   Local Coercion Z.of_nat : ℕ >-> Z.
 
@@ -140,22 +137,16 @@ Section Exercise_3_4_1_2.
     := fun m n => 5 * m = n.
   Definition Exercise_3_4_1_2_right_relation : relation ℕ
     := fun m n => | n - m | ≤ 1.
-
-  (** We use [omega] to prove things about arithmetic. *)
   Example Exercise_3_4_1_2_left_relation_linear_order
   : LinearOrder Exercise_3_4_1_2_left_relation.
   Proof.
     split; compute; intros; omega.
   Qed.
-
-  (** The middle relation does not contain (1, 1), and so is not reflexive, and so is not a preorder. *)
   Example Exercise_3_4_1_2_middle_relation_not_reflexive
   : ¬(Reflexive Exercise_3_4_1_2_middle_relation).
   Proof.
     intro H; specialize (H 1); compute in H; intuition.
   Qed.
-
-  (** The right relation is not transitive; it contains (0, 1) and (1, 2), but not (0, 2), and so is not a preorder. *)
   Example Exercise_3_4_1_2_right_relation_not_transitive
   : ¬(Transitive Exercise_3_4_1_2_right_relation).
   Proof.

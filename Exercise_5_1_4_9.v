@@ -142,15 +142,5 @@ Module Exercise_5_1_4_9.
           colimit", make an educated guess about what [Σ_F(I)] will
           be. Give your answer in the form of two sets that are made
           up from the three sets you already wrote down. *)
-  (** ** Solution *)
-  (** (a) The most general version of [I] is one that sends [1 -> I₁],
-          [2 -> I₂], and [3 -> I₃], where [I₁], [I₂], and [I₃] are
-          arbitrary sets.
-
-      (b) I guess that [Σ_F(I) : _2_ -> Set] is the functor [1 -> I₁] and [2 -> I₂ ⊔ I₃]
-   *)
-
-  (** If I had time, I'd show that the [Σ_F] I defined is adjoint to
-      [∆_F], but I don't have time. *)
 End Exercise_5_1_4_9.
 (** ------------------------------------------------------------------------ *)

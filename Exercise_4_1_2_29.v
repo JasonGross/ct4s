@@ -117,10 +117,6 @@ Section Exercise_4_1_2_29.
   (** Let [G] be the graph whose vertices are all cities in the US and
       whose arrows are airplane flights connecting cities. What idea
       is captured by the free category on [G]? *)
-  (** ** Solution *)
-  (** The objects are cities in the US, can the arrows are plane trips
-      (consisting of zero or more flights) that you can take to get
-      from one city to another. *)
 End Exercise_4_1_2_29.
 
 (** ------------------------------------------------------------------------ *)

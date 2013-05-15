@@ -131,32 +131,8 @@ Section Exercise_4_5_3_11.
           initial object?
 
       (b) Does it have a terminal object? *)
-  (** ** Solution *)
-  (** (a) Yes.  1
-
-      (b) Yes, but only if we assume proof-irrelevance and define,
-          conventionally, that [0 divides 0].  Note that the
-          definition given in the book ("if there exists [n ∈ ℕ] such
-          that [a = n * b], so [5 divides 35]") has that [0 divides
-          0].  The terminal object is 0.  If the morphisms are "proofs
-          that [n ≤ m]", then there are multiple morphisms from 0 to
-          0; one for each choice of number in the hole in [0 = 0 * _].
-          If we assume proof-irrelevance, then there is at most one
-          morphism between any two objects, and 0 is terminal. *)
 
   Let C : @Category ℕ := PreOrderCategory divides_pre_order.
-
-  (** We could prove uniqueness here by proof-irrelevance.  However,
-      this is not necesary.  Instead we prove it by proving that if [p
-      = q * 1], then [p = q], and so there is only one proof that [1]
-      divides any other number.  We use [eq_proofs_unicity] from
-      [Eqdep_dec] to prove that there is only one proof of [@eq nat n
-      n], because natural numbers have decidable equality (we prove
-      this with the tactic [decide equality].  We use [Mult.mult_1_r]
-      to turn [n * 1] into [n], and we destruct things of type [∃ x,
-      ...] when they show up in an equality to prove [@eq (∃ x, P x) p
-      q] by proving that the [x] parts and the proof parts are
-      equal. *)
 
   Example Exercise_4_5_3_11_a : InitialObject C.
   Proof.
@@ -185,9 +161,6 @@ Section Exercise_4_5_3_11.
                        | _ => intro
                      end).
   Defined.
-
-  (** We can prove uniqueness of morphisms from [n] to [0] without
-      proof-irrelevance if and only if [n <> 0]. *)
   Example Exercise_4_5_3_11_b : TerminalObject C.
   Proof.
     refine (@Build_TerminalObject

@@ -118,13 +118,8 @@ Section Exercise_4_2_1_16.
   (** ** Problem *)
   (** Every linear order is a partial order with a special
       property. Can you phrase this property in terms of hom-sets? *)
-  (** ** Solution *)
-  (** Yes, I can. *)
   (** ------------------------------------------------------------------------ *)
   (** *** Real Solution *)
-  (** For all [x y : Ob C], we have either [Hom_C(x, y) <> ∅] or
-      [Hom_C(y, x) <> ∅], i.e., that there is an element of [Hom_C(x,
-      y) ⊔ Hom_C(x, y)]. *)
 
   Local Open Scope category_scope.
 

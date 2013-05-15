@@ -127,18 +127,6 @@ Section Exercise_4_1_2_28.
       Example 4.1.2.27). We call [[1]] the free arrow category. What
       are its objects? For every pair of objects in [[1]], write down
       the hom-set. *)
-  (** ** Solution *)
-  (** The objects are [v₀] and [v₁].  Letting [[]] denote the empty
-      path, we have
-      - [Hom(v₀, v₀) = {[]}]
-      - [Hom(v₁, v₁) = {[]}]
-      - [Hom(v₀, v₁) = {[e]}]
-      - [Hom(v₁, v₀) = {}]
-
-      In Coq, I call the free category on [G] the category
-      [PathsCategory (Vertex G) (Edge G)] *)
-
-  (** Some useful lemmas. *)
   Lemma OneLeOne : 1 <= 1. repeat constructor. Qed.
   Lemma ZeroLeOne : 0 <= 1. repeat constructor. Qed.
   Lemma TwoNotLeOne n : S (S n) <= 1 -> False. omega. Qed.
@@ -179,8 +167,6 @@ Section Exercise_4_1_2_28.
             end }.
     induction p; t' idtac.
   Qed.
-
-  (** We need a helpful destruction lemma. *)
   Lemma destruct_path v v' (p : Morphism FreeArrowCategory v v')
   : { H : v = v' & match H
                          in (_ = y)

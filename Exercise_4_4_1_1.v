@@ -138,28 +138,8 @@ Module Exercise_4_4_1_1.
           arrows. What are the images of these arrows under the graph
           homomorphism [Paths(f) : Paths([2]) -> Paths(Paths(Loop))]?
           *)
-  (** ** Solution *)
-  (** (a) There are many.  For each [n <> m] both natural numbers,
-          there is an injective graph homomorphism which sends one
-          edge in [2] to the path of [n] edges in [Paths(Loop)], and
-          the other edge to the path of [m] edges.
-
-      (b) The three empty-path edges are sent to the edge which
-          corresponds to the empty path of edges in [Paths(Loop)].
-          The path [0 -> 1] is sent to the path which contains the
-          single edge, which is a path of [n] edges (edges which live
-          in [Loop]).  The path [1 -> 2] is sent to the path which
-          contains the single edge, which is a path of [m] edges
-          (edges which live in [Loop]).  The path [0 -> 1 -> 2] is
-          sent to the two element path, which consists first of the
-          edge in [Paths(Loop)] corresponding to the path of [n] edges
-          in [Loop], and second of the edge in [Paths(Loop)]
-          corresponding to the path of [m] edges in [Loop]. *)
 
   Definition Loop : Graph := {| Vertex := unit; Edge := (fun _ _ => unit) |}.
-
-  (** The graph [2] is [0 -> 1 -> 2]; we have three vertices, and an
-      edge from [Zero] to [One], and one from [One] to [Two] *)
   Inductive LinearOrder2Graph_Vertex := Zero | One | Two.
   Inductive LinearOrder2Graph_Edge
   : LinearOrder2Graph_Vertex -> LinearOrder2Graph_Vertex -> Set :=
@@ -168,23 +148,11 @@ Module Exercise_4_4_1_1.
   Definition LinearOrder2Graph : Graph
     := {| Vertex := LinearOrder2Graph_Vertex;
           Edge := LinearOrder2Graph_Edge |}.
-
-  (** There are many possible [f]s; one for each path.  Since the
-      paths are in bijection with the natural numbers, we parameterize
-      [f] on pairs natural numbers, because we have two edges. *)
-
-  (** We have [n] edges in this path. *)
   Fixpoint nth_edge_in_loop (n : ℕ) : path (fun _ _ => unit) tt tt
     := match n with
          | O => NoEdges
          | S n' => AddEdge (nth_edge_in_loop n') tt
        end.
-
-  (** Send the only valid [src, tgt] pairs to the helper function we
-      defined above.  Send everything else, which turns out to be the
-      empty set, to [NoEdges]; we do this because it's slightly
-      non-trivial to convince Coq that the type of [x] below is the
-      empty set. *)
   Definition f (n m : ℕ) : GraphHomomorphism LinearOrder2Graph (PathsFunctor Loop)
     := Build_GraphHomomorphism LinearOrder2Graph
                                (PathsFunctor Loop)
@@ -198,11 +166,6 @@ Module Exercise_4_4_1_1.
                                     | _, _ => fun x => NoEdges
                                   end).
 
-  (** We prove that [f] above is not injective on vertices.  We
-      construct a contradiction by obtaining a hypothesis that two of
-      the elements of [LinearOrder2Graph_Vertices], called [One] and
-      [Two], are equal. *)
-
   Lemma Exercise_4_4_1_1_a_vert n m
   : is_injective (OnVertices (f n m)) -> False.
     subst_body; clear; simpl.
@@ -210,14 +173,6 @@ Module Exercise_4_4_1_1.
     specialize (H One Two eq_refl).
     inversion H.
   Qed.
-
-  (** As a helper function, we prove [nth_edge_in_loop] is
-      injective. We prove this by induction on the natural number
-      argument, and then by deduction of absurdity from absurd
-      hypotheses, first order logical reasoning, and the fact that two
-      paths are equal if, when you add the same edge to both, you get
-      equal paths (the [inversion] tactic does both this and deduction
-      of absurdity from absurd hypotheses). *)
   Lemma nth_edge_in_loop_injective
   : is_injective nth_edge_in_loop.
     intro x; induction x;
@@ -227,20 +182,6 @@ Module Exercise_4_4_1_1.
       | [ H : _ |- _ ] => try solve [ inversion H; firstorder ]
     end.
   Qed.
-
-  (** We prove that [f] above is injective on edges when [n] and [m]
-      are nonequal.  That is, when treated as a graph homomorphism as
-      defined in the book, where there is a function from a set of all
-      edges in one graph to a set of all edges in another, we prove
-      that this function is injective.
-
-      We prove this mostly by substituting definitions, splitting
-      apart pair types, inferring absurdity from absurd hypotheses,
-      and using the fact that if two pairs are equal, then their
-      components are equal (this is the [apply
-      EqdepFacts.eq_sigT_eq_dep in H; apply eq_dep_JMeq in H; apply
-      JMeq_eq in H] sequence; we need to go through heterogeneous
-      equality to prove this). *)
   Definition f' n m := GraphHomomorphismToGraph'Homomorphism (f n m).
   Lemma Exercise_4_4_1_1_a_edges n m
   : m <> n -> is_injective (OnArrows' (f' n m)).
@@ -263,8 +204,6 @@ Module Exercise_4_4_1_1.
            end;
     firstorder.
   Qed.
-
-  (** The graph [[2]] has 6 paths, so [Paths([2])] has 6 arrows. *)
   Definition Paths2 := PathsFunctor LinearOrder2Graph.
   Definition Paths2Path0 : Edge Paths2 Zero Zero
     := NoEdges.
@@ -289,34 +228,17 @@ Module Exercise_4_4_1_1.
     Local Notation "a ~> b" := (Edge _ a b).
     Local Notation "a ~~> b" := (path _ a b).
 
-    (** We use [simpl] to compute the action on edges.  The part
-        between the equals sign and the colon describes the path, the
-        part after the colon describes the type.  The notation [~>] is
-        an edge, [~~>] is a path. *)
-
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path0.
-    (** [= []
-     : Paths_f Zero ~> Paths_f Zero] *)
 
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path1.
-    (** [= []
-     : Paths_f One ~> Paths_f One] *)
 
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path2.
-    (** [= []
-     : Paths_f Two ~> Paths_f Two] *)
 
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path3.
-    (** [= [nth_edge_in_loop n]
-     : Paths_f Zero ~~> Paths_f One] *)
 
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path4.
-    (** [= [nth_edge_in_loop m]
-     : Paths_f One ~~> Paths_f Two] *)
 
     Eval simpl in OnEdges (MorphismOf PathsFunctor (f n m)) _ _ Paths2Path5.
-    (** [= [nth_edge_in_loop n, nth_edge_in_loop m]
-     : Paths_f Zero ~~> Paths_f Two] *)
   End part_b.
 End Exercise_4_4_1_1.
 

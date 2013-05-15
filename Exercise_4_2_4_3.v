@@ -142,18 +142,10 @@ Module Exercise_4_2_4_3.
       both [J] and [Prop] to be categories (by Proposition 4.2.1.17),
       we have a function [L : Ob J -> Ob Prop]; this question is
       asking whether [L] extends to a functor [J -> Prop]. *)
-  (** ** Solution *)
-  (** If [U ⊆ V], then [L(V) ≤ L(U)], because whenever all the laws of
-      [V] hold, so must the laws of [U].
-
-      We do not have a functor [J -> Prop], but a functor [J -> Prop
-      ᵒᵖ]. *)
 
   Variable Law : Type.
   Variable LawAsProp : Law -> Prop.
-  (** The type of jurisdictions *)
   Variable Jurisdiction : Type.
-  (** The laws of a jurisdiction is a subset of the set of [Law]s *)
   Variable LawsOf : Jurisdiction -> Ensemble Law.
 
   Local Infix "<=" := impl.
@@ -161,17 +153,11 @@ Module Exercise_4_2_4_3.
 
   Section LawOfTheLand.
     Variable V : Jurisdiction.
-    (** An [Ensemble T] is a subset of [T]. *)
     Let V_Laws : Ensemble Law := LawsOf V.
-    (** A [P : Prop] is a law of [V] if there is some [Law] which is
-        equal to [P] when treated as a [Prop]. *)
     Let V_LawsAsProp : Ensemble Prop := fun P =>
                                           exists L,
                                             L ∈ V_Laws
                                             /\ LawAsProp L = P.
-    (** Since [Prop] has all meets (defined by subsets, i.e.,
-       [Ensemble Prop]s), we can define the law of the land as the
-       meet of all of the laws of [V]. *)
     Definition LawOfTheLand := PropHasEnsembleMeets V_LawsAsProp.
   End LawOfTheLand.
 

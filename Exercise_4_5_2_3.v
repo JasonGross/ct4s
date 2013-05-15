@@ -132,24 +132,6 @@ Module Exercise_4_5_2_3.
           triangles?
 
       (b) If not, what is? *)
-  (** ** Solution *)
-  (** (a) Yes; A commutative triangle is a diagram
-
-<<
-           f
-       a -------> b
-        \         |
-          \       |
-          h \     | g
-              \   |
-                ↘ ↓
-                  c
->>
-
-          with [g o f = h].  There is an isomorphism between
-          commutative triangles and diagrams [[2] -> C].
-
-      (b) N/A *)
 
   Parameter objC : Type.
   Parameter C : @Category objC.
@@ -169,11 +151,7 @@ Module Exercise_4_5_2_3.
   Defined.
 
   Section commutative_triangle_to_diagram.
-    (** For each commutative triangle, we construct a diagram [[2] ->
-        C]. *)
     Variable T : CommutativeTriangle.
-
-    (** We play this trick to bring the variables in to scope. *)
 
     Let a := a T.
     Let b := b T.
@@ -196,9 +174,6 @@ Module Exercise_4_5_2_3.
         abstract omega.
     Defined.
 
-    (** We send each morphism either to [f], [g], [h], the identity,
-        or deduce absurdity from the hypotheses. *)
-
     Definition CommutativeTriangleDiagram_MorphismOf
                s d (m : Morphism [2] s d)
     : Morphism C
@@ -213,13 +188,6 @@ Module Exercise_4_5_2_3.
               | exact (Identity _)
               | hnf in *; exfalso; abstract omega ].
     Defined.
-
-    (** We prove that this is a functor by cases; we consider, for
-        each object, whether it is 0, 1, 2, or [> 2].  We discharge
-        some cases with by reflexivity and rewriting i, others by
-        identifying an absurd arithmetical hypothesis, others by the
-        fact that [g o f = h], and some proofs involve rewriting with
-        what it means to be a category. *)
 
     Definition DiagramOfCommutativeTriangle : Functor [2] C.
       refine (Build_Functor [2] C
@@ -263,10 +231,6 @@ Module Exercise_4_5_2_3.
     Let g := MorphismOf CommutativeTriangleDiagram (s := b') (d := c') pf_g.
     Let h := MorphismOf CommutativeTriangleDiagram (s := a') (d := c') pf_h.
 
-    (** We prove that the triangle commutes by the composition law of
-       the functor.  I use proof irrelevance for convenience, though I
-       don't think I need it, strictly speaking. *)
-
     Lemma triangle_commutes : g o f = h.
       subst_body.
       rewrite <- FCompositionOf.
@@ -280,38 +244,6 @@ Module Exercise_4_5_2_3.
       exact triangle_commutes.
     Defined.
   End diagram_to_commutative_triangle.
-
-  (** We now prove that the set of functors [[2] -> C] is isomorphic
-      to the set of commutative triangles.  We use the two conversion
-      functions defined above to define the functions of the
-      isomorphism.  We play some tricks to get around using
-      [proof_irrelevance].  In the first bullet, we unfold
-      definitions, use the Leibniz property of equality ([f_equal]),
-      and destruct equalities.  In the second case, we exhaustively
-      apply the following ideas:
-
-      - apply the definition of equality of functors
-
-      - simplify terms
-
-      - unfold and substitute definitions
-
-      - apply reflexivity
-
-      - use [omega] to prove or disprove facts about arithmetic
-
-      - use the fact that [g o f = h]
-
-      - use the identity property of functors, that [F id_x = id_{F
-        x}]
-
-      - rewrite with the properties of a category
-
-      - using the assumption that we are talking about a -1 truncated
-        category, i.e., one where all of the proofs of equalities of
-        objects in [C] are equal.
-
-      - use the fact that there is at most one proof of [m <= n] *)
 
   Hypothesis C_obj_trunc : forall (s : C)
                                   (p1 p2 : s = s),

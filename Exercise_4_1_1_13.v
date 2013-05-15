@@ -121,9 +121,6 @@ Section Exercise_4_1_1_13.
       [f₁ : A -> A'] are isomorphisms in [Set]? If so, why; and if
       not, show a counterexample (where [f] is an isomorphism but
       either [f₀] or [f₁] is not). *)
-  (** ** Solution *)
-  (** Yes, because graph homomorphisms compose component-wise, and
-      equality is defined component-wise. *)
 
   Let Grph := CategoryOfGraph's.
 

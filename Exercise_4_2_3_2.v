@@ -122,15 +122,6 @@ Section Exercise_4_2_3_2.
   (** ** Problem *)
   (** Explain how "looking at points" gives a functor [Top -> Set]. Does
       "looking at open sets" give a functor [Top -> PrO]? *)
-  (** ** Solution *)
-  (** Every topology has an underlying set of points, and every
-      continuous function is a function on these sets.  Looking at
-      open sets gives a functor [Top -> PrO ᵒᵖ] where the open sets
-      are ordered by inclusion.  There is not an obvious functor [Top
-      -> PrO] given by looking at open sets; taking interiors doesn't
-      work with composition.  There might be a functor [Top -> PrO]
-      given by looking at closed sets and closure, but I haven't
-      looked in to that. *)
 
   Definition UnderlyingPoints : Functor CategoryOfTopologies CategoryOfTypes.
     refine {| ObjectOf := (fun X : CategoryOfTopologies =>
@@ -197,8 +188,6 @@ Section Exercise_4_2_3_2.
               MorphismOf := (continuous_induced_functor_morphism_of m) |};
     abstract (intros; simpl; apply ProofIrrelevance.proof_irrelevance).
   Defined.
-
-  (** Here's the open-set functor *)
   Definition PreOrderedSets
   : Functor CategoryOfTopologies (OppositeCategory CategoryOfPreOrders).
     refine (Build_Functor CategoryOfTopologies
@@ -218,7 +207,7 @@ Section Exercise_4_2_3_2.
                 )).
   Defined.
 
-(*  (** And now we begin playing with closures *)
+(*
   Definition continuous_induced_functor_object_of_interior s d (m : Morphism CategoryOfTopologies s d)
   : (opens_ordered_by_inclusion s) -> (opens_ordered_by_inclusion d).
     intro; hnf in *.
@@ -435,8 +424,6 @@ Section Exercise_4_2_3_2.
   Defined. *)
 End Exercise_4_2_3_2.
 Module Exercise_4_2_3_2_continuity_bad.
-  (** Here's a proof that continuous functions don't necesarily
-      respect openness *)
   Inductive Three := A | B | C.
 
   Definition ThreeTopology1 : Topology Three

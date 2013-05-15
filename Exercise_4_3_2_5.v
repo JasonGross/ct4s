@@ -125,26 +125,10 @@ Section Exercise_4_3_2_5.
   (** Let [C := {A}] be the category with [Ob C = {A}], and
       [Hom_C(A,A) = {id_A}]. What is [Fun(C, Set)]? In particular,
       characterize the objects and the morphisms. *)
-  (** ** Solution *)
-  (** The objects are functors [C -> Set], which can be identified
-      with sets, and the morphisms are natural transformations, which
-      can be identified with functions in [Set]. *)
   Let C := TerminalCategory.
   Let FunCSet := FunctorCategory C CategoryOfSets.
   Eval hnf in Object FunCSet.
-  (** [Functor C CategoryOfSets] *)
   Eval hnf in Morphism FunCSet.
-  (** [NaturalTransformation (C:=C) (D:=CategoryOfSets)] *)
-
-  (** The objects of [Fun(C, Set)] are functors from [C] to [Set],
-      which are just [Set]s.  The functions of the isomorphism are
-      "evaluation of [F : C -> Set] on the unique element of [C]" and
-      "sending a set [S] to the unique functor from [C] to [Set]
-      defined by sending everything to [S]".  The proof of isomorphism
-      goes by unfolding definitions, applying the definition of what
-      it means for functors to be equal (that they're equal on objects
-      and morphisms), and using the fact that [F id_x = id_{F x}] for
-      all functors [F]. *)
   Lemma FunCSet_Iso_Set : Object FunCSet ≅ Set.
     refine {| isomorphic_morphism := (fun F : FunCSet => ObjectOf F tt) |}.
     refine {| isomorphism_inverse := (fun S : Set => FunctorFromTerminal CategoryOfSets S) |};
@@ -156,15 +140,6 @@ Section Exercise_4_3_2_5.
                           || subst_eq_refl_in_match
                           || compute)).
   Defined.
-
-  (** The morphisms of [Fun(C, Set)] from [X] to [Y] are natural
-      transformations from [X] to [Y], which (treating [X] and [Y] as
-      sets as per above, are just functions [X -> Y]. This is proven
-      by unfolding definitions, applying the definition of equality of
-      natural transformations (equality on components), applying the
-      fact that there is only one element in [C], rewriting with the
-      fact that [F id_X = id_{F X}] for all functors [F], and applying
-      reflexivity of equality. *)
   Lemma FunCSet_Hom_Iso_Set (X Y : FunCSet)
         (X' := FunCSet_Iso_Set X)
         (Y' := FunCSet_Iso_Set Y)

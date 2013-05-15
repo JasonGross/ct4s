@@ -117,10 +117,6 @@ Section Exercise_3_5_2_18.
 
       What path equivalence declarations would be appropriate for this
       olog? You can use [f : F -> C] and [h: C -> F] if you prefer. *)
-  (** ** Solution *)
-  (** We should have [(a father who) has as first child (a child who)
-      has as father ≃ (a father)].  That is, [hf] should be the
-      identity. *)
 End Exercise_3_5_2_18.
 
 (** ------------------------------------------------------------------------ *)

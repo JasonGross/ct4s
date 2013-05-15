@@ -104,11 +104,5 @@ Section Exercise_3_2_1_8.
   (** ** Problem *)
   (** In Exercise 3.1.1.21 you classified the cyclic monoids. Which of
       them are groups? *)
-  (** ** Solution *)
-  (** There is one cyclic group of each order [n].  Since every
-      element is invertible, if $x^n = x^m$#<i>x<sup>n</sup></i> =
-      <i>x<sup>m</sup></i># for some distinct [m] and [n], then we can
-      multiply by $x^{-n}$#<i>x<sup>-n</sup></i># to find a power of
-      [x] equal to the identity. *)
 End Exercise_3_2_1_8.
 (** ------------------------------------------------------------------------ *)

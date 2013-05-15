@@ -145,33 +145,6 @@ Module Exercise_5_3_2_3.
           it).
 
       (c) Check that you believe the monad laws from Definition 5.3.2.1. *)
-  (** ** Solution *)
-  (** (a) Well.... it's true?
-
-      (b)
-
-<<
-          x | η_X x
-          ---------
-          a | {a}
-          b | {b}
->>
-
-<<
-          S          | µ_X S = ⋃_{x ∈ S} x
-          --------------------------------
-          {}         | {}
-          {{a}}      | {a}
-          {{b}}      | {b}
-          {{a}, {b}} | {a, b}
-          {{a, b}}   | {a, b}
-          ...        | ...
->>
-
-       (c) I'm going to leave that to Coq's checker (see below). *)
-
-  (** Everything is in [PowerSetMonad.v].  Look for the definition of
-      [PowerSetMonad]. *)
 
   Check PowerSetMonad.
 End Exercise_5_3_2_3.

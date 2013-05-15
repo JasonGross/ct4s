@@ -112,7 +112,6 @@ Section Exercise_3_2_1_11.
   (** Let [X] be a set and consider the group of permutations of [X]
       (see Exercise 3.2.1.7), which we will denote [Σ X]. Find a
       canonical action of [Σ X] on [X]. *)
-  (** ** Solution *)
   Let Σ := ComputationalGroupOfAutomorphisms.
   Variable X : Type.
 

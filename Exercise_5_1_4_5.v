@@ -186,34 +186,5 @@ Module Exercise_5_1_4_5.
 
       Write out the two tables associated to the [[1]]-instance
       [∆_F(I) : [1] -> Set].  *)
-  (** ** Solution *)
-  (** (a) 1: [h o g]
-
-      (b)
-
-<<
-                0
-      -----------------------
-      ID        | h o g
-      -----------------------
-      Am        | Verb
-      Baltimore | Noun
-      Carla     | Noun
-      Develop   | Verb
-      Edward    | Noun
-      Foolish   | Adjective
-      Green     | Adjective
-
-
-           1
-      ---------
-      ID
-      ---------
-      Adjective
-      Noun
-      Verb
->>
-
-   *)
 End Exercise_5_1_4_5.
 (** ------------------------------------------------------------------------ *)

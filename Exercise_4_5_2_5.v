@@ -145,23 +145,11 @@ Module Exercise_4_5_2_5.
 
       (c) If they should not have the same indexing category, what
           coincidence makes the two pictures have so much in common? *)
-  (** ** Solution *)
-  (** (a) No.
-
-      (b) N/A
-
-      (c) The left/first diagram factors through the right/second one.
-      *)
 
   Parameter objC : Type.
   Parameter C : @Category objC.
   Parameter A : C.
   Parameter f : Morphism C A A.
-
-  (** There is a category loop with one object and a morphism for
-      every natural number from that object to itself.  We use [+] for
-      composition, and [0] for the identity, and let the [omega]
-      tactic take care of goals about natural numbers. *)
   Definition NatGroup : @Category unit.
     refine (@Build_Category unit
                             (fun _ _ => ℕ)
@@ -173,15 +161,7 @@ Module Exercise_4_5_2_5.
     abstract (intros; omega).
   Defined.
 
-  (** The indexing category of the left/first diagram is [ω], the
-      category [0 -> 1 -> 2 -> 3 -> ...], which has one object for
-      each natural number and a morphism [n -> m] if [n <= m]. *)
-
   Definition FirstIndex : Category := [ω].
-
-  (** The indexing category of the right/second diagram is a category
-      with one object, and one morphism from that object to itself for
-      each natural number. *)
 
   Definition SecondIndex : Category := NatGroup.
 
@@ -191,9 +171,6 @@ Module Exercise_4_5_2_5.
          | S n' => Compose (SecondDiagram_MorphismOf n') f
        end.
 
-  (** We prove that the [MorphismOf] that we defined above commutes
-      with composition with [f], by induction. *)
-
   Lemma SecondDiagram_MorphismOf_commut n : f o SecondDiagram_MorphismOf n = SecondDiagram_MorphismOf n o f.
     induction n; simpl;
     autorewrite with category;
@@ -201,11 +178,6 @@ Module Exercise_4_5_2_5.
     try apply f_equal2;
     intuition.
   Qed.
-
-  (** The second diagram (with a single object) sends the morphism [n]
-      to [f^n].  This is a functor because [f^n o f^m = f^{n+m}],
-      which we prove by induction and using the above commutativity
-      law. *)
 
   Definition SecondDiagram : Functor SecondIndex C.
     refine (Build_Functor SecondIndex C
@@ -227,9 +199,6 @@ Module Exercise_4_5_2_5.
                        rewrite SecondDiagram_MorphismOf_commut
                      end).
   Defined.
-
-  (** The first diagram factors through the first, by way of a
-      morphism which sends the arrow [m -> n] to [n - m]. *)
 
   Definition FirstDiagram_helper : Functor FirstIndex SecondIndex.
     refine (Build_Functor FirstIndex SecondIndex

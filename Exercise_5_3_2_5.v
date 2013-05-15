@@ -140,17 +140,6 @@ Module Exercise_5_3_2_5.
       ”division by zero!”, etc. Let [T : Set -> Set] be the functor [X ->
       X ⊔ E]. Follow Example 5.3.2.4 and come up with a unit map [η] and a
       multiplication map [µ] for which [(T, η, µ)] is a monad. *)
-  (** ** Solution *)
-  (** We have [η] sending [f] to [f ⊔ id], and [µ] collapsing [E ⊔ E]
-      to [E] in the obvious way. *)
-
-  (** Everything we need to prove can be proven by repeatedly applying
-     [Extensionality_Ensembles : ∀ (U : Type) (A B : Ensemble U),
-     Same_set _ A B → A = B], [functional_extensionality_dep : ∀ (A :
-     Type) (B : A → Type) (f g : ∀ x : A, B x), (∀ x : A, f x = g x) →
-     f = g], unfolding definitions, assuming assumptions, and guessing
-     that some inhabitant of a type exists, and leaving it to be
-     filled in by a hypothesis later. *)
 
   Local Ltac t :=
     repeat (apply Extensionality_Ensembles

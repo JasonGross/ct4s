@@ -111,22 +111,6 @@ Section Exercise_3_5_2_13.
       example of a discrete dynamical system? How do the rules for
       ending the game in a win or draw play out in this model? (Look
       up online how chess games end if you don't know.) *)
-  (** ** Solution *)
-  (** Maybe.  Are we modelling the behavior of the program, or the
-      game of chess?  Also, is the program deterministic?  If the
-      program is non-deterministic, then we cannot model its behavior
-      this way.  If the program is deterministic, and we are modelling
-      the behavior of the program, then yes.  However, if we are
-      modelling the game, then no.  This program cannot determine
-      whether or not the game has been drawn as a result of the
-      threefold repetition rule, and so we cannot model the ending
-      state of the game.
-
-      On the other hand, if [P] acts on the full history of the game
-      up until this point in time (and thus can simply not append any
-      states to a finished game, and so act as the identity on
-      complete game histories), then we can model it as a discrete
-      dynamical system. *)
 End Exercise_3_5_2_13.
 
 (** ------------------------------------------------------------------------ *)

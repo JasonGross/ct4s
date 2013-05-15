@@ -120,8 +120,6 @@ Section Exercise_4_1_2_34.
   (** (Terminal category). Let [C] be a category. How many functors
       are there [C -> D_1], where [D_1 := Disc( _1_ )] is the discrete
       category on one element? *)
-  (** ** Solution *)
-  (** There is one such functor. *)
   Variable obj : Type.
   Variable C : @Category obj.
 

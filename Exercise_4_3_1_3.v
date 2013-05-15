@@ -125,16 +125,6 @@ Section Exercise_4_3_1_3.
       identity on [F] is a natural transformation from [F] to itself."
       What might they mean? If it is somehow true, what are the
       components of this natural transformation? *)
-  (** ** Solution *)
-  (** They mean that [Fun(C, D)] is a category (assuming composition
-      works), and [F : C -> D] is a functor in [Fun(C, D)], and there
-      is an identity morphism on [F].  Alternatively, they mean that
-      there is a natural transformation [T : F -> F] which satisfies
-      left- and right- identity laws under natural transformation
-      composition.  The componets of this natural transformation are
-      the identity on [F c] for each [c] in [C].
-
-      I defined this in NaturalTransformation.v, but here it is again. *)
 
   Context `(C : @Category objC).
   Context `(D : @Category objD).

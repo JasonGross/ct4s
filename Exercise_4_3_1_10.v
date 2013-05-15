@@ -128,10 +128,6 @@ Section Exercise_4_3_1_10.
       [X]. Similarly there is a constant functor [C_Y : Grph ->
       Set]. Use [f] to construct a natural transformation [C_X ->
       C_Y]. What are its components? *)
-  (** ** Solution *)
-  (** This is also called the diagonal functor or constant diagram
-      functor [Δ : C -> Fun(D, C)].  We can simply send object in
-      [Grph] to the morphism [f]. *)
 
   Section DiagonalFunctor_parts.
     Context `(C : @Category objC).

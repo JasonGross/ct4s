@@ -115,9 +115,6 @@ Section Exercise_3_2_1_7.
 
       b.) Is it a group?
    *)
-  (** ** Solution *)
-  (** The identity is the identity isomorphism, and the multiplication
-      formula is composition of isomorphisms.  This forms a group. *)
 
   Variable S : Type.
 

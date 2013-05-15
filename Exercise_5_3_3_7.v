@@ -138,8 +138,6 @@ Module Exercise_5_3_3_7.
       is closed under binary coproducts, i.e. every pair of objects [A B
       : Ob(Kls(T))] have a coproduct in [Kls(T)]. What is the coproduct of [A
       = {1,2,3}] and [B = {a, b}]? *)
-  (** ** Solution *)
-  (** The coproduct is [{1, 2, 3, a, b}]. *)
 
   Local Open Scope type_scope.
 
@@ -147,8 +145,6 @@ Module Exercise_5_3_3_7.
 
   Let η := MonadUnit T.
   Let µ := MonadMultiplication T.
-
-  (** Now we use [KleisliCategory_has_is_coproducts]. *)
 
   Global Instance PowerSetMonadCoproducts X Y : is_coproduct (KleisliCategory T) X Y (X + Y).
   apply KleisliCategory_has_is_coproducts.

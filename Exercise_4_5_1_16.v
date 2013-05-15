@@ -133,23 +133,8 @@ Section Exercise_4_5_1_16.
       (a) What is the product of 9 and 12 in this category?
 
       (b) Is there a standard name for products in this category? *)
-  (** ** Solution *)
-  (** (a) 3
-
-      (b) Greatest common divisor (least common multiple is the
-          coproduct; both gcd and lcm are "universal", and the
-          directionality for [divides] lines up with product in this
-          case).  (Really, the way I decided weather to solve this
-          problem or 4.5.1.29 was that I wrote code for gcd (because
-          it's simpler than lcm), and then tried to prove that it was
-          a product.  If the trivial way of doing this failed, I would
-          have switched to coproduct, where it would have worked.) *)
 
   Local Infix "≤" := divides.
-
-  (** We have that [v = gcd n m] if [v divides n], [v divides m], and
-      for any other [v'] which [divides] both [n] and [m], [v']
-      divides [v]. *)
   Class is_gcd (n m gcd_value : ℕ) :=
     {
       gcd_divides_first : divides gcd_value n;
@@ -159,41 +144,6 @@ Section Exercise_4_5_1_16.
                       -> divides v m
                       -> divides v gcd_value
     }.
-
-  (** We now implement the Euclidean algorithm for computing the gcd
-      of two numbers.  I chose to implement it using typeclasses,
-      because I didn't want to deal with well-founded recursion
-      ([gt_wf_rec] and [lt_wf_rec]), and I don't think Coq's built-in
-      [Fixpoint] mechanism is sufficiently powerful to implement this
-      algorithm.  See [Arith.Euclid] (in the standard library) for a
-      version of this algorithm based on well-founded recursion.  I
-      found this version too hard to use for proofs.  The downside of
-      using typeclasses is that we can't prove that it's a total
-      algorithm, and we need some tactic code to find gcds. *)
-
-  (** The tactics [t] and [t'] will discharge most of the proofs
-      required to implement the Euclidean algorithm for computing gcds. *)
-
-  (** The tactic [t] repeatedly tries the following things:
-
-      - proving a conjunction by proving its two parts
-
-      - turning [|- forall x, y] into [x |- y]
-
-      - solving the goal [x |- x] by [assumption] (the [e] in
-        [eassumption] means that we try to instantiate existential
-        variables
-
-      - using the [omega] tactic to solve some goals about arithmetic
-
-      - attempting to solve [exists x, P x] by guessing that [x = 0],
-        [x = 1], by guessing that [x] is some number that we have as a
-        hypothesis, or by leaving [x] as a hole, and hoping that it
-        will be instantiated uniquely in the process of solving the
-        rest of the proof.
-
-      - applying hypotheses, unfolding definitions (and applying
-        eliminators), and using the substitution property of equality *)
 
   Local Ltac t :=
     repeat (split
@@ -211,15 +161,6 @@ Section Exercise_4_5_1_16.
               || (solve [ progress (hnf in *; subst); t ])
               || (progress destruct_head_hnf @is_gcd)).
 
-  (** The tactic [t'] solves goals of the form [exists x, P x] (or
-      goals which can be transformed into such goals by applying a
-      hypothesis) by guessing that we are looking for either a sum of
-      two numbers, or a difference of two numbers.  We only accept
-      this as a solution if we can solve the remaining goals by some
-      combination of applying [t], rewriting with the distributive law
-      of multiplication, and finding the remaining goals among the
-      hypotheses. *)
-
   Local Ltac t' :=
     match goal with
       | [ a : _, b : _ |- _ ] =>
@@ -236,9 +177,6 @@ Section Exercise_4_5_1_16.
                   eassumption ]
     end.
 
-  (** We attempt to discharge [Program Instance] goals with [t] and
-      [t']. *)
-
   Local Obligation Tactic :=
     t;
     try t'.
@@ -246,8 +184,6 @@ Section Exercise_4_5_1_16.
   (*Class > le_class n m := le_class_intro :> le n m.
   Global Program Instance le_class_n n : le_class n n | 0.
   Global Instance le_class_S n m `(H : le_class n m) : le_class n (S m) | 0 := le_S _ _ H. *)
-
-  (** We enter some basic properties (base cases) of gcd. *)
   Global Program Instance gcd_0_n n : is_gcd 0 n n | 0.
   Global Program Instance gcd_n_0 n : is_gcd n 0 n | 0.
   Global Program Instance gcd_1_n n : is_gcd 1 n 1 | 0.
@@ -256,22 +192,14 @@ Section Exercise_4_5_1_16.
   Global Program Instance gcd_n_m_flip
          g `(le m n) `(is_gcd n m g)
   : is_gcd m n g | 1.
-  (** The main case is that [gcd(m, n) = gcd(m - n, n)] if [n <= m]. *)
   Global Program Instance gcd_n_m
          g `(le n m) `(is_gcd (m - n) n g)
   : is_gcd m n g | 1.
-
-  (** Now prove that the gcd is a product; the three components of the
-      gcd are the morphisms of products.  The rest of the proofs are
-      discharged by proof irrelevance. *)
   Global Instance gcd_is_product n m g `(H : is_gcd n m g)
   : is_product (PreOrderCategory (R := divides) _) n m g.
   exists gcd_divides_first gcd_divides_second gcd_maximal;
     abstract (intros; simpl; apply ProofIrrelevance.proof_irrelevance).
   Defined.
-
-  (** This tactic recursively solves goals of the form [is_gcd n m _]
-      by applying the instances defined above. *)
 
   Local Ltac try_solve_gcd :=
     match goal with
@@ -285,10 +213,7 @@ Section Exercise_4_5_1_16.
     eexists.
     try_solve_gcd.
   Defined.
-
-  (** Compute [gcd(9, 12)]. *)
   Eval hnf in (proj1_sig gcd_9_12).
-  (** [= 3 : ℕ] *)
 End Exercise_4_5_1_16.
 
 (** ------------------------------------------------------------------------ *)
