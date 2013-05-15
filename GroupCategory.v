@@ -114,9 +114,6 @@ Section CategoryOfGroups.
       as morphisms, see Definition 3.2.1.7. Show (to the level of
       detail of Example 4.1.1.4) that the rest of the conditions for
       [Grp] to be a category are satisfied. *)
-  (** ** Solution *)
-  (** Unfolding of definitions and applying proof-irrelevance is
-      sufficient to prove these goals by reflexivity. *)
 
   Definition CategoryOfGroups : @Category { T : Type & Group T }.
     refine {|
